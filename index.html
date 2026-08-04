@@ -413,7 +413,144 @@ font-size:21px;
 
 
 <script src="js/admin.js"></script>
+<div class="voice-panel">
 
+    <h2>🎤 میکروفون ناظم</h2>
+    
+    <button id="startVoice">
+    شروع شنود
+    </button>
+    
+    
+    <div id="voiceStatus">
+    خاموش
+    </div>
+    
+    
+    <div id="voiceText">
+    
+    متن تشخیص داده شده نمایش داده می‌شود...
+    
+    </div>
+    
+    
+    </div>
+    <script>
+
+
+        const startButton = document.getElementById("startVoice");
+        
+        const status = document.getElementById("voiceStatus");
+        
+        const textBox = document.getElementById("voiceText");
+        
+        
+        
+        const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+        
+        
+        
+        if(!SpeechRecognition){
+        
+        alert("مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند");
+        
+        }
+        
+        
+        else{
+        
+        
+        const recognition = new SpeechRecognition();
+        
+        
+        recognition.lang = "fa-IR";
+        
+        
+        recognition.continuous = true;
+        
+        
+        recognition.interimResults = true;
+        
+        
+        
+        recognition.onstart = function(){
+        
+        
+        status.innerHTML="🎤 در حال شنیدن...";
+        
+        
+        };
+        
+        
+        
+        recognition.onresult = function(event){
+        
+        
+        let text="";
+        
+        
+        for(
+        let i=event.resultIndex;
+        i<event.results.length;
+        i++
+        ){
+        
+        
+        text += event.results[i][0].transcript;
+        
+        
+        }
+        
+        
+        
+        textBox.innerHTML = text;
+        
+        
+        
+        };
+        
+        
+        
+        recognition.onerror=function(event){
+        
+        
+        console.log(
+        "خطای صدا:",
+        event.error
+        );
+        
+        
+        };
+        
+        
+        
+        recognition.onend=function(){
+        
+        
+        status.innerHTML="قطع شد";
+        
+        
+        };
+        
+        
+        
+        
+        startButton.onclick=function(){
+        
+        
+        recognition.start();
+        
+        
+        };
+        
+        
+        
+        }
+        
+        
+        </script>
 
 </body>
 
