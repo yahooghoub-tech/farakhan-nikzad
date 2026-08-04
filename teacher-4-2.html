@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>کلاس چهارم ۲</title>
+
+
+<style>
+
+body{
+
+margin:0;
+font-family:tahoma;
+background:linear-gradient(135deg,#06121f,#12385b);
+color:white;
+text-align:center;
+
+}
+
+
+.box{
+
+width:90%;
+max-width:500px;
+
+margin:50px auto;
+
+background:#ffffff22;
+
+backdrop-filter:blur(15px);
+
+border-radius:25px;
+
+padding:30px;
+
+}
+
+
+h1{
+
+font-size:30px;
+
+}
+
+
+#student{
+
+font-size:40px;
+
+color:#00ff99;
+
+margin-top:40px;
+
+}
+
+
+.status{
+
+font-size:22px;
+
+}
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+
+<h1>
+📢 کلاس چهارم ۲
+</h1>
+
+
+<div class="status">
+منتظر فراخوان...
+</div>
+
+
+<div id="student">
+---
+</div>
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+
+const supabase = window.supabase.createClient(
+
+"https://ghnpiijihybuhfetnxjp.supabase.co",
+
+"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
+
+);
+
+
+
+
+
+supabase
+
+.channel('calls-room')
+
+
+.on(
+
+'postgres_changes',
+
+{
+
+event:'INSERT',
+
+schema:'public',
+
+table:'calls'
+
+},
+
+(payload)=>{
+
+
+console.log(payload);
+
+
+
+let data = payload.new;
+
+
+
+if(data.class_name === "چهارم 2"){
+
+
+document.getElementById("student")
+.innerHTML = data.student_name;
+
+
+
+}
+
+
+}
+
+)
+
+
+.subscribe();
+
+
+
+</script>
+
+
+</body>
+
+</html>
