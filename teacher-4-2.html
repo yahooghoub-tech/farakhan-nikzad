@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -7,28 +8,47 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>کلاس چهارم ۲ - فراخوان خروج</title>
+
+<title>
+کلاس چهارم ۲ - فراخوان خروج
+</title>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 
 
+
 <style>
 
+
 *{
+
 box-sizing:border-box;
+
 }
+
 
 
 body{
 
+
 margin:0;
 
-font-family:Vazirmatn;
 
-background:linear-gradient(135deg,#06121f,#12385b);
+font-family:Vazirmatn,sans-serif;
+
+
+background:
+
+linear-gradient(
+135deg,
+#06121f,
+#12385b
+);
+
 
 color:white;
+
 
 }
 
@@ -36,68 +56,199 @@ color:white;
 
 .container{
 
+
 width:90%;
 
-max-width:900px;
+
+max-width:1000px;
+
 
 margin:auto;
 
+
 padding:20px;
+
 
 }
 
+
+
+/* ==========================
+هدر
+========================== */
 
 
 .header{
 
-background:#ffffff22;
 
-backdrop-filter:blur(15px);
+background:
+
+rgba(255,255,255,.12);
+
+
+backdrop-filter:
+
+blur(15px);
+
+
 
 border-radius:25px;
 
+
+
 padding:25px;
+
+
 
 text-align:center;
 
+
+
 margin-bottom:25px;
 
+
+
 }
+
 
 
 .header h1{
 
+
 margin:0;
+
 
 font-size:30px;
 
+
 }
 
+
+
+
+.header p{
+
+
+margin-top:10px;
+
+
+}
+
+
+
+/* ==========================
+دکمه ریست
+========================== */
+
+
+.reset-btn{
+
+
+background:#ff4444;
+
+
+color:white;
+
+
+border:none;
+
+
+padding:12px 30px;
+
+
+border-radius:20px;
+
+
+font-family:inherit;
+
+
+font-size:16px;
+
+
+cursor:pointer;
+
+
+
+}
+
+
+
+.reset-btn:hover{
+
+
+background:#ff0000;
+
+
+}
+
+
+
+
+
+/* ==========================
+باکس وضعیت
+========================== */
 
 
 .status-box{
 
-background:#ffffff22;
 
-padding:20px;
+background:
+
+rgba(255,255,255,.12);
+
+
+backdrop-filter:
+
+blur(15px);
+
+
 
 border-radius:20px;
 
+
+
+padding:20px;
+
+
+
 text-align:center;
 
+
+
 margin-bottom:25px;
+
+
+
+font-size:18px;
+
+
 
 }
 
 
 
+
+/* ==========================
+کارت ها
+========================== */
+
+
 .cards{
+
 
 display:grid;
 
-grid-template-columns:repeat(2,1fr);
+
+grid-template-columns:
+
+repeat(2,1fr);
+
+
 
 gap:20px;
+
+
 
 }
 
@@ -106,25 +257,49 @@ gap:20px;
 
 .card{
 
-background:#ffffff22;
 
-backdrop-filter:blur(15px);
+background:
+
+rgba(255,255,255,.12);
+
+
+
+backdrop-filter:
+
+blur(15px);
+
+
 
 border-radius:25px;
 
+
+
 padding:20px;
+
+
+
+transition:.3s;
+
+
 
 }
 
 
 
+
 .student-name{
+
 
 font-size:24px;
 
+
 font-weight:bold;
 
+
+
 color:#00ff99;
+
+
 
 }
 
@@ -132,9 +307,13 @@ color:#00ff99;
 
 .state{
 
+
 margin:15px 0;
 
+
 font-size:18px;
+
+
 
 }
 
@@ -142,19 +321,28 @@ font-size:18px;
 
 button{
 
+
 border:none;
+
 
 padding:12px;
 
+
 border-radius:15px;
+
 
 font-family:inherit;
 
+
 cursor:pointer;
+
 
 margin:5px;
 
+
 font-size:16px;
+
+
 
 }
 
@@ -162,7 +350,9 @@ font-size:16px;
 
 .receive{
 
+
 background:#ffd000;
+
 
 }
 
@@ -170,452 +360,630 @@ background:#ffd000;
 
 .send{
 
+
 background:#00ff99;
 
-}
-
-
-
-.sent{
-
-opacity:.6;
 
 }
 
 
+/* ==========================
+وضعیت کارت ها
+========================== */
 
-@media(max-width:600px){
 
-.cards{
+.waiting-card{
 
-grid-template-columns:1fr;
 
-}
+border:
 
-}
-/* وضعیت کارت ها */
+2px solid #ff4444;
 
-.card.waiting-card{
 
-border:2px solid #ff4444;
 
-background:rgba(255,0,0,.18);
+background:
+
+rgba(255,0,0,.18);
+
+
 
 }
 
 
 
-.card.received-card{
+.received-card{
 
-border:2px solid #ffd000;
 
-background:rgba(255,208,0,.18);
+border:
+
+2px solid #ffd000;
+
+
+
+background:
+
+rgba(255,208,0,.18);
+
+
 
 }
 
 
 
-.card.sent-card{
+.sent-card{
 
-border:2px solid #00ff99;
 
-background:rgba(0,255,150,.18);
+border:
+
+2px solid #00ff99;
+
+
+
+background:
+
+rgba(0,255,150,.18);
+
+
 
 opacity:.75;
 
+
+
 }
 
 
+
+
+
+/* ==========================
+زمان ها
+========================== */
+
+
+.time-box{
+
+
+background:
+
+rgba(0,0,0,.25);
+
+
+
+border-radius:15px;
+
+
+
+padding:10px;
+
+
+
+margin-top:15px;
+
+
+
+font-size:14px;
+
+
+
+line-height:2;
+
+
+
+}
+
+
+
+.time-title{
+
+
+color:#ffd000;
+
+
+font-weight:bold;
+
+
+}
+
+
+
+
+
+/* ==========================
+دکمه ها
+========================== */
+
+
+button:disabled{
+
+
+cursor:not-allowed;
+
+
+opacity:.6;
+
+
+}
+
+
+
+
+
+/* ==========================
+انیمیشن کارت جدید
+========================== */
+
+
+.new-card{
+
+
+animation:
+
+showCard .5s ease;
+
+
+
+}
+
+
+
+@keyframes showCard{
+
+
+from{
+
+
+opacity:0;
+
+
+transform:
+
+translateY(-20px);
+
+
+
+}
+
+
+
+to{
+
+
+opacity:1;
+
+
+transform:
+
+translateY(0);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+/* ==========================
+موبایل
+========================== */
+
+
+@media(max-width:700px){
+
+
+
+.container{
+
+
+width:95%;
+
+
+
+padding:10px;
+
+
+
+}
+
+
+
+
+.header h1{
+
+
+font-size:22px;
+
+
+}
+
+
+
+.cards{
+
+
+grid-template-columns:
+
+1fr;
+
+
+
+}
+
+
+
+.student-name{
+
+
+font-size:21px;
+
+
+
+}
+
+
+
+
+button{
+
+
+width:100%;
+
+
+margin-top:8px;
+
+
+}
+
+
+
+}
 </style>
 
 </head>
-
-
-
 <body>
 
 
-<div class="container">
+    <div class="container">
+    
+    
+    
+    <!-- ==========================
+    هدر صفحه معلم
+    ========================== -->
+    
+    
+    <div class="header">
+    
+    
+    <h1>
+    
+    📢 کلاس چهارم ۲
+    
+    </h1>
+    
+    
+    
+    <p>
+    
+    سیستم هوشمند فراخوان خروج دانش‌آموزان
+    
+    </p>
+    
+    
+    
+    <button
+    
+    class="reset-btn"
+    
+    onclick="resetPage()"
+    
+    >
+    
+    🔄 ریست صفحه
+    
+    </button>
+    
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <!-- ==========================
+    وضعیت کلی صفحه
+    ========================== -->
+    
+    
+    <div class="status-box" id="pageStatus">
+    
+    
+    منتظر فراخوان ناظم ...
+    
+    </div>
+    
+    
+    
+    
+    
+    <!-- ==========================
+    کارت های دانش آموزان
+    ========================== -->
+    
+    
+    <div
+    
+    id="cards"
+    
+    class="cards">
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    </div>
+    <!-- ==========================
+کتابخانه Supabase
+========================== -->
 
-
-<div class="header">
-
-<h1>
-📢 کلاس چهارم ۲
-</h1>
-
-<p>
-سیستم فراخوان خروج دانش‌آموزان
-</p>
-
-</div>
-
-
-
-<div class="status-box">
-
-منتظر فراخوان ناظم ...
-
-</div>
-
-
-
-<div id="cards" class="cards">
-
-
-</div>
-
-
-
-</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
-    // =====================================
-    // اتصال Supabase
-    // =====================================
-    
-    const supabaseClient = supabase.createClient(
-    
+    const supabaseClient=supabase.createClient(
     "https://ghnpiijihybuhfetnxjp.supabase.co",
-    
     "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
-    
     );
     
+    const currentClass="چهارم 2";
     
-    // =====================================
-    // کلاس فعلی این صفحه
-    // =====================================
+    const cardsBox=document.getElementById("cards");
+    const pageStatus=document.getElementById("pageStatus");
     
-    const currentClass = "چهارم 2";
+    function shamsiDate(date){
+    if(!date)return "-";
+    return new Intl.DateTimeFormat("fa-IR",{
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+    }).format(new Date(date));
+    }
     
+    function getStatusText(status){
+    switch(status){
+    case"calling":
+    return"🔔 در انتظار دریافت";
+    case"received":
+    return"✅ دریافت شد";
+    case"sent":
+    return"🚶 دانش‌آموز ارسال شد";
+    default:
+    return status;
+    }
+    }
     
-    
-    // =====================================
-    // گرفتن فراخوان‌های ذخیره شده
-    // بعد از Refresh
-    // =====================================
     
     async function loadCalls(){
-
-console.log(
-"صفحه کلاس باز شد - منتظر فراخوان جدید"
-);
-
-}
- 
+    
+    try{
+    
+    const{data,error}=await supabaseClient
+    .from("calls")
+    .select("*")
+    .eq("class_name",currentClass)
+    .eq("status","calling")
+    .order("created_at",{ascending:true});
     
     
+    if(error){
+    console.log("Load Error:",error);
+    return;
+    }
     
     
-    // =====================================
-    // ساخت کارت دانش آموز
-    // =====================================
+    data.forEach(call=>{
+    showStudent(call);
+    });
+    
+    
+    console.log("Active Calls Loaded:",data);
+    
+    
+    }catch(error){
+    
+    console.log("Load Error:",error);
+    
+    }
+    
+    }
+    
     
     
     function showStudent(call){
     
     
-    
-    let box =
-    document.getElementById("cards");
-    
-    
-    
-    if(!box)
-    return;
-    
-    
-    
-    // جلوگیری از تکرار
-    
-    
-    if(
-    document.getElementById(
-    "student-"+call.id
-    )
-    ){
-    
+    if(document.getElementById("student-"+call.id)){
     updateCard(call);
-    
     return;
-    
     }
     
     
+    let card=document.createElement("div");
+    
+    card.id="student-"+call.id;
+    
+    card.className="card new-card";
     
     
-    let card =
-    document.createElement("div");
-    
-    
-    
-    card.id =
-    "student-"+call.id;
-    
-    
-    
-    card.className =
-    "card";
-    
-    
-    
-    
-    card.innerHTML = `
-    
+    card.innerHTML=`
     
     <div class="student-name">
-    
     ${call.student_name}
-    
     </div>
-    
-    
     
     <div class="state">
-    
     وضعیت:
-    
     <span id="status-${call.id}">
-    
     ${getStatusText(call.status)}
-    
     </span>
+    </div>
+    
+    
+    <div class="time-box">
+    
+    <div>
+    <span class="time-title">
+    ⏰ زمان فراخوان:
+    </span>
+    ${shamsiDate(call.created_at)}
+    </div>
+    
+    
+    <div id="received-time-${call.id}">
+    </div>
+    
+    
+    <div id="sent-time-${call.id}">
+    </div>
     
     
     </div>
     
     
-    
     <button
-    
-    onclick="changeStatus(${call.id},'received')"
-    
     class="receive"
-    
-    >
-    
+    onclick="changeStatus(${call.id},'received')">
     دریافت فراخوان
-    
     </button>
-    
     
     
     <button
-    
-    onclick="changeStatus(${call.id},'sent')"
-    
     class="send"
-    
-    >
-    
+    onclick="changeStatus(${call.id},'sent')">
     ارسال دانش‌آموز
-    
     </button>
-    
     
     `;
     
     
-    
-    box.appendChild(card);
-    
-    
+    cardsBox.appendChild(card);
     
     updateCard(call);
     
-    
     }
-    
-    
-    
-    
-    
-    
-    // =====================================
-    // متن وضعیت
-    // =====================================
-    
-    
-    function getStatusText(status){
-    
-    
-    
-    switch(status){
-    
-    
-    case "calling":
-    
-    return "🔔 در انتظار";
-    
-    
-    case "received":
-    
-    return "✅ دریافت شد";
-    
-    
-    case "sent":
-    
-    return "🚶 ارسال شد";
-    
-    
-    default:
-    
-    return status;
-    
-    
-    }
-    
-    
-    }
-    
-    
-    
-    
-    
-    // =====================================
-    // تغییر وضعیت از طرف معلم
-    // =====================================
-    
-    
     async function changeStatus(id,status){
-    
-    
-    
-    const {error}=
-    
-    await supabaseClient
-    
-    .from("calls")
-    
-    .update({
-    
-    status:status
-    
-    })
-    
-    .eq(
-    "id",
-    id
-    );
-    
-    
-    
-    
-    if(error){
-    
-    console.log(
-    "Update Error",
-    error
-    );
-    
-    return;
-    
-    }
-    
-    
-    
-    let call={
-    
-    id:id,
-    
-    status:status
-    
-    };
-    
-    
-    updateCard(call);
-    
-    
-    
-    }
-// =====================================
-// تغییر ظاهر کارت بر اساس وضعیت
-// =====================================
+
+let updateData={
+status:status
+};
+
+
+if(status==="received"){
+
+updateData.received_at=new Date().toISOString();
+
+}
+
+
+if(status==="sent"){
+
+updateData.sent_at=new Date().toISOString();
+
+}
+
+
+const{data,error}=await supabaseClient
+.from("calls")
+.update(updateData)
+.eq("id",id)
+.select();
+
+
+if(error){
+
+console.log(
+"Status Update Error:",
+error
+);
+
+return;
+
+}
+
+
+if(data&&data[0]){
+
+updateCard(data[0]);
+
+}
+
+
+}
+
 
 
 function updateCard(call){
 
 
-let card =
-
-document.getElementById(
+let card=document.getElementById(
 "student-"+call.id
 );
 
 
-
-if(!card)
-return;
+if(!card)return;
 
 
-
-
-// پاک کردن کلاس های قبلی
 
 card.classList.remove(
-
 "waiting-card",
-
 "received-card",
-
 "sent-card"
-
 );
 
 
 
-
-// وضعیت فراخوان
-
 if(call.status==="calling"){
-
 
 card.classList.add(
 "waiting-card"
 );
 
-
 }
-
 
 
 
 if(call.status==="received"){
 
-
 card.classList.add(
 "received-card"
 );
 
-
 }
-
 
 
 
 if(call.status==="sent"){
 
-
 card.classList.add(
 "sent-card"
 );
-
 
 }
 
 
 
-
-
-// تغییر متن وضعیت
-
-
-let statusBox =
-
-document.getElementById(
+let statusBox=document.getElementById(
 "status-"+call.id
 );
 
@@ -623,25 +991,61 @@ document.getElementById(
 
 if(statusBox){
 
-
-statusBox.innerHTML =
-
+statusBox.innerHTML=
 getStatusText(call.status);
-
 
 }
 
 
 
 
+let receivedBox=document.getElementById(
+"received-time-"+call.id
+);
 
 
-// مدیریت دکمه ها
+
+if(receivedBox&&call.received_at){
+
+receivedBox.innerHTML=`
+
+<span class="time-title">
+✅ دریافت معلم:
+</span>
+
+${shamsiDate(call.received_at)}
+
+`;
+
+}
 
 
-let buttons =
 
-card.querySelectorAll(
+
+let sentBox=document.getElementById(
+"sent-time-"+call.id
+);
+
+
+
+if(sentBox&&call.sent_at){
+
+sentBox.innerHTML=`
+
+<span class="time-title">
+🚶 ارسال دانش‌آموز:
+</span>
+
+${shamsiDate(call.sent_at)}
+
+`;
+
+}
+
+
+
+
+let buttons=card.querySelectorAll(
 "button"
 );
 
@@ -650,18 +1054,13 @@ card.querySelectorAll(
 if(call.status==="received"){
 
 
-
 if(buttons[0]){
-
 
 buttons[0].style.display="none";
 
-
 }
 
-
 }
-
 
 
 
@@ -669,12 +1068,9 @@ buttons[0].style.display="none";
 if(call.status==="sent"){
 
 
-
 if(buttons[0]){
 
-
 buttons[0].style.display="none";
-
 
 }
 
@@ -682,63 +1078,67 @@ buttons[0].style.display="none";
 
 if(buttons[1]){
 
-
 buttons[1].innerHTML=
-
 "✅ ارسال شد";
-
 
 buttons[1].disabled=true;
 
-
 }
-
-
-
-}
-
 
 
 }
 
 
+}
+function resetPage(){
+
+if(!confirm(
+"آیا می‌خواهید کارت‌های نمایش داده شده پاک شوند؟"
+)){
+
+return;
+
+}
+
+
+cardsBox.innerHTML="";
+
+
+pageStatus.innerHTML=
+"🔄 صفحه ریست شد - منتظر فراخوان جدید";
+
+
+console.log(
+"Teacher Page Reset"
+);
+
+
+}
 
 
 
 // =====================================
-// دریافت لحظه ای فراخوان جدید از ناظم
+// دریافت فراخوان جدید از ناظم
 // INSERT
 // =====================================
 
 
 supabaseClient
-
-.channel("new-class-call")
-
+.channel("teacher-new-call")
 .on(
-
 "postgres_changes",
-
 {
-
 event:"INSERT",
-
 schema:"public",
-
 table:"calls",
-
 filter:
-
 `class_name=eq.${currentClass}`
-
-
 },
-
 (payload)=>{
 
 
 console.log(
-"New Student:",
+"New Call:",
 payload.new
 );
 
@@ -750,58 +1150,44 @@ payload.new
 
 
 
-// صدای هشدار
+pageStatus.innerHTML=
+"📢 فراخوان جدید دریافت شد";
+
 
 
 playAlert();
 
 
-
 }
 
 )
-
 .subscribe();
 
 
 
 
-
-
-
 // =====================================
-// دریافت تغییر وضعیت
+// دریافت تغییر وضعیت از معلم / ناظم
+// UPDATE
 // =====================================
 
 
 supabaseClient
-
-.channel("update-class-call")
-
+.channel("teacher-call-update")
 .on(
-
 "postgres_changes",
-
 {
-
 event:"UPDATE",
-
 schema:"public",
-
 table:"calls",
-
 filter:
-
 `class_name=eq.${currentClass}`
-
-
 },
-
 (payload)=>{
 
 
 console.log(
-"Update:",
+"Status Update:",
 payload.new
 );
 
@@ -816,31 +1202,21 @@ payload.new
 }
 
 )
-
 .subscribe();
 
 
 
 
-
-
-
 // =====================================
-// صدای هشدار
+// صدای هشدار فراخوان
 // =====================================
 
 
 function playAlert(){
 
-
-let audio =
-
-new Audio(
-
+let audio=new Audio(
 "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-
 );
-
 
 
 audio.play()
@@ -852,7 +1228,6 @@ audio.play()
 
 
 
-
 // =====================================
 // شروع صفحه
 // =====================================
@@ -860,12 +1235,10 @@ audio.play()
 
 loadCalls();
 
-
-
 </script>
 
 
 
 </body>
 
-</html>    
+</html>
