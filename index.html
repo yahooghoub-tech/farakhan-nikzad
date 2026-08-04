@@ -655,7 +655,7 @@ loadOldCalls();
         
         
         
-        resetClasses();
+       // resetClasses();
         
         
         
@@ -1093,42 +1093,58 @@ loadOldCalls();
         
         };
         
-        
-        
-        
-        
         recognition.onend=function(){
-        
-        
-        isListening=false;
-        
-        
-        voiceStatus.innerHTML =
-        "میکروفون خاموش شد";
-        
-        
-        };
-        
-        
-        
-        
-        
-        
-        startButton.onclick=function(){
-        
-        
-        
-        if(!isListening){
-        
-        
-        recognition.start();
-        
-        
-        }
-        
-        
-        
-        };
+
+
+voiceStatus.innerHTML =
+"🔄 اتصال دوباره میکروفون...";
+
+
+// اگر هنوز کاربر می‌خواهد شنود فعال باشد
+if(isListening){
+
+
+setTimeout(()=>{
+
+
+try{
+
+recognition.start();
+
+}
+
+catch(error){
+
+console.log(
+"Restart Error:",
+error
+);
+
+}
+
+
+},1000);
+
+
+}
+
+
+};
+startButton.onclick=function(){
+
+
+if(!isListening){
+
+
+isListening=true;
+
+recognition.start();
+
+
+}
+
+
+};
         
         
         
