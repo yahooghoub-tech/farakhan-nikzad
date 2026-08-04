@@ -6,14 +6,17 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({
+      error: "Method Not Allowed"
+    });
+  }
 
   try {
-
     const { data, error } = await supabase
       .from("students")
       .select("*")
       .order("id", { ascending: true });
-
 
     if (error) {
       return res.status(500).json({
@@ -21,16 +24,11 @@ export default async function handler(req, res) {
       });
     }
 
-
-    res.status(200).json(data);
-
+    return res.status(200).json(data);
 
   } catch (err) {
-
-    res.status(500).json({
+    return res.status(500).json({
       error: err.message
     });
-
   }
-
 }
