@@ -7,28 +7,48 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>کلاس چهارم ۲</title>
+<title>کلاس چهارم ۲ - فراخوان خروج</title>
+
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 
 
 <style>
 
+*{
+box-sizing:border-box;
+}
+
+
 body{
 
 margin:0;
-font-family:tahoma;
+
+font-family:Vazirmatn;
+
 background:linear-gradient(135deg,#06121f,#12385b);
+
 color:white;
-text-align:center;
 
 }
 
 
-.box{
+
+.container{
 
 width:90%;
-max-width:500px;
 
-margin:50px auto;
+max-width:900px;
+
+margin:auto;
+
+padding:20px;
+
+}
+
+
+
+.header{
 
 background:#ffffff22;
 
@@ -36,72 +56,230 @@ backdrop-filter:blur(15px);
 
 border-radius:25px;
 
-padding:30px;
+padding:25px;
+
+text-align:center;
+
+margin-bottom:25px;
 
 }
 
 
-h1{
+.header h1{
+
+margin:0;
 
 font-size:30px;
 
 }
 
 
-#student{
 
-font-size:40px;
+.status-box{
+
+background:#ffffff22;
+
+padding:20px;
+
+border-radius:20px;
+
+text-align:center;
+
+margin-bottom:25px;
+
+}
+
+
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:20px;
+
+}
+
+
+
+
+.card{
+
+background:#ffffff22;
+
+backdrop-filter:blur(15px);
+
+border-radius:25px;
+
+padding:20px;
+
+}
+
+
+
+.student-name{
+
+font-size:24px;
+
+font-weight:bold;
 
 color:#00ff99;
 
-margin-top:40px;
+}
+
+
+
+.state{
+
+margin:15px 0;
+
+font-size:18px;
 
 }
 
 
-.status{
 
-font-size:22px;
+button{
+
+border:none;
+
+padding:12px;
+
+border-radius:15px;
+
+font-family:inherit;
+
+cursor:pointer;
+
+margin:5px;
+
+font-size:16px;
 
 }
+
+
+
+.receive{
+
+background:#ffd000;
+
+}
+
+
+
+.send{
+
+background:#00ff99;
+
+}
+
+
+
+.sent{
+
+opacity:.6;
+
+}
+
+
+
+@media(max-width:600px){
+
+.cards{
+
+grid-template-columns:1fr;
+
+}
+
+}
+/* وضعیت کارت ها */
+
+.card.waiting-card{
+
+border:2px solid #ff4444;
+
+background:rgba(255,0,0,.18);
+
+}
+
+
+
+.card.received-card{
+
+border:2px solid #ffd000;
+
+background:rgba(255,208,0,.18);
+
+}
+
+
+
+.card.sent-card{
+
+border:2px solid #00ff99;
+
+background:rgba(0,255,150,.18);
+
+opacity:.75;
+
+}
+
 
 </style>
 
-
 </head>
+
 
 
 <body>
 
 
-<div class="box">
+<div class="container">
 
+
+<div class="header">
 
 <h1>
 📢 کلاس چهارم ۲
 </h1>
 
-
-<div class="status">
-منتظر فراخوان...
-</div>
-
-
-<div id="student">
----
-</div>
-
+<p>
+سیستم فراخوان خروج دانش‌آموزان
+</p>
 
 </div>
 
 
 
+<div class="status-box">
+
+منتظر فراخوان ناظم ...
+
+</div>
+
+
+
+<div id="cards" class="cards">
+
+
+</div>
+
+
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
 
-const supabaseClient = window.supabase.createClient(
+
+// =====================================
+// اتصال Supabase
+// =====================================
+
+
+const supabaseClient = supabase.createClient(
 
 "https://ghnpiijihybuhfetnxjp.supabase.co",
 
@@ -110,42 +288,637 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
+
+// =====================================
+// کلاس فعلی
+// =====================================
+
+
+const currentClass = "چهارم 2";
+
+
+
+// =====================================
+// گرفتن فراخوان‌های قبلی
+// =====================================
+
+
+async function loadCalls(){
+
+
+const {data,error}=await supabaseClient
+
+.from("calls")
+
+.select("*")
+
+.eq("class_name",currentClass)
+
+.order("created_at",{ascending:true});
+
+
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+
+
+data.forEach(call=>{
+
+
+showStudent(call);
+
+
+});
+
+
+}
+
+
+
+
+
+// =====================================
+// نمایش کارت دانش‌آموز
+// =====================================
+
+
+function showStudent(call){
+
+
+
+let box=document.getElementById("cards");
+
+
+
+// جلوگیری از تکراری شدن کارت
+
+
+if(document.getElementById("student-"+call.id)){
+
+updateCard(call);
+
+return;
+
+}
+
+
+
+let card=document.createElement("div");
+
+
+card.className="card waiting-card";
+
+card.id="student-"+call.id;
+
+
+
+card.innerHTML=`
+
+<div class="student-name">
+
+${call.student_name}
+
+</div>
+
+
+<div class="state">
+
+وضعیت:
+
+<span id="status-${call.id}">
+
+${getStatusText(call.status)}
+
+</span>
+
+</div>
+
+
+
+<button 
+class="receive"
+onclick="changeStatus(${call.id},'received')">
+
+دریافت فراخوان
+
+</button>
+
+
+
+<button 
+class="send"
+onclick="changeStatus(${call.id},'sent')">
+
+ارسال دانش‌آموز
+
+</button>
+
+
+`;
+
+
+
+box.appendChild(card);
+
+
+}
+
+
+
+
+// =====================================
+// متن وضعیت
+// =====================================
+
+
+function getStatusText(status){
+
+
+if(status==="calling")
+return "🔔 در انتظار";
+
+
+if(status==="received")
+return "✅ دریافت شد";
+
+
+if(status==="sent")
+return "🚶 ارسال شد";
+
+
+return status;
+
+
+}
+
+
+
+// =====================================
+// آپدیت کارت
+// =====================================
+
+
+function updateCard(call){
+
+
+let status =
+document.getElementById(
+"status-"+call.id
+);
+
+
+
+if(status){
+
+status.innerHTML=
+getStatusText(call.status);
+
+}
+
+
+
+let card=
+document.getElementById(
+"student-"+call.id
+);
+
+
+
+if(call.status==="sent"){
+
+card.classList.add("sent");
+
+}
+
+
+
+}
+
+
+
+
+// اجرای اولیه
+
+loadCalls();
+
+
+// =====================================
+// تغییر وضعیت فراخوان
+// =====================================
+
+
+async function changeStatus(id,status){
+
+
+
+const {error}=await supabaseClient
+
+.from("calls")
+
+.update({
+
+status:status
+
+})
+
+.eq("id",id);
+
+
+
+
+if(error){
+
+console.log(
+"Update Error:",
+error
+);
+
+return;
+
+}
+
+
+
+// تغییر سریع روی صفحه
+
+
+const statusBox =
+document.getElementById(
+"status-"+id
+);
+
+
+
+if(statusBox){
+
+statusBox.innerHTML =
+getStatusText(status);
+
+}
+
+
+
+// اگر ارسال شد کارت حذف نشود
+// فقط حالت ظاهری تغییر کند
+
+
+if(status==="sent"){
+
+
+const card =
+document.getElementById(
+"student-"+id
+);
+
+
+
+if(card){
+
+card.classList.add("sent");
+
+}
+
+
+}
+
+
+
+console.log(
+"Status Updated:",
+id,
+status
+);
+
+
+
+}
+
+
+
+
+
+
+// =====================================
+// دریافت لحظه‌ای تغییرات Supabase
+// =====================================
+
+
+
 supabaseClient
 
-.channel('calls-room')
-
+.channel("class-calls")
 
 .on(
 
-'postgres_changes',
+"postgres_changes",
 
 {
 
-event:'INSERT',
+event:"UPDATE",
 
-schema:'public',
+schema:"public",
 
-table:'calls'
+table:"calls",
+
+filter:
+`class_name=eq.${currentClass}`
 
 },
 
 (payload)=>{
 
 
-console.log(payload);
+console.log(
+"Realtime Update:",
+payload.new
+);
 
 
 
-let data = payload.new;
+updateCard(payload.new);
 
 
 
-if(data.class_name === "چهارم 2"){
+}
+
+)
+
+.subscribe((status)=>{
 
 
-document.getElementById("student")
-.innerHTML = data.student_name;
+console.log(
+"Realtime:",
+status
 
+);
+
+
+});
+// =====================================
+// مرتب سازی کارت‌ها
+// =====================================
+
+
+function sortCards(){
+
+
+const container =
+document.getElementById("cards");
+
+
+let cards =
+Array.from(
+container.children
+);
+
+
+
+cards.sort((a,b)=>{
+
+
+return a.id.localeCompare(b.id);
+
+
+});
+
+
+
+cards.forEach(card=>{
+
+container.appendChild(card);
+
+});
+
+
+}
+
+
+
+
+// =====================================
+// تغییر ظاهر بر اساس وضعیت
+// =====================================
+
+
+function updateCard(call){
+
+
+let card =
+document.getElementById(
+"student-"+call.id
+);
+
+
+
+if(!card)
+return;
+
+
+
+// حذف رنگ قبلی کارت
+
+card.classList.remove(
+"waiting-card",
+"received-card",
+"sent-card"
+);
+
+
+
+
+// تغییر رنگ بر اساس وضعیت
+
+
+if(call.status === "calling"){
+
+
+card.classList.add(
+"waiting-card"
+);
+
+
+}
+
+
+
+if(call.status === "received"){
+
+
+card.classList.add(
+"received-card"
+);
+
+
+}
+
+
+
+if(call.status === "sent"){
+
+
+card.classList.add(
+"sent-card"
+);
+
+
+}
+
+
+
+
+
+// تغییر متن وضعیت
+
+
+let status =
+document.getElementById(
+"status-"+call.id
+);
+
+
+
+if(status){
+
+
+status.innerHTML =
+getStatusText(call.status);
+
+
+}
+
+
+
+
+
+// کنترل دکمه‌ها
+
+
+let buttons =
+card.querySelectorAll("button");
+
+
+
+if(call.status==="received"){
+
+
+if(buttons[0]){
+
+buttons[0].style.display="none";
+
+}
+
+
+}
+
+
+
+
+if(call.status==="sent"){
+
+
+if(buttons[0]){
+
+buttons[0].style.display="none";
+
+}
+
+
+
+if(buttons[1]){
+
+
+buttons[1].innerHTML =
+"✅ ارسال شد";
+
+
+buttons[1].disabled=true;
+
+
+}
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// پاکسازی اولیه فقط نمایشی
+// (دیتابیس پاک نمی‌شود)
+// =====================================
+
+
+window.onload=function(){
+
+
+console.log(
+"Class Page Ready"
+);
+
+
+};
+// =====================================
+// دریافت فراخوان جدید از ناظم
+// INSERT REALTIME
+// =====================================
+
+
+supabaseClient
+
+.channel("new-class-calls")
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"INSERT",
+
+schema:"public",
+
+table:"calls"
+
+},
+
+(payload)=>{
+
+
+let call = payload.new;
+
+
+
+console.log(
+"New Call:",
+call
+);
+
+
+
+// فقط کلاس چهارم 2
+
+if(call.class_name === currentClass){
+
+
+showStudent(call);
+
+
+// پخش هشدار
+
+playAlert();
 
 
 }
@@ -155,18 +928,33 @@ document.getElementById("student")
 
 )
 
-
 .subscribe((status)=>{
 
-console.log("Realtime Status:", status);
+
+console.log(
+"Insert Channel:",
+status
+);
+
 
 });
+// =====================================
+// صدای هشدار فراخوان
+// =====================================
 
 
+function playAlert(){
+
+
+let audio =
+new Audio(
+"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+);
+
+
+audio.play();
+
+
+}
 
 </script>
-
-
-</body>
-
-</html>
