@@ -515,84 +515,66 @@ font-size:21px;
     
     </div>
     <script>
-
-
         // =====================================
-        // دریافت دانش آموزان از API
-        // =====================================
-        
-        
-        let students = [];
-        
-        
-        async function loadStudents(){
-        
-        try{
-        
-        
-        const response = await fetch("/api/get-students");
-        
-        
-        students = await response.json();
-        
-        
-        console.log(
-        "Students Loaded:",
-        students
-        );
-        
-        
-        }
-        
-        catch(error){
-        
-        console.log(
-        "Load Students Error:",
-        error
-        );
-        
-        }
-        
-        
-        }
-        
-        
-        loadStudents();
-        
-        async function loadOldCalls(){
+// دریافت دانش آموزان از API
+// =====================================
 
+let students = [];
+
+async function loadStudents(){
 
 try{
 
+const response = await fetch("/api/get-students");
+
+students = await response.json();
+
+console.log(
+"Students Loaded:",
+students
+);
+
+}
+
+catch(error){
+
+console.log(
+"Load Students Error:",
+error
+);
+
+}
+
+}
+
+
+
+// =====================================
+// دریافت فراخوان های قبلی
+// =====================================
+
+async function loadOldCalls(){
+
+try{
 
 const response =
 await fetch("/api/get-calls");
 
-
 const calls =
 await response.json();
 
-
-
 calls.forEach(call=>{
-
 
 addCallToClass(call);
 
-
 });
-
-
 
 console.log(
 "Old Calls Loaded:",
 calls
 );
 
-
-
 }
-
 
 catch(error){
 
@@ -601,511 +583,378 @@ console.log(
 error
 );
 
+}
 
 }
 
 
-}
+
+// =====================================
+// نمایش فراخوان های ذخیره شده
+// =====================================
+
 function addCallToClass(call){
 
-
-let student = {
-
+const student={
 
 name:call.student_name,
 
 class_name:call.class_name
 
+};
+
+addStudentToClass(student);
+
+}
+
+
+
+// =====================================
+// پاک کردن کلاس ها
+// =====================================
+
+function resetClasses(){
+
+document
+.querySelectorAll(".student-list")
+.forEach(list=>{
+
+list.innerHTML=
+"هنوز فراخوانی نشده";
+
+list.classList.add("empty");
+
+});
+
+}
+
+
+
+// =====================================
+// شروع برنامه
+// =====================================
+
+async function init(){
+
+resetClasses();
+
+await loadStudents();
+
+await loadOldCalls();
+
+}
+
+init();
+
+
+
+// =====================================
+// آخرین دانش آموز
+// =====================================
+
+let lastStudent="";
+// =====================================
+// پیدا کردن دانش آموز
+// =====================================
+
+function findStudent(text){
+
+return students.find(student=>
+
+text.includes(student.name)
+
+);
+
+}
+
+
+
+// =====================================
+// اضافه کردن دانش آموز به کلاس
+// =====================================
+
+function addStudentToClass(student){
+
+const classMap={
+
+"اول 1":"1-1",
+"اول 2":"1-2",
+"اول 3":"1-3",
+
+"دوم 1":"2-1",
+"دوم 2":"2-2",
+
+"سوم 1":"3-1",
+"سوم 2":"3-2",
+"سوم 3":"3-3",
+
+"چهارم 1":"4-1",
+"چهارم 2":"4-2",
+"چهارم 3":"4-3",
+
+"پنجم 1":"5-1",
+"پنجم 2":"5-2",
+"پنجم 3":"5-3",
+
+"ششم 1":"6-1",
+"ششم 2":"6-2"
 
 };
 
 
 
-addStudentToClass(student);
+const classId=
+classMap[student.class_name];
 
+if(!classId){
+
+console.log(
+"کلاس ناشناخته:",
+student.class_name
+);
+
+return;
 
 }
-        // شروع خواندن فراخوان‌های قبلی
-loadOldCalls();
-        
-        // =====================================
-        // پاک کردن کلاس ها در شروع صفحه
-        // =====================================
-        
-        
-        function resetClasses(){
-        
-        
-        document
-        .querySelectorAll(".student-list")
-        .forEach(list=>{
-        
-        
-        list.innerHTML =
-        "هنوز فراخوانی نشده";
-        
-        
-        list.classList.add("empty");
-        
-        
-        });
-        
-        
-        }
-        
-        
-        
-       // resetClasses();
-        
-        
-        
-        
-        
-        // =====================================
-        // آخرین دانش آموز
-        // =====================================
-        
-        
-        let lastStudent = "";
-        
-        
-        
-        
-        
-        
-        // =====================================
-        // پیدا کردن دانش آموز
-        // =====================================
-        
-        
-        function findStudent(text){
-        
-        
-        return students.find(student =>
-        
-        
-        text.includes(student.name)
-        
-        
-        );
-        
-        
-        }
-        
-        
-        
-        
-        
-        
-        
-        // =====================================
-        // اضافه کردن دانش آموز به کلاس خودش
-        // =====================================
-        
-        
-        function addStudentToClass(student){
-        
-        
-        
-        const classMap = {
-        
-        
-        "اول 1":"1-1",
-        "اول 2":"1-2",
-        "اول 3":"1-3",
-        
-        
-        "دوم 1":"2-1",
-        "دوم 2":"2-2",
-        
-        
-        "سوم 1":"3-1",
-        "سوم 2":"3-2",
-        "سوم 3":"3-3",
-        
-        
-        "چهارم 1":"4-1",
-        "چهارم 2":"4-2",
-        "چهارم 3":"4-3",
-        
-        
-        "پنجم 1":"5-1",
-        "پنجم 2":"5-2",
-        "پنجم 3":"5-3",
-        
-        
-        "ششم 1":"6-1",
-        "ششم 2":"6-2"
-        
-        
-        };
-        
-        
-        
-        
-        let classId =
-        classMap[student.class_name];
-        
-        
-        
-        if(!classId){
-        
-        console.log(
-        "کلاس پیدا نشد:",
-        student.class_name
-        );
-        
-        return;
-        
-        }
-        
-        
-        
-        
-        let classBox =
-        document.getElementById(
-        "class-"+classId
-        );
-        
-        
-        
-        if(!classBox){
-        
-        console.log(
-        "کارت کلاس پیدا نشد"
-        );
-        
-        return;
-        
-        }
-        
-        
-        
-        
-        
-        let list =
-        classBox.querySelector(
-        ".student-list"
-        );
-        
-        
-        
-        
-        
-        if(list.classList.contains("empty")){
-        
-        
-        list.innerHTML="";
-        
-        
-        list.classList.remove("empty");
-        
-        
-        }
-        
-        
-        
-        
-        // جلوگیری از تکراری شدن اسم
-        
-        if(
-        list.innerHTML.includes(student.name)
-        ){
-        
-        return;
-        
-        }
-        
-        
-        
-        
-        list.innerHTML += `
-        
-        <div class="student">
-        
-        ✅ ${student.name}
-        
-        </div>
-        
-        `;
-        
-        
-        
-        }
-        
-        
-        
-        
-        
-        
-        
-        // =====================================
-        // ذخیره در جدول calls
-        // =====================================
-        
-        
-        async function sendCall(student){
-        
-        
-        try{
-        
-        
-        await fetch("/api/add-call",{
-        
-        
-        method:"POST",
-        
-        
-        headers:{
-        
-        
-        "Content-Type":"application/json"
-        
-        
-        },
-        
-        
-        body:JSON.stringify({
-        
-        
-        student_name:student.name,
-        
-        
-        class_name:student.class_name,
-        
-        
-        status:"calling"
-        
-        
-        })
-        
-        
-        });
-        
-        
-        
-        console.log(
-        "Saved:",
-        student.name
-        );
-        
-        
-        
-        }
-        
-        
-        catch(error){
-        
-        
-        console.log(
-        "Save Error:",
-        error
-        );
-        
-        
-        }
-        
-        
-        }
-        
-        
-        
-        
-        
-        
-        // =====================================
-        // Speech Recognition
-        // =====================================
-        
-        
-        const startButton =
-        document.getElementById(
-        "startVoice"
-        );
-        
-        
-        const voiceStatus =
-        document.getElementById(
-        "voiceStatus"
-        );
-        
-        
-        const voiceText =
-        document.getElementById(
-        "voiceText"
-        );
-        
-        
-        
-        
-        
-        const SpeechRecognition =
-        
-        window.SpeechRecognition ||
-        
-        window.webkitSpeechRecognition;
-        
-        
-        
-        
-        
-        let recognition;
-        
-        let isListening=false;
-        
-        
-        
-        
-        
-        if(!SpeechRecognition){
-        
-        
-        alert(
-        "مرورگر شما پشتیبانی نمی کند"
-        );
-        
-        
-        }
-        
-        else{
-        
-        
-        recognition =
-        new SpeechRecognition();
-        
-        
-        
-        recognition.lang="fa-IR";
-        
-        
-        recognition.continuous=true;
-        
-        
-        recognition.interimResults=true;
-        
-        
-        
-        
-        
-        recognition.onstart=function(){
-        
-        
-        isListening=true;
-        
-        
-        voiceStatus.innerHTML =
-        "🎤 میکروفون فعال است";
-        
-        
-        };
-        
-        
-        
-        
-        
-        
-        recognition.onresult=function(event){
-        
-        
-        let text="";
-        
-        
-        
-        for(
-        let i=event.resultIndex;
-        i<event.results.length;
-        i++
-        ){
-        
-        
-        text +=
-        event.results[i][0].transcript;
-        
-        
-        }
-        
-        
-        
-        text=text.trim();
-        
-        
-        
-        voiceText.innerHTML=text;
-        
-        
-        
-        
-        
-        let student =
-        findStudent(text);
-        
-        
-        
-        
-        if(student && student.name !== lastStudent){
-        
-        
-        
-        lastStudent =
-        student.name;
-        
-        
-        
-        document
-        .getElementById("lastStudent")
-        .innerHTML =
-        student.name;
-        
-        
-        
-        
-        
-        addStudentToClass(student);
-        
-        
-        
-        
-        // ذخیره دیتابیس
-        
-        sendCall(student);
-        
-        
-        
-        }
-        
-        
-        
-        
-        };
-        
-        
-        
-        
-        
-        recognition.onerror=function(event){
-        
-        
-        console.log(
-        "Speech Error:",
-        event.error
-        );
-        
-        
-        };
-        
-        recognition.onend=function(){
 
+
+
+const classBox=
+document.getElementById(
+"class-"+classId
+);
+
+if(!classBox){
+
+console.log(
+"کارت کلاس پیدا نشد"
+);
+
+return;
+
+}
+
+
+
+const list=
+classBox.querySelector(
+".student-list"
+);
+
+
+
+// حذف متن اولیه
+
+if(list.classList.contains("empty")){
+
+list.innerHTML="";
+
+list.classList.remove("empty");
+
+}
+
+
+
+// جلوگیری از ثبت تکراری
+
+if(
+list.innerHTML.includes(student.name)
+){
+
+return;
+
+}
+
+
+
+// اضافه کردن دانش آموز
+
+list.innerHTML+=`
+
+<div class="student">
+
+✅ ${student.name}
+
+</div>
+
+`;
+
+}
+
+
+
+// =====================================
+// ذخیره فراخوان در دیتابیس
+// =====================================
+
+async function sendCall(student){
+
+try{
+
+await fetch("/api/add-call",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+student_name:student.name,
+
+class_name:student.class_name,
+
+status:"calling"
+
+})
+
+});
+
+console.log(
+"Call Saved:",
+student.name
+);
+
+}
+
+catch(error){
+
+console.log(
+"Save Error:",
+error
+);
+
+}
+
+}
+// =====================================
+// Speech Recognition
+// =====================================
+
+const startButton =
+document.getElementById("startVoice");
+
+const voiceStatus =
+document.getElementById("voiceStatus");
+
+const voiceText =
+document.getElementById("voiceText");
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+let recognition;
+let isListening = false;
+
+if(!SpeechRecognition){
+
+alert("مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند");
+
+}
+
+else{
+
+recognition = new SpeechRecognition();
+
+recognition.lang = "fa-IR";
+
+recognition.continuous = true;
+
+recognition.interimResults = true;
+
+recognition.maxAlternatives = 1;
+
+
+
+recognition.onstart = function(){
+
+isListening = true;
 
 voiceStatus.innerHTML =
-"🔄 اتصال دوباره میکروفون...";
+"🎤 میکروفون فعال است";
+
+};
 
 
-// اگر هنوز کاربر می‌خواهد شنود فعال باشد
+
+recognition.onresult = function(event){
+
+let text = "";
+
+for(
+let i = event.resultIndex;
+i < event.results.length;
+i++
+){
+
+if(event.results[i].isFinal){
+
+text += event.results[i][0].transcript;
+
+}
+
+}
+
+text = text.trim();
+
+if(text==="") return;
+
+voiceText.innerHTML = text;
+
+
+
+const student =
+findStudent(text);
+
+
+
+if(student && student.name !== lastStudent){
+
+lastStudent = student.name;
+
+document.getElementById("lastStudent").innerHTML =
+student.name;
+
+addStudentToClass(student);
+
+sendCall(student);
+
+}
+
+};
+
+
+
+recognition.onerror = function(event){
+
+console.log(
+"Speech Error:",
+event.error
+);
+
+voiceStatus.innerHTML =
+"خطا: " + event.error;
+
+};
+// =====================================
+// اگر میکروفون قطع شد
+// دوباره وصل شود
+// =====================================
+
+recognition.onend = function(){
+
+console.log("Speech Ended");
+
+voiceStatus.innerHTML =
+"🔄 در حال اتصال مجدد...";
+
 if(isListening){
 
-
-setTimeout(()=>{
-
+setTimeout(function(){
 
 try{
 
@@ -1122,35 +971,60 @@ error
 
 }
 
-
 },1000);
-
 
 }
 
-
 };
-startButton.onclick=function(){
 
 
-if(!isListening){
 
+// =====================================
+// دکمه شروع
+// =====================================
 
-isListening=true;
+startButton.onclick = function(){
+
+if(isListening){
+
+return;
+
+}
+
+isListening = true;
+
+try{
 
 recognition.start();
 
+}
+
+catch(error){
+
+console.log(error);
 
 }
 
-
 };
-        
-        
-        
-        }
-        
-</script>
+
+
+
+// =====================================
+// دکمه توقف (در آینده)
+// =====================================
+
+// stopButton.onclick=function(){
+//
+// isListening=false;
+//
+// recognition.stop();
+//
+// };
+
+
+
+}
+    </script>
 
 
 </body>
