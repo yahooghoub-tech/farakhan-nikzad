@@ -298,62 +298,14 @@ opacity:.75;
     // بعد از Refresh
     // =====================================
     
-    
     async function loadCalls(){
-    
-    
-    const {data,error}=await supabaseClient
-    
-    .from("calls")
-    
-    .select("*")
-    
-    .eq(
-    "class_name",
-    currentClass
-    )
-    
-    .order(
-    "created_at",
-    {
-    ascending:true
-    }
-    );
-    
-    
-    
-    if(error){
-    
-    console.log(error);
-    
-    return;
-    
-    }
-    
-    
-    
-    // فقط فراخوان‌های فعال
-    
-    data.forEach(call=>{
-    
-    
-    if(
-    call.status==="calling" ||
-    call.status==="received"
-    ){
-    
-    
-    showStudent(call);
-    
-    
-    }
-    
-    
-    });
-    
-    
-    }
-    
+
+console.log(
+"صفحه کلاس باز شد - منتظر فراخوان جدید"
+);
+
+}
+ 
     
     
     
@@ -911,12 +863,7 @@ loadCalls();
 
 
 </script>
-<!-- کتابخانه Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-<!-- کد جاوااسکریپت صفحه کلاس -->
-<script src="js/class.js"></script>
 
 
 </body>
