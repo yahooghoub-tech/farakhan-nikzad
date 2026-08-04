@@ -586,16 +586,100 @@ name.includes(student.name)
 function addStudentToClass(student){
 
 
-let classNumber = student.class_name
-.replace(" ","-");
+    function addStudentToClass(student){
+
+
+const classMap = {
+
+"اول 1":"1-1",
+"اول 2":"1-2",
+"اول 3":"1-3",
+
+"دوم 1":"2-1",
+"دوم 2":"2-2",
+
+"سوم 1":"3-1",
+"سوم 2":"3-2",
+"سوم 3":"3-3",
+
+"چهارم 1":"4-1",
+"چهارم 2":"4-2",
+"چهارم 3":"4-3",
+
+"پنجم 1":"5-1",
+"پنجم 2":"5-2",
+"پنجم 3":"5-3",
+
+"ششم 1":"6-1",
+"ششم 2":"6-2"
+
+};
 
 
 
-let classBox = document.querySelector(
+let classId =
+classMap[student.class_name];
 
-"#class-" + classNumber
 
+
+if(!classId){
+
+console.log(
+"کلاس ناشناخته:",
+student.class_name
 );
+
+return;
+
+}
+
+
+
+let classBox =
+document.getElementById(
+"class-" + classId
+);
+
+
+
+if(!classBox){
+
+console.log(
+"کارت کلاس پیدا نشد"
+);
+
+return;
+
+}
+
+
+
+let list =
+classBox.querySelector(".student-list");
+
+
+
+if(list.classList.contains("empty")){
+
+list.innerHTML="";
+
+list.classList.remove("empty");
+
+}
+
+
+
+list.innerHTML += `
+
+<div class="student">
+
+✅ ${student.name}
+
+</div>
+
+`;
+
+}
 
 
 
