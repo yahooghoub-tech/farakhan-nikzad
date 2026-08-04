@@ -5,83 +5,13 @@ User Interface Manager
 
 
 /*
-المان‌های صفحه
-*/
-
-const studentCardName = document.querySelector(".info h3");
-
-const studentCardGrade = document.querySelectorAll(".info span")[0];
-
-const studentCardClass = document.querySelectorAll(".info span")[1];
-
-const resultBox = document.querySelector(".result");
-
-
-
-
-
-/*
-نمایش یک دانش‌آموز روی کارت اصلی
-*/
-
-function showStudentCard(student){
-
-
-    if(!student){
-
-        return;
-
-    }
-
-
-    if(studentCardName){
-
-        studentCardName.innerHTML = student.name;
-
-    }
-
-
-    if(studentCardGrade){
-
-        studentCardGrade.innerHTML = 
-        "پایه " + student.grade;
-
-    }
-
-
-    if(studentCardClass){
-
-        studentCardClass.innerHTML =
-        "کلاس " + student.className;
-
-    }
-
-
-
-    // ذخیره دانش‌آموز انتخاب شده
-
-    if(typeof selectStudent === "function"){
-
-        selectStudent(student);
-        console.log(
-            "دانش آموز انتخاب شد:",
-            student.name
-            );
-
-    }
-
-
-}
-
-
-
-
-
-/*
-نمایش لیست نتایج جستجو
+نمایش نتایج جستجو
 */
 
 function renderSearchResults(list){
+
+
+    const resultBox = document.querySelector(".result");
 
 
     if(!resultBox){
@@ -102,14 +32,20 @@ function renderSearchResults(list){
 
 
 
-    if(list.length===0){
+    if(list.length === 0){
 
 
         html += `
 
         <div class="student-card">
 
+        <div class="info">
+
+        <h3>
         دانش‌آموزی پیدا نشد
+        </h3>
+
+        </div>
 
         </div>
 
@@ -117,6 +53,7 @@ function renderSearchResults(list){
 
 
     }
+
 
 
     else{
@@ -131,42 +68,47 @@ function renderSearchResults(list){
             <div class="student-card">
 
 
-            <div class="photo">
+                <div class="photo">
 
-            <i class="fa-solid fa-user"></i>
+                <i class="fa-solid fa-user"></i>
 
-            </div>
-
-
-
-            <div class="info">
-
-
-            <h3>
-            ${student.name}
-            </h3>
-
-
-            <span>
-            پایه ${student.grade}
-            </span>
-
-
-            <span>
-            کلاس ${student.className}
-            </span>
-
-
-            </div>
+                </div>
 
 
 
-            <button 
-            onclick="chooseStudent(${student.id})">
+                <div class="info">
 
-            انتخاب
 
-            </button>
+                    <h3>
+                    ${student.name}
+                    </h3>
+
+
+                    <span>
+                    ${student.grade}
+                    </span>
+
+
+                    <span>
+                    کلاس ${student.className}
+                    </span>
+
+
+                    <span>
+                    ${student.teacher}
+                    </span>
+
+
+                </div>
+
+
+
+                <button
+                onclick="callStudent(${student.id})">
+
+                📢 فراخوان
+
+                </button>
 
 
 
@@ -174,6 +116,7 @@ function renderSearchResults(list){
 
 
             `;
+
 
 
         });
@@ -192,20 +135,97 @@ function renderSearchResults(list){
 
 
 
+
 /*
-انتخاب دانش‌آموز از نتایج
+فراخوان مستقیم از کارت نتیجه
 */
 
-function chooseStudent(id){
+function callStudent(id){
+
 
 
     const student = getStudentById(id);
 
 
-    if(student){
+
+    if(!student){
+
+        alert("دانش‌آموز پیدا نشد");
+
+        return;
+
+    }
 
 
-        showStudentCard(student);
+
+    selectStudent(student);
+
+
+
+    createCall(student);
+
+
+
+}
+
+
+
+
+
+
+/*
+نمایش دانش آموز انتخاب شده
+*/
+
+function showStudentCard(student){
+
+
+
+    if(!student){
+
+        return;
+
+    }
+
+
+
+    const name =
+    document.querySelector(".info h3");
+
+
+    const spans =
+    document.querySelectorAll(".info span");
+
+
+
+    if(name){
+
+        name.innerHTML=student.name;
+
+    }
+
+
+    if(spans[0]){
+
+        spans[0].innerHTML =
+        student.grade;
+
+    }
+
+
+    if(spans[1]){
+
+        spans[1].innerHTML =
+        "کلاس "+student.className;
+
+    }
+
+
+
+    if(typeof selectStudent==="function"){
+
+
+        selectStudent(student);
 
 
     }
@@ -218,13 +238,25 @@ function chooseStudent(id){
 
 
 /*
-نمایش پیام سیستم
+انتخاب دانش‌آموز
 */
 
-function showMessage(text,type="info"){
+function chooseStudent(id){
 
 
-    console.log(type,text);
+
+    const student =
+    getStudentById(id);
+
+
+
+    if(student){
+
+
+        showStudentCard(student);
+
+
+    }
 
 
 }

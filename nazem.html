@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>پنل ناظم - سیستم فراخوان خروج</title>
+<link rel="stylesheet" href="nazem.css">
+</head>
+<body>
+
+<div class="app">
+
+<header class="header">
+
+<div class="header-title">
+<h1>پنل ناظم</h1>
+<p>سیستم هوشمند فراخوان خروج دانش‌آموزان</p>
+</div>
+
+<button class="reset-btn" id="resetCalls">
+🔄 ریست فراخوان‌ها
+</button>
+
+</header>
+
+
+<section class="microphone-panel">
+
+<div class="mic-status">
+<div class="mic-icon" id="micIcon">
+🎤
+</div>
+
+<div>
+<h2>وضعیت میکروفون</h2>
+<p id="micStatus">
+در حال آماده‌سازی میکروفون...
+</p>
+</div>
+
+</div>
+
+
+<div class="speech-box">
+
+<h3>آخرین صدای دریافت شده:</h3>
+
+<p id="speechText">
+منتظر شنیدن نام دانش‌آموز...
+</p>
+
+</div>
+
+</section>
+
+
+<section class="classes-section">
+
+    <div class="section-title">
+    <h2>کلاس‌ها</h2>
+    <p>دانش‌آموزان فراخوان شده در کلاس مربوطه نمایش داده می‌شوند</p>
+    </div>
+    
+    <div class="classes-grid">
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 1</h3>
+    <span id="count-اول-1">0</span>
+    </div>
+    <div class="students-list" id="class-اول-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 2</h3>
+    <span id="count-اول-2">0</span>
+    </div>
+    <div class="students-list" id="class-اول-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 3</h3>
+    <span id="count-اول-3">0</span>
+    </div>
+    <div class="students-list" id="class-اول-3"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>دوم 1</h3>
+    <span id="count-دوم-1">0</span>
+    </div>
+    <div class="students-list" id="class-دوم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>دوم 2</h3>
+    <span id="count-دوم-2">0</span>
+    </div>
+    <div class="students-list" id="class-دوم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 1</h3>
+    <span id="count-سوم-1">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 2</h3>
+    <span id="count-سوم-2">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 3</h3>
+    <span id="count-سوم-3">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-3"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 1</h3>
+    <span id="count-چهارم-1">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 2</h3>
+    <span id="count-چهارم-2">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 3</h3>
+    <span id="count-چهارم-3">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-3"></div>
+    </div>
+    <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 1</h3>
+        <span id="count-پنجم-1">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-1"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 2</h3>
+        <span id="count-پنجم-2">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-2"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 3</h3>
+        <span id="count-پنجم-3">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-3"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>ششم 1</h3>
+        <span id="count-ششم-1">0</span>
+        </div>
+        <div class="students-list" id="class-ششم-1"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>ششم 2</h3>
+        <span id="count-ششم-2">0</span>
+        </div>
+        <div class="students-list" id="class-ششم-2"></div>
+        </div>
+        
+        
+        </div>
+        
+        </section>
+        
+        
+        <footer class="footer">
+        <p>
+        سامانه هوشمند فراخوان خروج دانش‌آموزان
+        </p>
+        </footer>
+        
+        
+        </div>
+        
+        
+        <script src="nazem.js"></script>
+        
+        </body>
+        </html>

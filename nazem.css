@@ -1,0 +1,418 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+font-family:Vazirmatn,sans-serif;
+direction:rtl;
+min-height:100vh;
+background:linear-gradient(135deg,#061826,#0b3954,#062c43);
+color:white;
+}
+
+.app{
+width:100%;
+min-height:100vh;
+padding:15px;
+}
+
+.header{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+padding:20px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.15);
+border-radius:22px;
+backdrop-filter:blur(15px);
+box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.header-title h1{
+font-size:28px;
+font-weight:800;
+}
+
+.header-title p{
+font-size:14px;
+opacity:.8;
+margin-top:5px;
+}
+
+.reset-btn{
+border:none;
+cursor:pointer;
+padding:13px 25px;
+border-radius:16px;
+font-family:inherit;
+font-size:15px;
+font-weight:700;
+color:white;
+background:linear-gradient(135deg,#ff416c,#ff4b2b);
+transition:.3s;
+}
+
+.reset-btn:hover{
+transform:scale(1.05);
+}
+
+
+.microphone-panel{
+margin-top:20px;
+padding:20px;
+border-radius:22px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.15);
+backdrop-filter:blur(15px);
+}
+
+.mic-status{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.mic-icon{
+width:65px;
+height:65px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+background:rgba(0,255,120,.2);
+border:2px solid #00ff88;
+}
+
+.mic-status h2{
+font-size:20px;
+}
+
+.mic-status p{
+margin-top:5px;
+font-size:14px;
+opacity:.8;
+}
+
+.speech-box{
+margin-top:20px;
+padding:15px;
+border-radius:15px;
+background:rgba(0,0,0,.25);
+}
+
+.speech-box h3{
+font-size:16px;
+margin-bottom:10px;
+}
+
+.speech-box p{
+font-size:18px;
+font-weight:700;
+color:#00eaff;
+}
+.classes-section{
+    margin-top:20px;
+    padding:20px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:22px;
+    backdrop-filter:blur(15px);
+    }
+    
+    .section-title{
+    margin-bottom:20px;
+    }
+    
+    .section-title h2{
+    font-size:22px;
+    }
+    
+    .section-title p{
+    font-size:13px;
+    opacity:.75;
+    margin-top:5px;
+    }
+    
+    .classes-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    }
+    
+    .class-card{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:18px;
+    padding:15px;
+    min-height:150px;
+    }
+    
+    .class-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+    }
+    
+    .class-header h3{
+    font-size:17px;
+    }
+    
+    .class-header span{
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#00c6ff;
+    font-weight:700;
+    }
+    
+    .students-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    }
+    
+    .student-card{
+    padding:12px;
+    border-radius:12px;
+    background:rgba(0,0,0,.25);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    }
+    
+    .student-name{
+    font-size:15px;
+    font-weight:700;
+    }
+    
+    .student-status{
+    font-size:13px;
+    padding:5px 10px;
+    border-radius:10px;
+    width:max-content;
+    }
+    
+    .status-called{
+    background:#ff9800;
+    color:white;
+    }
+    .status-ready{
+        background:#00c853;
+        color:white;
+        }
+        
+        .status-wait{
+        background:#ff9800;
+        color:white;
+        }
+        
+        .status-cancel{
+        background:#e53935;
+        color:white;
+        }
+        
+        .status-out{
+        background:#1565c0;
+        color:white;
+        }
+        
+        .student-time{
+        font-size:12px;
+        opacity:.7;
+        }
+        
+        
+        .footer{
+        margin-top:20px;
+        text-align:center;
+        padding:15px;
+        font-size:13px;
+        opacity:.7;
+        }
+        
+        
+        /* افکت فعال بودن میکروفون */
+        
+        .mic-active{
+        animation:pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse{
+        
+        0%{
+        box-shadow:0 0 0 0 rgba(0,255,136,.7);
+        }
+        
+        70%{
+        box-shadow:0 0 0 20px rgba(0,255,136,0);
+        }
+        
+        100%{
+        box-shadow:0 0 0 0 rgba(0,255,136,0);
+        }
+        
+        }
+        
+        
+        /* تبلت */
+        
+        @media(max-width:1100px){
+        
+        .classes-grid{
+        grid-template-columns:repeat(2,1fr);
+        }
+        
+        .header-title h1{
+        font-size:24px;
+        }
+        
+        }
+        @media(max-width:700px){
+
+            .app{
+            padding:10px;
+            }
+            
+            .header{
+            flex-direction:column;
+            padding:15px;
+            text-align:center;
+            }
+            
+            .header-title h1{
+            font-size:21px;
+            }
+            
+            .header-title p{
+            font-size:12px;
+            }
+            
+            .reset-btn{
+            width:100%;
+            font-size:14px;
+            }
+            
+            .microphone-panel{
+            padding:15px;
+            }
+            
+            .mic-status{
+            flex-direction:column;
+            text-align:center;
+            }
+            
+            .mic-icon{
+            width:55px;
+            height:55px;
+            font-size:28px;
+            }
+            
+            .speech-box p{
+            font-size:15px;
+            }
+            
+            .classes-section{
+            padding:12px;
+            }
+            
+            .classes-grid{
+            grid-template-columns:1fr;
+            gap:12px;
+            }
+            
+            .class-card{
+            padding:12px;
+            }
+            
+            .class-header h3{
+            font-size:15px;
+            }
+            
+            .student-card{
+            padding:10px;
+            }
+            
+            .student-name{
+            font-size:14px;
+            }
+            
+            .student-status{
+            font-size:12px;
+            }
+            
+            }
+            
+            
+            @media(max-width:360px){
+            
+            .app{
+            padding:6px;
+            }
+            
+            .header{
+            border-radius:15px;
+            }
+            
+            .header-title h1{
+            font-size:18px;
+            }
+            
+            .header-title p{
+            font-size:11px;
+            }
+            
+            .reset-btn{
+            padding:10px;
+            font-size:12px;
+            }
+            
+            .microphone-panel,
+            .classes-section{
+            border-radius:15px;
+            padding:10px;
+            }
+            
+            .mic-icon{
+            width:48px;
+            height:48px;
+            font-size:24px;
+            }
+            
+            .speech-box h3{
+            font-size:13px;
+            }
+            
+            .speech-box p{
+            font-size:13px;
+            }
+            
+            .class-card{
+            border-radius:12px;
+            }
+            
+            .class-header span{
+            width:30px;
+            height:30px;
+            font-size:12px;
+            }
+            
+            .student-card{
+            border-radius:10px;
+            }
+            
+            .footer{
+            font-size:11px;
+            }
+            
+            }
