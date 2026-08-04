@@ -502,427 +502,514 @@ font-size:21px;
     </div>
     <script src="js/admin.js"></script>
 
-
-<script>
-
-
-// ===============================
-// لیست آزمایشی دانش آموزان
-// بعداً از API جایگزین می شود
-// ===============================
-
-let students = [];
-
-
-// دریافت دانش آموزان از دیتابیس
-
-async function loadStudents(){
-
-try{
-
-
-const response = await fetch("/api/get-students");
-
-
-students = await response.json();
-
-
-console.log(
-"Students Loaded:",
-students
-);
-
-
-}
-
-catch(error){
-
-console.log(
-"Load Students Error:",
-error
-);
-
-}
-
-
-}
-
-
-loadStudents();
-
-
-
-// آخرین دانش آموز فراخوان شده
-
-let lastStudent = "";
-
-
-
-// ===============================
-// پیدا کردن کلاس دانش آموز
-// ===============================
-
-
-function findStudent(name){
-
-
-return students.find(student =>
-
-name.includes(student.name)
-
-);
-
-
-}
-
-
-
-
-// ===============================
-// اضافه کردن به کلاس مربوطه
-// ===============================
-
-
-function addStudentToClass(student){
-
-
-    function addStudentToClass(student){
-
-
-const classMap = {
-
-"اول 1":"1-1",
-"اول 2":"1-2",
-"اول 3":"1-3",
-
-"دوم 1":"2-1",
-"دوم 2":"2-2",
-
-"سوم 1":"3-1",
-"سوم 2":"3-2",
-"سوم 3":"3-3",
-
-"چهارم 1":"4-1",
-"چهارم 2":"4-2",
-"چهارم 3":"4-3",
-
-"پنجم 1":"5-1",
-"پنجم 2":"5-2",
-"پنجم 3":"5-3",
-
-"ششم 1":"6-1",
-"ششم 2":"6-2"
-
-};
-
-
-
-let classId =
-classMap[student.class_name];
-
-
-
-if(!classId){
-
-console.log(
-"کلاس ناشناخته:",
-student.class_name
-);
-
-return;
-
-}
-
-
-
-let classBox =
-document.getElementById(
-"class-" + classId
-);
-
-
-
-if(!classBox){
-
-console.log(
-"کارت کلاس پیدا نشد"
-);
-
-return;
-
-}
-
-
-
-let list =
-classBox.querySelector(".student-list");
-
-
-
-if(list.classList.contains("empty")){
-
-list.innerHTML="";
-
-list.classList.remove("empty");
-
-}
-
-
-
-list.innerHTML += `
-
-<div class="student">
-
-✅ ${student.name}
-
-</div>
-
-`;
-
-}
-
-
-
-if(!classBox){
-
-console.log("کلاس پیدا نشد");
-
-return;
-
-}
-
-
-
-let list = classBox.querySelector(".student-list");
-
-
-
-// حذف متن اولیه
-
-if(list.classList.contains("empty")){
-
-list.innerHTML="";
-
-list.classList.remove("empty");
-
-}
-
-
-
-
-list.innerHTML += `
-
-
-<div class="student">
-
-✅ ${student.name}
-
-</div>
-
-
-`;
-
-
-
-}
-
-
-
-// ===============================
-// Speech Recognition
-// ===============================
-
-
-
-const startButton =
-document.getElementById("startVoice");
-
-
-const voiceStatus =
-document.getElementById("voiceStatus");
-
-
-const voiceText =
-document.getElementById("voiceText");
-
-
-
-const SpeechRecognition =
-
-window.SpeechRecognition ||
-
-window.webkitSpeechRecognition;
-
-
-
-if(!SpeechRecognition){
-
-
-alert(
-"مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند"
-);
-
-
-}
-
-else{
-
-
-const recognition =
-new SpeechRecognition();
-
-
-
-recognition.lang="fa-IR";
-
-
-recognition.continuous=true;
-
-
-recognition.interimResults=true;
-
-
-
-
-recognition.onstart=function(){
-
-
-voiceStatus.innerHTML=
-
-"🎤 میکروفون فعال است";
-
-
-};
-
-
-
-
-
-recognition.onresult=function(event){
-
-
-let text="";
-
-
-
-for(
-let i=event.resultIndex;
-i<event.results.length;
-i++
-){
-
-
-text +=
-
-event.results[i][0].transcript;
-
-
-}
-
-
-
-text=text.trim();
-
-
-
-voiceText.innerHTML=text;
-
-
-
-
-// اگر اسم جدید باشد
-
-
-if(text !== lastStudent){
-
-
-
-let student =
-findStudent(text);
-
-
-
-if(student){
-
-
-
-// نمایش آخرین اسم
-
-
-lastStudent = student.name;
-
-
-document.getElementById(
-"lastStudent"
-).innerHTML=
-
-student.name;
-
-
-
-
-// انتقال به کلاس
-
-addStudentToClass(student);
-
-
-
-}
-
-}
-
-
-};
-
-
-
-
-
-recognition.onerror=function(event){
-
-
-console.log(
-"Speech Error:",
-event.error
-);
-
-
-};
-
-
-
-
-
-recognition.onend=function(){
-
-
-voiceStatus.innerHTML=
-
-"میکروفون قطع شد";
-
-
-};
-
-
-
-
-
-
-startButton.onclick=function(){
-
-
-recognition.start();
-
-
-};
-
-
-
-}
-
-
-
-</script>
+    <script>
+
+
+        // ===============================
+        // دریافت دانش آموزان از Supabase
+        // ===============================
+        
+        
+        let students = [];
+        
+        
+        async function loadStudents(){
+        
+        
+        try{
+        
+        
+        const response = await fetch("/api/get-students");
+        
+        
+        students = await response.json();
+        
+        
+        console.log(
+        "Students Loaded:",
+        students
+        );
+        
+        
+        }
+        
+        
+        catch(error){
+        
+        
+        console.log(
+        "Load Students Error:",
+        error
+        );
+        
+        
+        }
+        
+        
+        }
+        
+        
+        loadStudents();
+        
+        
+        
+        
+        // ===============================
+        // آخرین دانش آموز خوانده شده
+        // ===============================
+        
+        
+        let lastStudent = "";
+        
+        
+        
+        
+        // ===============================
+        // پیدا کردن دانش آموز
+        // ===============================
+        
+        
+        function findStudent(name){
+        
+        
+        return students.find(student =>
+        
+        name.includes(student.name)
+        
+        );
+        
+        
+        }
+        
+        
+        
+        
+        // ===============================
+        // انتقال دانش آموز به کلاس خودش
+        // ===============================
+        
+        
+        function addStudentToClass(student){
+        
+        
+        
+        const classMap = {
+        
+        
+        "اول 1":"1-1",
+        "اول 2":"1-2",
+        "اول 3":"1-3",
+        
+        
+        "دوم 1":"2-1",
+        "دوم 2":"2-2",
+        
+        
+        "سوم 1":"3-1",
+        "سوم 2":"3-2",
+        "سوم 3":"3-3",
+        
+        
+        "چهارم 1":"4-1",
+        "چهارم 2":"4-2",
+        "چهارم 3":"4-3",
+        
+        
+        "پنجم 1":"5-1",
+        "پنجم 2":"5-2",
+        "پنجم 3":"5-3",
+        
+        
+        "ششم 1":"6-1",
+        "ششم 2":"6-2"
+        
+        
+        };
+        
+        
+        
+        const classId =
+        classMap[student.class_name];
+        
+        
+        
+        if(!classId){
+        
+        
+        console.log(
+        "کلاس ناشناخته:",
+        student.class_name
+        );
+        
+        
+        return;
+        
+        
+        }
+        
+        
+        
+        
+        const classBox =
+        document.getElementById(
+        "class-" + classId
+        );
+        
+        
+        
+        if(!classBox){
+        
+        
+        console.log(
+        "کارت کلاس پیدا نشد:",
+        classId
+        );
+        
+        
+        return;
+        
+        
+        }
+        
+        
+        
+        
+        const list =
+        classBox.querySelector(
+        ".student-list"
+        );
+        
+        
+        
+        
+        // حذف متن اولیه
+        
+        
+        if(list.classList.contains("empty")){
+        
+        
+        list.innerHTML="";
+        
+        
+        list.classList.remove("empty");
+        
+        
+        }
+        
+        
+        
+        
+        list.innerHTML += `
+        
+        
+        <div class="student">
+        
+        ✅ ${student.name}
+        
+        </div>
+        
+        
+        `;
+        
+        
+        
+        }
+        
+        
+        
+        
+        // ===============================
+        // ارسال فراخوان به API
+        // مرحله بعد فعال می شود
+        // ===============================
+        
+        
+        async function sendCall(student){
+        
+        
+        try{
+        
+        
+        await fetch("/api/add-call",{
+        
+        
+        method:"POST",
+        
+        
+        headers:{
+        
+        
+        "Content-Type":"application/json"
+        
+        
+        },
+        
+        
+        body:JSON.stringify({
+        
+        
+        student_name:student.name,
+        
+        
+        class_name:student.class_name,
+        
+        
+        status:"calling"
+        
+        
+        })
+        
+        
+        });
+        
+        
+        console.log(
+        "Call Saved:",
+        student.name
+        );
+        
+        
+        
+        }
+        
+        
+        catch(error){
+        
+        
+        console.log(
+        "Call Error:",
+        error
+        );
+        
+        
+        }
+        
+        
+        
+        }
+        
+        
+        
+        
+        // ===============================
+        // Speech Recognition
+        // ===============================
+        
+        
+        const startButton =
+        document.getElementById("startVoice");
+        
+        
+        const voiceStatus =
+        document.getElementById("voiceStatus");
+        
+        
+        const voiceText =
+        document.getElementById("voiceText");
+        
+        
+        
+        const SpeechRecognition =
+        
+        window.SpeechRecognition ||
+        
+        window.webkitSpeechRecognition;
+        
+        
+        
+        
+        let isListening=false;
+        
+        
+        
+        if(!SpeechRecognition){
+        
+        
+        alert(
+        "مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند"
+        );
+        
+        
+        }
+        
+        else{
+        
+        
+        const recognition =
+        new SpeechRecognition();
+        
+        
+        
+        recognition.lang="fa-IR";
+        
+        
+        recognition.continuous=true;
+        
+        
+        recognition.interimResults=true;
+        
+        
+        
+        
+        
+        recognition.onstart=function(){
+        
+        
+        isListening=true;
+        
+        
+        voiceStatus.innerHTML=
+        
+        "🎤 میکروفون فعال است";
+        
+        
+        };
+        
+        
+        
+        
+        
+        recognition.onresult=function(event){
+        
+        
+        let text="";
+        
+        
+        
+        for(
+        
+        let i=event.resultIndex;
+        
+        i<event.results.length;
+        
+        i++
+        
+        ){
+        
+        
+        text +=
+        
+        event.results[i][0].transcript;
+        
+        
+        }
+        
+        
+        
+        text=text.trim();
+        
+        
+        
+        voiceText.innerHTML=text;
+        
+        
+        
+        
+        
+        if(text !== lastStudent){
+        
+        
+        
+        const student =
+        findStudent(text);
+        
+        
+        
+        if(student){
+        
+        
+        
+        lastStudent =
+        student.name;
+        
+        
+        
+        document.getElementById(
+        "lastStudent"
+        ).innerHTML =
+        
+        student.name;
+        
+        
+        
+        
+        addStudentToClass(student);
+        
+        
+        
+        // فعلا فعال باشد
+        sendCall(student);
+        
+        
+        
+        }
+        
+        
+        }
+        
+        
+        };
+        
+        
+        
+        
+        
+        recognition.onerror=function(event){
+        
+        
+        console.log(
+        "Speech Error:",
+        event.error
+        );
+        
+        
+        };
+        
+        
+        
+        
+        
+        recognition.onend=function(){
+        
+        
+        isListening=false;
+        
+        
+        voiceStatus.innerHTML=
+        
+        "میکروفون قطع شد";
+        
+        
+        };
+        
+        
+        
+        
+        
+        startButton.onclick=function(){
+        
+        
+        
+        if(!isListening){
+        
+        
+        recognition.start();
+        
+        
+        }
+        
+        
+        
+        };
+        
+        
+        
+        
+        }
+        
+        
+        
+        </script>
 
 
 </body>
