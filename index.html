@@ -428,51 +428,37 @@ margin-top:5px;
     
     
     </div>
-    <script>
-
-        const supabaseClient=supabase.createClient(
+    const supabaseClient=supabase.createClient(
         "https://ghnpiijihybuhfetnxjp.supabase.co",
         "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
         );
         
-        
         let students=[];
-        
         let lastStudent="";
         
-        
         const classMap={
-        
         "اول 1":"1-1",
         "اول 2":"1-2",
         "اول 3":"1-3",
-        
         "دوم 1":"2-1",
         "دوم 2":"2-2",
-        
         "سوم 1":"3-1",
         "سوم 2":"3-2",
         "سوم 3":"3-3",
-        
         "چهارم 1":"4-1",
         "چهارم 2":"4-2",
         "چهارم 3":"4-3",
-        
         "پنجم 1":"5-1",
         "پنجم 2":"5-2",
         "پنجم 3":"5-3",
-        
         "ششم 1":"6-1",
         "ششم 2":"6-2"
-        
         };
-        
         
         
         function shamsiDate(date){
         
         if(!date)return "-";
-        
         
         return new Intl.DateTimeFormat(
         "fa-IR",
@@ -485,9 +471,7 @@ margin-top:5px;
         }
         ).format(new Date(date));
         
-        
         }
-        
         
         
         
@@ -495,14 +479,11 @@ margin-top:5px;
         
         try{
         
-        
         const response=await fetch(
         "/api/get-students"
         );
         
-        
         students=await response.json();
-        
         
         console.log(
         "Students Loaded:",
@@ -510,29 +491,23 @@ margin-top:5px;
         );
         
         
-        
-        }catch(error){
-        
+        }
+        catch(error){
         
         console.log(
         "Load Students Error:",
         error
         );
         
-        
         }
         
-        
         }
-        
         
         
         
         function findStudent(text){
         
-        
         return students.find(student=>
-        
         
         text.includes(
         student.name
@@ -540,43 +515,235 @@ margin-top:5px;
         
         );
         
-        
         }
-        
         
         
         
         function getStatusText(status){
         
-        
         switch(status){
         
+        case "calling":
         
-        case"calling":
-        
-        return"🔔 در انتظار دریافت";
-        
-        
-        case"received":
-        
-        return"📥 فراخوانی شد توسط معلم";
+        return "🔔 در انتظار دریافت";
         
         
-        case"sent":
+        case "received":
         
-        return"🚶 فرستاده شد";
+        return "📥 فراخوانی شد توسط معلم";
+        
+        
+        case "sent":
+        
+        return "🚶 دانش‌آموز فرستاده شد";
         
         
         default:
         
         return status;
         
+        }
         
         }
         
         
-        }
+        
         function addStudentToClass(student){
+        
+        
+        const classId=classMap[student.class_name];
+        
+        
+        if(!classId){
+        
+        console.log(
+        "کلاس پیدا نشد:",
+        student.class_name
+        );
+        
+        return;
+        
+        }
+        
+        
+        
+        const classBox=document.getElementById(
+        "class-"+classId
+        );
+        
+        
+        if(!classBox)return;
+        
+        
+        
+        const list=classBox.querySelector(
+        ".student-list"
+        );
+        
+        
+        
+        if(list.classList.contains("empty")){
+        
+        list.innerHTML="";
+        
+        list.classList.remove("empty");
+        
+        }
+        
+        
+        
+        if(document.getElementById(
+        "student-"+student.name
+        )){
+        
+        return;
+        
+        }
+        
+        
+        
+        list.innerHTML+=`
+        
+        <div class="student" id="student-${student.name}">
+        
+        <div>
+        ✅ ${student.name}
+        </div>
+        
+        <div class="student-status waiting">
+        
+        🔔 در انتظار دریافت
+        
+        </div>
+        
+        <div class="student-time" id="time-${student.name}">
+        
+        </div>
+        
+        </div>
+        
+      <script>
+        const supabaseClient=supabase.createClient(
+"https://ghnpiijihybuhfetnxjp.supabase.co",
+"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
+);
+
+let students=[];
+let lastStudent="";
+
+const classMap={
+"اول 1":"1-1",
+"اول 2":"1-2",
+"اول 3":"1-3",
+"دوم 1":"2-1",
+"دوم 2":"2-2",
+"سوم 1":"3-1",
+"سوم 2":"3-2",
+"سوم 3":"3-3",
+"چهارم 1":"4-1",
+"چهارم 2":"4-2",
+"چهارم 3":"4-3",
+"پنجم 1":"5-1",
+"پنجم 2":"5-2",
+"پنجم 3":"5-3",
+"ششم 1":"6-1",
+"ششم 2":"6-2"
+};
+
+
+function shamsiDate(date){
+
+if(!date)return "-";
+
+return new Intl.DateTimeFormat(
+"fa-IR",
+{
+year:"numeric",
+month:"2-digit",
+day:"2-digit",
+hour:"2-digit",
+minute:"2-digit"
+}
+).format(new Date(date));
+
+}
+
+
+
+async function loadStudents(){
+
+try{
+
+const response=await fetch(
+"/api/get-students"
+);
+
+students=await response.json();
+
+console.log(
+"Students Loaded:",
+students
+);
+
+
+}
+catch(error){
+
+console.log(
+"Load Students Error:",
+error
+);
+
+}
+
+}
+
+
+
+function findStudent(text){
+
+return students.find(student=>
+
+text.includes(
+student.name
+)
+
+);
+
+}
+
+
+
+function getStatusText(status){
+
+switch(status){
+
+case "calling":
+
+return "🔔 در انتظار دریافت";
+
+
+case "received":
+
+return "📥 فراخوانی شد توسط معلم";
+
+
+case "sent":
+
+return "🚶 دانش‌آموز فرستاده شد";
+
+
+default:
+
+return status;
+
+}
+
+}
+
+
+
+function addStudentToClass(student){
 
 
 const classId=classMap[student.class_name];
@@ -620,7 +787,6 @@ list.classList.remove("empty");
 
 
 
-
 if(document.getElementById(
 "student-"+student.name
 )){
@@ -628,7 +794,6 @@ if(document.getElementById(
 return;
 
 }
-
 
 
 
@@ -640,53 +805,35 @@ list.innerHTML+=`
 ✅ ${student.name}
 </div>
 
-
 <div class="student-status waiting">
 
 🔔 در انتظار دریافت
 
 </div>
 
-
 <div class="student-time" id="time-${student.name}">
 
 </div>
-
 
 </div>
 
 `;
 
-
-
 }
-
-
-
-
 function updateStudentStatus(call){
-
-
 
 const studentBox=document.getElementById(
 "student-"+call.student_name
 );
 
 
-
-if(!studentBox){
-
-return;
-
-}
-
+if(!studentBox)return;
 
 
 
 const statusBox=studentBox.querySelector(
 ".student-status"
 );
-
 
 
 const timeBox=document.getElementById(
@@ -707,24 +854,19 @@ statusBox.className=
 
 
 statusBox.innerHTML=
-`
-📥 فراخوانی شد توسط معلم
-`;
+"📥 فراخوانی شد توسط معلم";
 
 
 
 if(timeBox){
 
 timeBox.innerHTML=
-`
-⏰ ${shamsiDate(call.received_at)}
-`;
+"⏰ "+shamsiDate(call.received_at);
 
 }
 
 
 }
-
 
 
 
@@ -736,18 +878,14 @@ statusBox.className=
 
 
 statusBox.innerHTML=
-`
-🚶 فرستاده شد
-`;
+"🚶 دانش‌آموز فرستاده شد";
 
 
 
 if(timeBox){
 
 timeBox.innerHTML=
-`
-⏰ ${shamsiDate(call.sent_at)}
-`;
+"⏰ "+shamsiDate(call.sent_at);
 
 }
 
@@ -756,6 +894,11 @@ timeBox.innerHTML=
 
 
 }
+
+
+
+
+
 async function sendCall(student){
 
 try{
@@ -796,7 +939,8 @@ result
 
 
 
-}catch(error){
+}
+catch(error){
 
 
 console.log(
@@ -809,8 +953,12 @@ error
 
 
 }
-async function loadActiveCalls(){
 
+
+
+
+
+async function loadActiveCalls(){
 
 try{
 
@@ -840,9 +988,7 @@ ascending:true
 
 if(error){
 
-console.log(
-error
-);
+console.log(error);
 
 return;
 
@@ -862,9 +1008,7 @@ class_name:call.class_name
 });
 
 
-
 updateStudentStatus(call);
-
 
 
 });
@@ -878,29 +1022,140 @@ data
 
 
 
-}catch(error){
-
+}
+catch(error){
 
 console.log(
-"Load Active Calls Error:",
+"Load Calls Error:",
 error
 );
 
-
 }
 
 
 }
-const startButton=document.getElementById("startVoice");
-const voiceStatus=document.getElementById("voiceStatus");
-const voiceText=document.getElementById("voiceText");
-const mainStatus=document.getElementById("mainStatus");
-const lastStudentBox=document.getElementById("lastStudent");
+
+
+
+
+
+// دریافت فراخوان جدید
+
+supabaseClient
+
+.channel("calls-insert")
+
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"calls"
+},
+
+(payload)=>{
+
+
+const call=payload.new;
+
+
+console.log(
+"New Call:",
+call
+);
+
+
+
+addStudentToClass({
+
+name:call.student_name,
+
+class_name:call.class_name
+
+});
+
+
+
+updateStudentStatus(call);
+
+
+
+playAlert();
+
+
+}
+
+)
+
+.subscribe();
+
+
+
+
+
+
+
+// تغییر وضعیت توسط معلم
+
+supabaseClient
+
+.channel("calls-update")
+
+.on(
+"postgres_changes",
+{
+event:"UPDATE",
+schema:"public",
+table:"calls"
+},
+
+(payload)=>{
+
+
+const call=payload.new;
+
+
+console.log(
+"Status Update:",
+call
+);
+
+
+
+updateStudentStatus(call);
+
+
+}
+
+)
+
+.subscribe();
+const startButton=document.getElementById(
+"startVoice"
+);
+
+const voiceStatus=document.getElementById(
+"voiceStatus"
+);
+
+const voiceText=document.getElementById(
+"voiceText"
+);
+
+const mainStatus=document.getElementById(
+"mainStatus"
+);
+
+const lastStudentBox=document.getElementById(
+"lastStudent"
+);
+
 
 
 const SpeechRecognition=
-window.SpeechRecognition||
+window.SpeechRecognition ||
 window.webkitSpeechRecognition;
+
 
 
 let recognition;
@@ -917,7 +1172,8 @@ alert(
 );
 
 
-}else{
+}
+else{
 
 
 recognition=new SpeechRecognition();
@@ -929,7 +1185,7 @@ recognition.lang="fa-IR";
 recognition.continuous=true;
 
 
-recognition.interimResults=true;
+recognition.interimResults=false;
 
 
 recognition.maxAlternatives=1;
@@ -957,34 +1213,14 @@ mainStatus.innerHTML=
 recognition.onresult=function(event){
 
 
-let text="";
-
-
-for(
-let i=event.resultIndex;
-i<event.results.length;
-i++
-){
-
-
-if(event.results[i].isFinal){
-
-
-text+=event.results[i][0].transcript;
-
-
-}
-
-
-}
+let text=
+event.results[
+event.results.length-1
+][0].transcript;
 
 
 
 text=text.trim();
-
-
-
-if(text==="")return;
 
 
 
@@ -996,7 +1232,7 @@ const student=findStudent(text);
 
 
 
-if(student&&student.name!==lastStudent){
+if(student && student.name!==lastStudent){
 
 
 
@@ -1021,16 +1257,11 @@ mainStatus.innerHTML=
 "📢 فراخوان ثبت شد";
 
 
-playAlert();
-
-
-
 }
 
 
+
 };
-
-
 
 
 
@@ -1052,18 +1283,13 @@ voiceStatus.innerHTML=
 
 
 
-
 recognition.onend=function(){
+
 
 
 console.log(
 "Speech End"
 );
-
-
-
-voiceStatus.innerHTML=
-"🔄 اتصال مجدد";
 
 
 
@@ -1079,7 +1305,9 @@ try{
 recognition.start();
 
 
-}catch(error){
+
+}
+catch(error){
 
 
 console.log(error);
@@ -1099,9 +1327,8 @@ console.log(error);
 
 
 
-
-
 }
+
 
 
 
@@ -1109,7 +1336,35 @@ startButton.onclick=function(){
 
 
 
-if(isListening)return;
+if(!recognition){
+
+alert(
+"تشخیص صدا فعال نیست"
+);
+
+return;
+
+}
+
+
+
+if(isListening){
+
+
+recognition.stop();
+
+
+isListening=false;
+
+
+voiceStatus.innerHTML=
+"خاموش";
+
+
+return;
+
+
+}
 
 
 
@@ -1120,124 +1375,135 @@ recognition.start();
 
 
 
-}catch(error){
-
-
-console.log(error);
-
-
 }
+catch(error){
 
-
-};
-startButton.onclick=function(){
-
-if(isListening)return;
-
-try{
-
-recognition.start();
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-supabaseClient
-.channel("calls-insert")
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"calls"
-},
-(payload)=>{
-
-const call=payload.new;
 
 console.log(
-"New Call:",
-call
+"Start Error:",
+error
 );
 
 
-addStudentToClass({
+}
 
-name:call.student_name,
 
-class_name:call.class_name
+};
+
+
+
+
+
+// ریست کامل فراخوان ها
+
+
+async function resetAllCalls(){
+
+
+
+let answer=confirm(
+"آیا همه فراخوان‌ها پاک شوند؟"
+);
+
+
+
+if(!answer)return;
+
+
+
+const {error}=await supabaseClient
+
+.from("calls")
+
+.delete()
+.neq(
+"id",
+0
+);
+
+
+
+if(error){
+
+console.log(
+"Reset Error:",
+error
+);
+
+return;
+
+}
+
+
+
+document
+.querySelectorAll(".student-list")
+.forEach(list=>{
+
+
+list.innerHTML=
+"هنوز فراخوانی نشده";
+
+
+list.classList.add(
+"empty"
+);
+
 
 });
 
 
-updateStudentStatus(call);
+
+lastStudentBox.innerHTML=
+"---";
+
+
+mainStatus.innerHTML=
+"🔄 همه فراخوان‌ها پاک شدند";
+
 
 }
-)
-.subscribe();
 
 
 
-supabaseClient
-.channel("calls-update")
-.on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"calls"
-},
-(payload)=>{
-
-const call=payload.new;
-
-console.log(
-"Status Update:",
-call
-);
 
 
-updateStudentStatus(call);
-
-}
-)
-.subscribe();
-
-// =====================================
-// صدای هشدار
-// =====================================
 
 function playAlert(){
 
+
 let audio=new Audio(
+
 "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+
 );
+
 
 audio.play()
 .catch(()=>{});
 
+
 }
 
 
 
-// =====================================
-// شروع اولیه صفحه
-// =====================================
+
 
 async function init(){
+
 
 console.log(
 "پنل ناظم آماده شد"
 );
 
 
+
 await loadStudents();
 
 
+
 await loadActiveCalls();
+
 
 
 }
@@ -1245,6 +1511,6 @@ await loadActiveCalls();
 
 
 init();
-       </script>
+      </script>
        </body>
        </html>
