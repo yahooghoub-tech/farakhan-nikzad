@@ -8,7 +8,7 @@ SUPABASE_KEY
 );
 let calledStudents=[];
 console.log("Supabase connected");
-
+loadCalls();
 const micStatus=document.getElementById("micStatus");
 const micIcon=document.getElementById("micIcon");
 const speechText=document.getElementById("speechText");
@@ -122,7 +122,7 @@ const students=[
     
     if(result){
     
-    addStudentToClass(result);
+    
     
     sendTeacherMessage(result);
     
@@ -422,4 +422,44 @@ const students=[
         
         }
    
-           
+        async function loadCalls(){
+
+            const {data,error}=await supabaseClient
+            .from("calls")
+            .select("*")
+            .eq("status","فراخوان شد")
+            .order("id",{ascending:true});
+            
+            
+            if(error){
+            
+            console.error(
+            "خطا در دریافت فراخوان‌ها:",
+            error
+            );
+            
+            return;
+            
+            }
+            
+            
+            
+            data.forEach(call=>{
+            
+            
+            const student={
+            
+            name:call.student_name,
+            
+            className:call.class_name
+            
+            };
+            
+            
+            addStudentToClass(student);
+            
+            
+            });
+            
+            
+            }
