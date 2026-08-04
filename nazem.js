@@ -1,3 +1,14 @@
+const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+
+const supabaseClient=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+let calledStudents=[];
+console.log("Supabase connected");
+
 const micStatus=document.getElementById("micStatus");
 const micIcon=document.getElementById("micIcon");
 const speechText=document.getElementById("speechText");
@@ -94,12 +105,11 @@ recognition.start();
 
 }
 const students=[
-    {name:"علی احمدی",className:"ششم 1"},
-    {name:"رضا محمدی",className:"پنجم 2"},
-    {name:"محمد رضایی",className:"سوم 1"},
-    {name:"امیر حسینی",className:"اول 2"}
+    {name:"علی احمدی",className:"ششم-1"},
+    {name:"رضا محمدی",className:"پنجم-2"},
+    {name:"محمد رضایی",className:"سوم-1"},
+    {name:"امیر حسینی",className:"اول-2"}
     ];
-    
     
     function findStudentFromText(text){
     
@@ -142,87 +152,189 @@ const students=[
     
     
     
-    
     function addStudentToClass(student){
-    
-    const classBox=document.getElementById(
-    "class-"+student.className
-    );
-    
-    
-    const countBox=document.getElementById(
-    "count-"+student.className
-    );
-    
-    
-    
-    if(!classBox){
-    return;
-    }
-    
-    
-    
-    const card=document.createElement("div");
-    
-    card.className="student-card";
-    
-    
-    card.innerHTML=`
-    
-    <div class="student-name">
-    ${student.name}
-    </div>
-    
-    <div class="student-status status-called">
-    فراخوان شد
-    </div>
-    
-    <div class="student-time">
-    ${new Date().toLocaleTimeString("fa-IR")}
-    </div>
-    
-    `;
-    
-    
-    
-    classBox.appendChild(card);
-    
-    
-    
-    countBox.innerText=
-    classBox.children.length;
-    
-    
-    }
-    function sendTeacherMessage(student){
+        if(calledStudents.includes(student.name)){
+            return;
+            }
+            
+            calledStudents.push(student.name);
 
-        const message={
-        
-        studentName:student.name,
-        
-        className:student.className,
-        
-        status:"فراخوان شد",
-        
-        time:new Date().toISOString()
-        
-        };
-        
-        
-        /*
-        در مرحله اتصال به Supabase
-        این پیام به جدول پیام‌ها ارسال می‌شود
-        و پنل معلم مربوطه آن را دریافت می‌کند
-        */
-        
-        
-        console.log(
-        "ارسال پیام به معلم:",
-        message
+        const classBox=document.getElementById(
+        "class-"+student.className
         );
         
         
+        const countBox=document.getElementById(
+        "count-"+student.className
+        );
+        
+        
+        if(!classBox){
+        return;
         }
+        
+        
+        const now=new Date();
+        
+        
+        const date=
+        new Intl.DateTimeFormat(
+        "fa-IR",
+        {
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit"
+        }
+        ).format(now);
+        
+        
+        
+        const time=
+        now.toLocaleTimeString(
+        "fa-IR",
+        {
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+        }
+        );
+        
+        
+        
+        const card=document.createElement("div");
+        
+        card.className="student-card";
+        
+        
+        card.innerHTML=`
+        
+        <div class="student-name">
+        ${student.name}
+        </div>
+        
+        
+        <div class="student-status status-called">
+        فراخوان شد
+        </div>
+        
+        
+        <div class="student-time">
+        📅 ${date}
+        <br>
+        ⏰ ${time}
+        </div>
+        
+        `;
+        
+        
+        
+        classBox.appendChild(card);
+        
+        
+        
+        countBox.innerText=
+        classBox.children.length;
+        
+        
+        }
+   
+        async function sendTeacherMessage(student){
+
+
+            const {data:exist,error:checkError}=await supabaseClient
+            .from("calls")
+            .select("id")
+            .eq("student_name",student.name)
+            .eq("class_name",student.className)
+            .eq("status","فراخوان شد");
+            
+            
+            if(checkError){
+            
+            console.error(checkError);
+            return;
+            
+            }
+            
+            
+            if(exist.length>0){
+            
+            console.log("این دانش آموز قبلا فراخوان شده");
+            
+            return;
+            
+            }
+            
+            
+            
+            const now=new Date();
+            
+            
+            
+            const calledDate=
+            new Intl.DateTimeFormat(
+            "fa-IR",
+            {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit"
+            }
+            ).format(now);
+            
+            
+            
+            const calledTime=
+            now.toLocaleTimeString(
+            "fa-IR",
+            {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
+            }
+            );
+            
+            
+            
+            const {data,error}=await supabaseClient
+            .from("calls")
+            .insert([
+            
+            {
+            student_name:student.name,
+            class_name:student.className,
+            status:"فراخوان شد",
+            called_date:calledDate,
+            called_time:calledTime
+            }
+            
+            ])
+            .select();
+            
+            
+            
+            if(error){
+            
+            console.error(
+            "خطا در ثبت فراخوان:",
+            error
+            );
+            
+            }else{
+            
+            console.log(
+            "فراخوان ثبت شد:",
+            data
+            );
+            
+            
+            // نمایش در کلاس
+            addStudentToClass(student);
+            
+            
+            }
+            
+            
+            }
         
         
         
