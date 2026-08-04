@@ -511,35 +511,44 @@ font-size:21px;
 // بعداً از API جایگزین می شود
 // ===============================
 
+let students = [];
 
-const students = [
 
-{
-name:"آریا لشکری",
-class_name:"چهارم 2"
-},
+// دریافت دانش آموزان از دیتابیس
 
-{
-name:"کارن جهانی",
-class_name:"سوم 3"
-},
+async function loadStudents(){
 
-{
-name:"رهام ماندگاریان",
-class_name:"پنجم 2"
-},
+try{
 
-{
-name:"رادین یاهو",
-class_name:"ششم 2"
-},
 
-{
-name:"رایان خمسه",
-class_name:"دوم 2"
+const response = await fetch("/api/get-students");
+
+
+students = await response.json();
+
+
+console.log(
+"Students Loaded:",
+students
+);
+
+
 }
 
-];
+catch(error){
+
+console.log(
+"Load Students Error:",
+error
+);
+
+}
+
+
+}
+
+
+loadStudents();
 
 
 
