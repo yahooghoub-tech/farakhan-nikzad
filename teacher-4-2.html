@@ -101,8 +101,7 @@ font-size:22px;
 
 <script>
 
-
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
 
 "https://ghnpiijihybuhfetnxjp.supabase.co",
 
@@ -111,10 +110,7 @@ const supabase = window.supabase.createClient(
 );
 
 
-
-
-
-supabase
+supabaseClient
 
 .channel('calls-room')
 
