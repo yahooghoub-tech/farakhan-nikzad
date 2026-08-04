@@ -46,7 +46,7 @@ padding:20px;
 }
 
 
-/* header */
+/* Header */
 
 .header{
 
@@ -75,7 +75,7 @@ font-size:28px;
 
 
 
-/* voice */
+/* Voice Panel */
 
 .voice-panel{
 
@@ -94,11 +94,13 @@ margin-bottom:25px;
 }
 
 
+
 .microphone{
 
 font-size:55px;
 
 }
+
 
 
 .status{
@@ -108,6 +110,7 @@ color:#00ff99;
 font-size:18px;
 
 }
+
 
 
 .last-name{
@@ -136,7 +139,7 @@ font-weight:bold;
 
 
 
-/* voice button */
+/* Button */
 
 #startVoice{
 
@@ -184,7 +187,7 @@ min-height:50px;
 
 
 
-/* classes */
+/* Classes */
 
 .classes{
 
@@ -270,7 +273,7 @@ color:#ffd000;
 
 
 
-/* responsive */
+/* Responsive */
 
 
 @media(max-width:1000px){
@@ -312,6 +315,7 @@ font-size:21px;
     <div class="container">
     
     
+    
     <div class="header">
     
     <h1>
@@ -331,8 +335,11 @@ font-size:21px;
     
     
     <div class="microphone">
+    
     🎤
+    
     </div>
+    
     
     
     <div class="status" id="mainStatus">
@@ -343,6 +350,7 @@ font-size:21px;
     
     
     
+    
     <div class="last-name">
     
     آخرین دانش‌آموز:
@@ -350,18 +358,22 @@ font-size:21px;
     <br>
     
     <span id="lastStudent">
+    
     ---
+    
     </span>
     
     </div>
     
     
     
-    <div id="voicePanel">
     
     <button id="startVoice">
+    
     شروع شنود
+    
     </button>
+    
     
     
     <div id="voiceStatus">
@@ -369,6 +381,8 @@ font-size:21px;
     خاموش
     
     </div>
+    
+    
     
     
     <div id="voiceText">
@@ -380,8 +394,6 @@ font-size:21px;
     
     </div>
     
-    
-    </div>
     
     
     
@@ -420,6 +432,7 @@ font-size:21px;
     <div class="class-title">دوم 2</div>
     <div class="student-list empty">هنوز فراخوانی نشده</div>
     </div>
+    
     
     
     
@@ -499,22 +512,20 @@ font-size:21px;
     </div>
     
     
+    
     </div>
-    <script src="js/admin.js"></script>
-
     <script>
 
 
-        // ===============================
-        // دریافت دانش آموزان از Supabase
-        // ===============================
+        // =====================================
+        // دریافت دانش آموزان از API
+        // =====================================
         
         
         let students = [];
         
         
         async function loadStudents(){
-        
         
         try{
         
@@ -533,15 +544,12 @@ font-size:21px;
         
         }
         
-        
         catch(error){
-        
         
         console.log(
         "Load Students Error:",
         error
         );
-        
         
         }
         
@@ -554,9 +562,42 @@ font-size:21px;
         
         
         
-        // ===============================
-        // آخرین دانش آموز خوانده شده
-        // ===============================
+        // =====================================
+        // پاک کردن کلاس ها در شروع صفحه
+        // =====================================
+        
+        
+        function resetClasses(){
+        
+        
+        document
+        .querySelectorAll(".student-list")
+        .forEach(list=>{
+        
+        
+        list.innerHTML =
+        "هنوز فراخوانی نشده";
+        
+        
+        list.classList.add("empty");
+        
+        
+        });
+        
+        
+        }
+        
+        
+        
+        resetClasses();
+        
+        
+        
+        
+        
+        // =====================================
+        // آخرین دانش آموز
+        // =====================================
         
         
         let lastStudent = "";
@@ -564,17 +605,21 @@ font-size:21px;
         
         
         
-        // ===============================
+        
+        
+        // =====================================
         // پیدا کردن دانش آموز
-        // ===============================
+        // =====================================
         
         
-        function findStudent(name){
+        function findStudent(text){
         
         
         return students.find(student =>
         
-        name.includes(student.name)
+        
+        text.includes(student.name)
+        
         
         );
         
@@ -584,9 +629,12 @@ font-size:21px;
         
         
         
-        // ===============================
-        // انتقال دانش آموز به کلاس خودش
-        // ===============================
+        
+        
+        
+        // =====================================
+        // اضافه کردن دانش آموز به کلاس خودش
+        // =====================================
         
         
         function addStudentToClass(student){
@@ -628,61 +676,54 @@ font-size:21px;
         
         
         
-        const classId =
+        
+        let classId =
         classMap[student.class_name];
         
         
         
         if(!classId){
         
-        
         console.log(
-        "کلاس ناشناخته:",
+        "کلاس پیدا نشد:",
         student.class_name
         );
         
-        
         return;
-        
         
         }
         
         
         
         
-        const classBox =
+        let classBox =
         document.getElementById(
-        "class-" + classId
+        "class-"+classId
         );
         
         
         
         if(!classBox){
         
-        
         console.log(
-        "کارت کلاس پیدا نشد:",
-        classId
+        "کارت کلاس پیدا نشد"
         );
         
-        
         return;
-        
         
         }
         
         
         
         
-        const list =
+        
+        let list =
         classBox.querySelector(
         ".student-list"
         );
         
         
         
-        
-        // حذف متن اولیه
         
         
         if(list.classList.contains("empty")){
@@ -699,15 +740,26 @@ font-size:21px;
         
         
         
-        list.innerHTML += `
+        // جلوگیری از تکراری شدن اسم
         
+        if(
+        list.innerHTML.includes(student.name)
+        ){
+        
+        return;
+        
+        }
+        
+        
+        
+        
+        list.innerHTML += `
         
         <div class="student">
         
         ✅ ${student.name}
         
         </div>
-        
         
         `;
         
@@ -718,10 +770,12 @@ font-size:21px;
         
         
         
-        // ===============================
-        // ارسال فراخوان به API
-        // مرحله بعد فعال می شود
-        // ===============================
+        
+        
+        
+        // =====================================
+        // ذخیره در جدول calls
+        // =====================================
         
         
         async function sendCall(student){
@@ -763,8 +817,9 @@ font-size:21px;
         });
         
         
+        
         console.log(
-        "Call Saved:",
+        "Saved:",
         student.name
         );
         
@@ -777,7 +832,7 @@ font-size:21px;
         
         
         console.log(
-        "Call Error:",
+        "Save Error:",
         error
         );
         
@@ -785,27 +840,36 @@ font-size:21px;
         }
         
         
-        
         }
         
         
         
         
-        // ===============================
+        
+        
+        // =====================================
         // Speech Recognition
-        // ===============================
+        // =====================================
         
         
         const startButton =
-        document.getElementById("startVoice");
+        document.getElementById(
+        "startVoice"
+        );
         
         
         const voiceStatus =
-        document.getElementById("voiceStatus");
+        document.getElementById(
+        "voiceStatus"
+        );
         
         
         const voiceText =
-        document.getElementById("voiceText");
+        document.getElementById(
+        "voiceText"
+        );
+        
+        
         
         
         
@@ -818,7 +882,12 @@ font-size:21px;
         
         
         
+        
+        let recognition;
+        
         let isListening=false;
+        
+        
         
         
         
@@ -826,7 +895,7 @@ font-size:21px;
         
         
         alert(
-        "مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند"
+        "مرورگر شما پشتیبانی نمی کند"
         );
         
         
@@ -835,7 +904,7 @@ font-size:21px;
         else{
         
         
-        const recognition =
+        recognition =
         new SpeechRecognition();
         
         
@@ -858,12 +927,12 @@ font-size:21px;
         isListening=true;
         
         
-        voiceStatus.innerHTML=
-        
+        voiceStatus.innerHTML =
         "🎤 میکروفون فعال است";
         
         
         };
+        
         
         
         
@@ -877,18 +946,13 @@ font-size:21px;
         
         
         for(
-        
         let i=event.resultIndex;
-        
         i<event.results.length;
-        
         i++
-        
         ){
         
         
         text +=
-        
         event.results[i][0].transcript;
         
         
@@ -906,16 +970,13 @@ font-size:21px;
         
         
         
-        if(text !== lastStudent){
-        
-        
-        
-        const student =
+        let student =
         findStudent(text);
         
         
         
-        if(student){
+        
+        if(student && student.name !== lastStudent){
         
         
         
@@ -924,11 +985,11 @@ font-size:21px;
         
         
         
-        document.getElementById(
-        "lastStudent"
-        ).innerHTML =
-        
+        document
+        .getElementById("lastStudent")
+        .innerHTML =
         student.name;
+        
         
         
         
@@ -937,7 +998,9 @@ font-size:21px;
         
         
         
-        // فعلا فعال باشد
+        
+        // ذخیره دیتابیس
+        
         sendCall(student);
         
         
@@ -945,7 +1008,6 @@ font-size:21px;
         }
         
         
-        }
         
         
         };
@@ -975,12 +1037,12 @@ font-size:21px;
         isListening=false;
         
         
-        voiceStatus.innerHTML=
-        
-        "میکروفون قطع شد";
+        voiceStatus.innerHTML =
+        "میکروفون خاموش شد";
         
         
         };
+        
         
         
         
@@ -1004,12 +1066,9 @@ font-size:21px;
         
         
         
-        
         }
         
-        
-        
-        </script>
+</script>
 
 
 </body>
