@@ -270,439 +270,317 @@ opacity:.75;
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <script>
 
-
+    // =====================================
+    // اتصال Supabase
+    // =====================================
+    
+    const supabaseClient = supabase.createClient(
+    
+    "https://ghnpiijihybuhfetnxjp.supabase.co",
+    
+    "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
+    
+    );
+    
+    
+    // =====================================
+    // کلاس فعلی این صفحه
+    // =====================================
+    
+    const currentClass = "چهارم 2";
+    
+    
+    
+    // =====================================
+    // گرفتن فراخوان‌های ذخیره شده
+    // بعد از Refresh
+    // =====================================
+    
+    
+    async function loadCalls(){
+    
+    
+    const {data,error}=await supabaseClient
+    
+    .from("calls")
+    
+    .select("*")
+    
+    .eq(
+    "class_name",
+    currentClass
+    )
+    
+    .order(
+    "created_at",
+    {
+    ascending:true
+    }
+    );
+    
+    
+    
+    if(error){
+    
+    console.log(error);
+    
+    return;
+    
+    }
+    
+    
+    
+    // فقط فراخوان‌های فعال
+    
+    data.forEach(call=>{
+    
+    
+    if(
+    call.status==="calling" ||
+    call.status==="received"
+    ){
+    
+    
+    showStudent(call);
+    
+    
+    }
+    
+    
+    });
+    
+    
+    }
+    
+    
+    
+    
+    
+    // =====================================
+    // ساخت کارت دانش آموز
+    // =====================================
+    
+    
+    function showStudent(call){
+    
+    
+    
+    let box =
+    document.getElementById("cards");
+    
+    
+    
+    if(!box)
+    return;
+    
+    
+    
+    // جلوگیری از تکرار
+    
+    
+    if(
+    document.getElementById(
+    "student-"+call.id
+    )
+    ){
+    
+    updateCard(call);
+    
+    return;
+    
+    }
+    
+    
+    
+    
+    let card =
+    document.createElement("div");
+    
+    
+    
+    card.id =
+    "student-"+call.id;
+    
+    
+    
+    card.className =
+    "card";
+    
+    
+    
+    
+    card.innerHTML = `
+    
+    
+    <div class="student-name">
+    
+    ${call.student_name}
+    
+    </div>
+    
+    
+    
+    <div class="state">
+    
+    وضعیت:
+    
+    <span id="status-${call.id}">
+    
+    ${getStatusText(call.status)}
+    
+    </span>
+    
+    
+    </div>
+    
+    
+    
+    <button
+    
+    onclick="changeStatus(${call.id},'received')"
+    
+    class="receive"
+    
+    >
+    
+    دریافت فراخوان
+    
+    </button>
+    
+    
+    
+    <button
+    
+    onclick="changeStatus(${call.id},'sent')"
+    
+    class="send"
+    
+    >
+    
+    ارسال دانش‌آموز
+    
+    </button>
+    
+    
+    `;
+    
+    
+    
+    box.appendChild(card);
+    
+    
+    
+    updateCard(call);
+    
+    
+    }
+    
+    
+    
+    
+    
+    
+    // =====================================
+    // متن وضعیت
+    // =====================================
+    
+    
+    function getStatusText(status){
+    
+    
+    
+    switch(status){
+    
+    
+    case "calling":
+    
+    return "🔔 در انتظار";
+    
+    
+    case "received":
+    
+    return "✅ دریافت شد";
+    
+    
+    case "sent":
+    
+    return "🚶 ارسال شد";
+    
+    
+    default:
+    
+    return status;
+    
+    
+    }
+    
+    
+    }
+    
+    
+    
+    
+    
+    // =====================================
+    // تغییر وضعیت از طرف معلم
+    // =====================================
+    
+    
+    async function changeStatus(id,status){
+    
+    
+    
+    const {error}=
+    
+    await supabaseClient
+    
+    .from("calls")
+    
+    .update({
+    
+    status:status
+    
+    })
+    
+    .eq(
+    "id",
+    id
+    );
+    
+    
+    
+    
+    if(error){
+    
+    console.log(
+    "Update Error",
+    error
+    );
+    
+    return;
+    
+    }
+    
+    
+    
+    let call={
+    
+    id:id,
+    
+    status:status
+    
+    };
+    
+    
+    updateCard(call);
+    
+    
+    
+    }
 // =====================================
-// اتصال Supabase
-// =====================================
-
-
-const supabaseClient = supabase.createClient(
-
-"https://ghnpiijihybuhfetnxjp.supabase.co",
-
-"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
-
-);
-
-
-
-// =====================================
-// کلاس فعلی
-// =====================================
-
-
-const currentClass = "چهارم 2";
-
-
-
-// =====================================
-// گرفتن فراخوان‌های قبلی
-// =====================================
-
-
-async function loadCalls(){
-
-
-const {data,error}=await supabaseClient
-
-.from("calls")
-
-.select("*")
-
-.eq("class_name",currentClass)
-
-.order("created_at",{ascending:true});
-
-
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-
-
-data.forEach(call=>{
-
-
-showStudent(call);
-
-
-});
-
-
-}
-
-
-
-
-
-// =====================================
-// نمایش کارت دانش‌آموز
-// =====================================
-
-
-function showStudent(call){
-
-
-
-let box=document.getElementById("cards");
-
-
-
-// جلوگیری از تکراری شدن کارت
-
-
-if(document.getElementById("student-"+call.id)){
-
-updateCard(call);
-
-return;
-
-}
-
-
-
-let card=document.createElement("div");
-
-
-card.className="card waiting-card";
-
-card.id="student-"+call.id;
-
-
-
-card.innerHTML=`
-
-<div class="student-name">
-
-${call.student_name}
-
-</div>
-
-
-<div class="state">
-
-وضعیت:
-
-<span id="status-${call.id}">
-
-${getStatusText(call.status)}
-
-</span>
-
-</div>
-
-
-
-<button 
-class="receive"
-onclick="changeStatus(${call.id},'received')">
-
-دریافت فراخوان
-
-</button>
-
-
-
-<button 
-class="send"
-onclick="changeStatus(${call.id},'sent')">
-
-ارسال دانش‌آموز
-
-</button>
-
-
-`;
-
-
-
-box.appendChild(card);
-
-
-}
-
-
-
-
-// =====================================
-// متن وضعیت
-// =====================================
-
-
-function getStatusText(status){
-
-
-if(status==="calling")
-return "🔔 در انتظار";
-
-
-if(status==="received")
-return "✅ دریافت شد";
-
-
-if(status==="sent")
-return "🚶 ارسال شد";
-
-
-return status;
-
-
-}
-
-
-
-// =====================================
-// آپدیت کارت
-// =====================================
-
-
-function updateCard(call){
-
-
-let status =
-document.getElementById(
-"status-"+call.id
-);
-
-
-
-if(status){
-
-status.innerHTML=
-getStatusText(call.status);
-
-}
-
-
-
-let card=
-document.getElementById(
-"student-"+call.id
-);
-
-
-
-if(call.status==="sent"){
-
-card.classList.add("sent");
-
-}
-
-
-
-}
-
-
-
-
-// اجرای اولیه
-
-loadCalls();
-
-
-// =====================================
-// تغییر وضعیت فراخوان
-// =====================================
-
-
-async function changeStatus(id,status){
-
-
-
-const {error}=await supabaseClient
-
-.from("calls")
-
-.update({
-
-status:status
-
-})
-
-.eq("id",id);
-
-
-
-
-if(error){
-
-console.log(
-"Update Error:",
-error
-);
-
-return;
-
-}
-
-
-
-// تغییر سریع روی صفحه
-
-
-const statusBox =
-document.getElementById(
-"status-"+id
-);
-
-
-
-if(statusBox){
-
-statusBox.innerHTML =
-getStatusText(status);
-
-}
-
-
-
-// اگر ارسال شد کارت حذف نشود
-// فقط حالت ظاهری تغییر کند
-
-
-if(status==="sent"){
-
-
-const card =
-document.getElementById(
-"student-"+id
-);
-
-
-
-if(card){
-
-card.classList.add("sent");
-
-}
-
-
-}
-
-
-
-console.log(
-"Status Updated:",
-id,
-status
-);
-
-
-
-}
-
-
-
-
-
-
-// =====================================
-// دریافت لحظه‌ای تغییرات Supabase
-// =====================================
-
-
-
-supabaseClient
-
-.channel("class-calls")
-
-.on(
-
-"postgres_changes",
-
-{
-
-event:"UPDATE",
-
-schema:"public",
-
-table:"calls",
-
-filter:
-`class_name=eq.${currentClass}`
-
-},
-
-(payload)=>{
-
-
-console.log(
-"Realtime Update:",
-payload.new
-);
-
-
-
-updateCard(payload.new);
-
-
-
-}
-
-)
-
-.subscribe((status)=>{
-
-
-console.log(
-"Realtime:",
-status
-
-);
-
-
-});
-// =====================================
-// مرتب سازی کارت‌ها
-// =====================================
-
-
-function sortCards(){
-
-
-const container =
-document.getElementById("cards");
-
-
-let cards =
-Array.from(
-container.children
-);
-
-
-
-cards.sort((a,b)=>{
-
-
-return a.id.localeCompare(b.id);
-
-
-});
-
-
-
-cards.forEach(card=>{
-
-container.appendChild(card);
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// تغییر ظاهر بر اساس وضعیت
+// تغییر ظاهر کارت بر اساس وضعیت
 // =====================================
 
 
@@ -710,6 +588,7 @@ function updateCard(call){
 
 
 let card =
+
 document.getElementById(
 "student-"+call.id
 );
@@ -721,21 +600,25 @@ return;
 
 
 
-// حذف رنگ قبلی کارت
+
+// پاک کردن کلاس های قبلی
 
 card.classList.remove(
+
 "waiting-card",
+
 "received-card",
+
 "sent-card"
+
 );
 
 
 
 
-// تغییر رنگ بر اساس وضعیت
+// وضعیت فراخوان
 
-
-if(call.status === "calling"){
+if(call.status==="calling"){
 
 
 card.classList.add(
@@ -747,7 +630,8 @@ card.classList.add(
 
 
 
-if(call.status === "received"){
+
+if(call.status==="received"){
 
 
 card.classList.add(
@@ -759,7 +643,8 @@ card.classList.add(
 
 
 
-if(call.status === "sent"){
+
+if(call.status==="sent"){
 
 
 card.classList.add(
@@ -776,17 +661,19 @@ card.classList.add(
 // تغییر متن وضعیت
 
 
-let status =
+let statusBox =
+
 document.getElementById(
 "status-"+call.id
 );
 
 
 
-if(status){
+if(statusBox){
 
 
-status.innerHTML =
+statusBox.innerHTML =
+
 getStatusText(call.status);
 
 
@@ -796,25 +683,33 @@ getStatusText(call.status);
 
 
 
-// کنترل دکمه‌ها
+
+// مدیریت دکمه ها
 
 
 let buttons =
-card.querySelectorAll("button");
+
+card.querySelectorAll(
+"button"
+);
 
 
 
 if(call.status==="received"){
 
 
+
 if(buttons[0]){
+
 
 buttons[0].style.display="none";
 
+
 }
 
 
 }
+
 
 
 
@@ -822,9 +717,12 @@ buttons[0].style.display="none";
 if(call.status==="sent"){
 
 
+
 if(buttons[0]){
 
+
 buttons[0].style.display="none";
+
 
 }
 
@@ -833,7 +731,8 @@ buttons[0].style.display="none";
 if(buttons[1]){
 
 
-buttons[1].innerHTML =
+buttons[1].innerHTML=
+
 "✅ ارسال شد";
 
 
@@ -843,42 +742,26 @@ buttons[1].disabled=true;
 }
 
 
-}
-
-
 
 }
 
 
 
+}
+
 
 
 
 
 // =====================================
-// پاکسازی اولیه فقط نمایشی
-// (دیتابیس پاک نمی‌شود)
-// =====================================
-
-
-window.onload=function(){
-
-
-console.log(
-"Class Page Ready"
-);
-
-
-};
-// =====================================
-// دریافت فراخوان جدید از ناظم
-// INSERT REALTIME
+// دریافت لحظه ای فراخوان جدید از ناظم
+// INSERT
 // =====================================
 
 
 supabaseClient
 
-.channel("new-class-calls")
+.channel("new-class-call")
 
 .on(
 
@@ -890,56 +773,108 @@ event:"INSERT",
 
 schema:"public",
 
-table:"calls"
+table:"calls",
+
+filter:
+
+`class_name=eq.${currentClass}`
+
 
 },
 
 (payload)=>{
 
 
-let call = payload.new;
-
-
-
 console.log(
-"New Call:",
-call
+"New Student:",
+payload.new
 );
 
 
 
-// فقط کلاس چهارم 2
-
-if(call.class_name === currentClass){
-
-
-showStudent(call);
+showStudent(
+payload.new
+);
 
 
-// پخش هشدار
+
+// صدای هشدار
+
 
 playAlert();
 
-
-}
 
 
 }
 
 )
 
-.subscribe((status)=>{
+.subscribe();
+
+
+
+
+
+
+
+// =====================================
+// دریافت تغییر وضعیت
+// =====================================
+
+
+supabaseClient
+
+.channel("update-class-call")
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"UPDATE",
+
+schema:"public",
+
+table:"calls",
+
+filter:
+
+`class_name=eq.${currentClass}`
+
+
+},
+
+(payload)=>{
 
 
 console.log(
-"Insert Channel:",
-status
+"Update:",
+payload.new
 );
 
 
-});
+
+updateCard(
+payload.new
+);
+
+
+
+}
+
+)
+
+.subscribe();
+
+
+
+
+
+
+
 // =====================================
-// صدای هشدار فراخوان
+// صدای هشدار
 // =====================================
 
 
@@ -947,14 +882,43 @@ function playAlert(){
 
 
 let audio =
+
 new Audio(
+
 "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+
 );
 
 
-audio.play();
+
+audio.play()
+.catch(()=>{});
 
 
 }
 
+
+
+
+
+// =====================================
+// شروع صفحه
+// =====================================
+
+
+loadCalls();
+
+
+
 </script>
+<!-- کتابخانه Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- کد جاوااسکریپت صفحه کلاس -->
+<script src="js/class.js"></script>
+
+
+</body>
+
+</html>    
