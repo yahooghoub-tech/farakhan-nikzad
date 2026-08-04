@@ -160,7 +160,11 @@ document.getElementById("student")
 )
 
 
-.subscribe();
+.subscribe((status)=>{
+
+console.log("Realtime Status:", status);
+
+});
 
 
 
