@@ -74,11 +74,14 @@ font-size:28px;
 }
 
 
+
 /* voice */
 
 .voice-panel{
 
 background:rgba(255,255,255,.1);
+
+backdrop-filter:blur(15px);
 
 border-radius:25px;
 
@@ -123,6 +126,64 @@ font-size:22px;
 
 
 
+#lastStudent{
+
+color:#00ff99;
+
+font-weight:bold;
+
+}
+
+
+
+/* voice button */
+
+#startVoice{
+
+background:#00ff99;
+
+border:none;
+
+padding:12px 30px;
+
+border-radius:20px;
+
+font-size:18px;
+
+cursor:pointer;
+
+font-family:inherit;
+
+}
+
+
+
+#voiceStatus{
+
+margin-top:15px;
+
+color:#ffd000;
+
+}
+
+
+
+#voiceText{
+
+margin-top:15px;
+
+background:#0005;
+
+border-radius:15px;
+
+padding:15px;
+
+min-height:50px;
+
+}
+
+
+
 /* classes */
 
 .classes{
@@ -140,6 +201,8 @@ gap:20px;
 .class-card{
 
 background:rgba(255,255,255,.12);
+
+backdrop-filter:blur(10px);
 
 border-radius:20px;
 
@@ -172,6 +235,7 @@ margin-bottom:15px;
 min-height:80px;
 
 }
+
 
 
 .empty{
@@ -241,181 +305,59 @@ font-size:21px;
 
 </style>
 
-
 </head>
-
-
 <body>
 
 
-<div class="container">
-
-
-<div class="header">
-
-<h1>
-📢 سیستم هوشمند فراخوان خروج دانش‌آموزان
-</h1>
-
-<p>
-پنل ناظم
-</p>
-
-</div>
-
-
-
-
-<div class="voice-panel">
-
-
-<div class="microphone">
-
-🎤
-
-</div>
-
-
-<div class="status">
-
-آماده دریافت اسامی دانش‌آموزان
-
-</div>
-
-
-
-<div class="last-name">
-
-آخرین دانش‌آموز:
-
-<br>
-
-<span id="lastStudent">
-
----
-
-</span>
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="classes">
-
-
-
-<div class="class-card" id="class-1-1">
-<div class="class-title">اول 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-1-2">
-<div class="class-title">اول 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-1-3">
-<div class="class-title">اول 3</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-2-1">
-<div class="class-title">دوم 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-2-2">
-<div class="class-title">دوم 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-3-1">
-<div class="class-title">سوم 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-3-2">
-<div class="class-title">سوم 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-3-3">
-<div class="class-title">سوم 3</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-4-1">
-<div class="class-title">چهارم 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-4-2">
-<div class="class-title">چهارم 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-4-3">
-<div class="class-title">چهارم 3</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-5-1">
-<div class="class-title">پنجم 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-5-2">
-<div class="class-title">پنجم 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-5-3">
-<div class="class-title">پنجم 3</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-6-1">
-<div class="class-title">ششم 1</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-<div class="class-card" id="class-6-2">
-<div class="class-title">ششم 2</div>
-<div class="student-list empty">هنوز فراخوانی نشده</div>
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-<script src="js/admin.js"></script>
-<div class="voice-panel">
-
-    <h2>🎤 میکروفون ناظم</h2>
+    <div class="container">
+    
+    
+    <div class="header">
+    
+    <h1>
+    📢 سیستم هوشمند فراخوان خروج دانش‌آموزان
+    </h1>
+    
+    <p>
+    پنل ناظم
+    </p>
+    
+    </div>
+    
+    
+    
+    
+    <div class="voice-panel">
+    
+    
+    <div class="microphone">
+    🎤
+    </div>
+    
+    
+    <div class="status" id="mainStatus">
+    
+    آماده دریافت اسامی دانش‌آموزان
+    
+    </div>
+    
+    
+    
+    <div class="last-name">
+    
+    آخرین دانش‌آموز:
+    
+    <br>
+    
+    <span id="lastStudent">
+    ---
+    </span>
+    
+    </div>
+    
+    
+    
+    <div id="voicePanel">
     
     <button id="startVoice">
     شروع شنود
@@ -423,7 +365,9 @@ font-size:21px;
     
     
     <div id="voiceStatus">
+    
     خاموش
+    
     </div>
     
     
@@ -435,122 +379,458 @@ font-size:21px;
     
     
     </div>
-    <script>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="classes">
+    
+    
+    
+    <div class="class-card" id="class-1-1">
+    <div class="class-title">اول 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-1-2">
+    <div class="class-title">اول 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-1-3">
+    <div class="class-title">اول 3</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    <div class="class-card" id="class-2-1">
+    <div class="class-title">دوم 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-2-2">
+    <div class="class-title">دوم 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    <div class="class-card" id="class-3-1">
+    <div class="class-title">سوم 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-3-2">
+    <div class="class-title">سوم 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-3-3">
+    <div class="class-title">سوم 3</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    
+    <div class="class-card" id="class-4-1">
+    <div class="class-title">چهارم 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-4-2">
+    <div class="class-title">چهارم 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-4-3">
+    <div class="class-title">چهارم 3</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    
+    <div class="class-card" id="class-5-1">
+    <div class="class-title">پنجم 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-5-2">
+    <div class="class-title">پنجم 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-5-3">
+    <div class="class-title">پنجم 3</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    
+    <div class="class-card" id="class-6-1">
+    <div class="class-title">ششم 1</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    <div class="class-card" id="class-6-2">
+    <div class="class-title">ششم 2</div>
+    <div class="student-list empty">هنوز فراخوانی نشده</div>
+    </div>
+    
+    
+    
+    </div>
+    
+    
+    </div>
+    <script src="js/admin.js"></script>
 
 
-        const startButton = document.getElementById("startVoice");
-        
-        const status = document.getElementById("voiceStatus");
-        
-        const textBox = document.getElementById("voiceText");
-        
-        
-        
-        const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-        
-        
-        
-        if(!SpeechRecognition){
-        
-        alert("مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند");
-        
-        }
-        
-        
-        else{
-        
-        
-        const recognition = new SpeechRecognition();
-        
-        
-        recognition.lang = "fa-IR";
-        
-        
-        recognition.continuous = true;
-        
-        
-        recognition.interimResults = true;
-        
-        
-        
-        recognition.onstart = function(){
-        
-        
-        status.innerHTML="🎤 در حال شنیدن...";
-        
-        
-        };
-        
-        
-        
-        recognition.onresult = function(event){
-        
-        
-        let text="";
-        
-        
-        for(
-        let i=event.resultIndex;
-        i<event.results.length;
-        i++
-        ){
-        
-        
-        text += event.results[i][0].transcript;
-        
-        
-        }
-        
-        
-        
-        textBox.innerHTML = text;
-        
-        
-        
-        };
-        
-        
-        
-        recognition.onerror=function(event){
-        
-        
-        console.log(
-        "خطای صدا:",
-        event.error
-        );
-        
-        
-        };
-        
-        
-        
-        recognition.onend=function(){
-        
-        
-        status.innerHTML="قطع شد";
-        
-        
-        };
-        
-        
-        
-        
-        startButton.onclick=function(){
-        
-        
-        recognition.start();
-        
-        
-        };
-        
-        
-        
-        }
-        
-        
-        </script>
+<script>
+
+
+// ===============================
+// لیست آزمایشی دانش آموزان
+// بعداً از API جایگزین می شود
+// ===============================
+
+
+const students = [
+
+{
+name:"آریا لشکری",
+class_name:"چهارم 2"
+},
+
+{
+name:"کارن جهانی",
+class_name:"سوم 3"
+},
+
+{
+name:"رهام ماندگاریان",
+class_name:"پنجم 2"
+},
+
+{
+name:"رادین یاهو",
+class_name:"ششم 2"
+},
+
+{
+name:"رایان خمسه",
+class_name:"دوم 2"
+}
+
+];
+
+
+
+// آخرین دانش آموز فراخوان شده
+
+let lastStudent = "";
+
+
+
+// ===============================
+// پیدا کردن کلاس دانش آموز
+// ===============================
+
+
+function findStudent(name){
+
+
+return students.find(student =>
+
+name.includes(student.name)
+
+);
+
+
+}
+
+
+
+
+// ===============================
+// اضافه کردن به کلاس مربوطه
+// ===============================
+
+
+function addStudentToClass(student){
+
+
+let classNumber = student.class_name
+.replace(" ","-");
+
+
+
+let classBox = document.querySelector(
+
+"#class-" + classNumber
+
+);
+
+
+
+if(!classBox){
+
+console.log("کلاس پیدا نشد");
+
+return;
+
+}
+
+
+
+let list = classBox.querySelector(".student-list");
+
+
+
+// حذف متن اولیه
+
+if(list.classList.contains("empty")){
+
+list.innerHTML="";
+
+list.classList.remove("empty");
+
+}
+
+
+
+
+list.innerHTML += `
+
+
+<div class="student">
+
+✅ ${student.name}
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+// ===============================
+// Speech Recognition
+// ===============================
+
+
+
+const startButton =
+document.getElementById("startVoice");
+
+
+const voiceStatus =
+document.getElementById("voiceStatus");
+
+
+const voiceText =
+document.getElementById("voiceText");
+
+
+
+const SpeechRecognition =
+
+window.SpeechRecognition ||
+
+window.webkitSpeechRecognition;
+
+
+
+if(!SpeechRecognition){
+
+
+alert(
+"مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند"
+);
+
+
+}
+
+else{
+
+
+const recognition =
+new SpeechRecognition();
+
+
+
+recognition.lang="fa-IR";
+
+
+recognition.continuous=true;
+
+
+recognition.interimResults=true;
+
+
+
+
+recognition.onstart=function(){
+
+
+voiceStatus.innerHTML=
+
+"🎤 میکروفون فعال است";
+
+
+};
+
+
+
+
+
+recognition.onresult=function(event){
+
+
+let text="";
+
+
+
+for(
+let i=event.resultIndex;
+i<event.results.length;
+i++
+){
+
+
+text +=
+
+event.results[i][0].transcript;
+
+
+}
+
+
+
+text=text.trim();
+
+
+
+voiceText.innerHTML=text;
+
+
+
+
+// اگر اسم جدید باشد
+
+
+if(text !== lastStudent){
+
+
+
+let student =
+findStudent(text);
+
+
+
+if(student){
+
+
+
+// نمایش آخرین اسم
+
+
+lastStudent = student.name;
+
+
+document.getElementById(
+"lastStudent"
+).innerHTML=
+
+student.name;
+
+
+
+
+// انتقال به کلاس
+
+addStudentToClass(student);
+
+
+
+}
+
+}
+
+
+};
+
+
+
+
+
+recognition.onerror=function(event){
+
+
+console.log(
+"Speech Error:",
+event.error
+);
+
+
+};
+
+
+
+
+
+recognition.onend=function(){
+
+
+voiceStatus.innerHTML=
+
+"میکروفون قطع شد";
+
+
+};
+
+
+
+
+
+
+startButton.onclick=function(){
+
+
+recognition.start();
+
+
+};
+
+
+
+}
+
+
+
+</script>
+
 
 </body>
 
