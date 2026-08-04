@@ -559,8 +559,74 @@ font-size:21px;
         
         loadStudents();
         
-        
-        
+        async function loadOldCalls(){
+
+
+try{
+
+
+const response =
+await fetch("/api/get-calls");
+
+
+const calls =
+await response.json();
+
+
+
+calls.forEach(call=>{
+
+
+addCallToClass(call);
+
+
+});
+
+
+
+console.log(
+"Old Calls Loaded:",
+calls
+);
+
+
+
+}
+
+
+catch(error){
+
+console.log(
+"Load Calls Error:",
+error
+);
+
+
+}
+
+
+}
+function addCallToClass(call){
+
+
+let student = {
+
+
+name:call.student_name,
+
+class_name:call.class_name
+
+
+};
+
+
+
+addStudentToClass(student);
+
+
+}
+        // شروع خواندن فراخوان‌های قبلی
+loadOldCalls();
         
         // =====================================
         // پاک کردن کلاس ها در شروع صفحه
