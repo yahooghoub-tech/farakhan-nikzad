@@ -7,7 +7,7 @@ SUPABASE_KEY
 );
 
 
-const teacherClass="ششم 1 ";
+const teacherClass="ششم-1";
 
 
 const studentsList=
