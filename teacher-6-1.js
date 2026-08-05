@@ -520,31 +520,65 @@ resetButton.addEventListener(
                 document.body.appendChild(box);
                 
                 const audio =
-                new Audio(
-                "https://farakhan.vercel.app/notification.mp3"
-                );
+new Audio(
+"notification.mp3"
+);
 
 
-                audio.volume=1;
+audio.volume=1;
 
 
-                audio.play()
-                .then(()=>{
+audio.play()
+.then(()=>{
 
-                console.log(
-                "صدای اعلان پخش شد"
-                );
 
-                })
-                .catch(error=>{
+console.log(
+"صدای اعلان پخش شد"
+);
 
-                console.log(
-                "خطای پخش صدا:",
-                error
-                );
 
-                });
-                
+setTimeout(()=>{
+
+
+const speech=
+new SpeechSynthesisUtterance();
+
+
+speech.text=
+"فراخوان جدید. دانش آموز "+
+studentName;
+
+
+speech.lang=
+"fa-IR";
+
+
+speech.rate=0.9;
+
+
+speech.pitch=1;
+
+
+window.speechSynthesis.speak(
+speech
+);
+
+
+},700);
+
+
+
+})
+.catch(error=>{
+
+
+console.log(
+"خطای پخش صدا:",
+error
+);
+
+
+});
                 
                 const speech=
                 new SpeechSynthesisUtterance();
