@@ -26,10 +26,31 @@ document.getElementById("resetCalls");
 
 const students=[
 
-{name:"علی احمدی",className:"ششم-1"},
-{name:"رضا محمدی",className:"پنجم-2"},
-{name:"محمد رضایی",className:"سوم-1"},
-{name:"امیر حسینی",className:"اول-2"}
+    
+        {name:"مهان احمدی",className:"ششم-1"},
+        {name:"پارسا بکایی",className:"ششم-1"},
+        {name:"مهدی حسین زاده سیف",className:"ششم-1"},
+        {name:"آرین خلج زاده",className:"ششم-1"},
+        {name:"محسن دمرچلی",className:"ششم-1"},
+        {name:"آرتین رضایی",className:"ششم-1"},
+        {name:"علیسان صفیاری",className:"ششم-1"},
+        {name:"آرتین عابدی",className:"ششم-1"},
+        {name:"آراد عبدالله کرمی",className:"ششم-1"},
+        {name:"مهیار غلامی",className:"ششم-1"},
+        {name:"امیرپارسا فخرآبادی",className:"ششم-1"},
+        {name:"سپهر فرج نژاد",className:"ششم-1"},
+        {name:"رایان فرهبد",className:"ششم-1"},
+        {name:"مهراد فخری",className:"ششم-1"},
+        {name:"امیرحسین قابضی",className:"ششم-1"},
+        {name:"آراد قیاسی",className:"ششم-1"},
+        {name:"آرشا کیاپاشا",className:"ششم-1"},
+        {name:"مهربد کاهانی",className:"ششم-1"},
+        {name:"مهراد مظفر",className:"ششم-1"},
+        {name:"عماد مظلومی نیا",className:"ششم-1"},
+        {name:"آرتین محمدبیگی",className:"ششم-1"},
+        {name:"میثم نگهداری",className:"ششم-1"},
+        {name:"مازیار نگهداری",className:"ششم-1"}
+        
 
 ];
 
