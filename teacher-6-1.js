@@ -243,7 +243,7 @@ async function loadTeacherCalls(){
 event:"INSERT",
 schema:"public",
 table:"calls",
-
+filter:`class_name=eq.${teacherClass}`
 },
 payload=>{
 
