@@ -541,36 +541,6 @@ console.log(
 );
 
 
-setTimeout(()=>{
-
-
-const speech =
-new SpeechSynthesisUtterance();
-
-
-speech.text =
-"فراخوان جدید. دانش آموز "+
-studentName;
-
-
-speech.lang =
-"fa-IR";
-
-
-speech.rate = 0.9;
-
-
-speech.pitch = 1;
-
-
-window.speechSynthesis.speak(
-speech
-);
-
-
-},700);
-
-
 })
 .catch(error=>{
 
