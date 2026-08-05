@@ -521,37 +521,25 @@ resetButton.addEventListener(
                 document.body.appendChild(box);
 
 
-const audio =
-new Audio(
-"notification.mp3"
-);
+                notificationAudio.currentTime=0;
 
 
-audio.volume = 1;
-
-
-audio.currentTime = 0;
-
-
-audio.play()
-.then(()=>{
-
-console.log(
-"صدای اعلان پخش شد"
-);
-
-
-})
-.catch(error=>{
-
-
-console.log(
-"خطای پخش صدا:",
-error
-);
-
-
-});
+                notificationAudio.play()
+                .then(()=>{
+                
+                console.log(
+                "صدای اعلان پخش شد"
+                );
+                
+                })
+                .catch(error=>{
+                
+                console.log(
+                "خطای پخش صدا:",
+                error
+                );
+                
+                });
 
 
 
