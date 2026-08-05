@@ -262,8 +262,7 @@ const students=[
             .select("id")
             .eq("student_name",student.name)
             .eq("class_name",student.className)
-            .eq("status","فراخوان شد");
-            
+            .neq("status","ارسال شد");
             
             if(checkError){
             
@@ -343,8 +342,7 @@ const students=[
             );
             
             
-            // نمایش در کلاس
-            addStudentToClass(student);
+            
             
             
             }
@@ -466,7 +464,6 @@ const students=[
             const {data,error}=await supabaseClient
             .from("calls")
             .select("*")
-            .eq("status","فراخوان شد")
             .order("id",{ascending:true});
             
             
