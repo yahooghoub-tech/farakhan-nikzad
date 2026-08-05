@@ -662,6 +662,88 @@ recognition.onresult=function(event){
             
             
             });
+
+            supabaseClient
+.channel("nazem-new-call")
+.on(
+"postgres_changes",
+{
+
+event:"INSERT",
+
+schema:"public",
+
+table:"calls"
+
+},
+payload=>{
+
+
+console.log(
+"فراخوان جدید ثبت شد:",
+payload.new
+);
+
+
+
+const student={
+
+
+id:payload.new.id,
+
+
+name:payload.new.student_name,
+
+
+className:
+payload.new.class_name.replaceAll(
+" ",
+"-"
+),
+
+
+status:
+payload.new.status,
+
+
+called_date:
+payload.new.called_date,
+
+
+called_time:
+payload.new.called_time,
+
+
+received_time:
+payload.new.received_time,
+
+
+sent_time:
+payload.new.sent_time
+
+
+};
+
+
+
+addStudentToClass(student);
+
+
+
+}
+)
+.subscribe(
+(status)=>{
+
+
+console.log(
+"Nazem INSERT Realtime:",
+status
+);
+
+
+});
+
             resetButton.addEventListener(
                 "click",
                 async function(){
