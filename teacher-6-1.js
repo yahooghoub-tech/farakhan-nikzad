@@ -517,20 +517,24 @@ resetButton.addEventListener(
                 
                 
                 
+             
                 document.body.appendChild(box);
-                
-                const audio =
+
+
+const audio =
 new Audio(
 "notification.mp3"
 );
 
 
-audio.volume=1;
+audio.volume = 1;
+
+
+audio.currentTime = 0;
 
 
 audio.play()
 .then(()=>{
-
 
 console.log(
 "صدای اعلان پخش شد"
@@ -540,23 +544,23 @@ console.log(
 setTimeout(()=>{
 
 
-const speech=
+const speech =
 new SpeechSynthesisUtterance();
 
 
-speech.text=
+speech.text =
 "فراخوان جدید. دانش آموز "+
 studentName;
 
 
-speech.lang=
+speech.lang =
 "fa-IR";
 
 
-speech.rate=0.9;
+speech.rate = 0.9;
 
 
-speech.pitch=1;
+speech.pitch = 1;
 
 
 window.speechSynthesis.speak(
@@ -565,7 +569,6 @@ speech
 
 
 },700);
-
 
 
 })
@@ -579,42 +582,14 @@ error
 
 
 });
-                
-                const speech=
-                new SpeechSynthesisUtterance();
-                
-                
-                speech.text=
-                "فراخوان جدید. دانش آموز "+
-                studentName;
-                
-                
-                speech.lang=
-                "fa-IR";
-                
-                
-                speech.rate=0.9;
-                
-                
-                speech.pitch=1;
-                
-                
-                
-                window.speechSynthesis.speak(
-                speech
-                );
-                
-                
-                
-                
-                setTimeout(()=>{
-                
-                
-                box.remove();
-                
-                
-                },5000);
-                
-                
-                
-                }
+
+
+
+setTimeout(()=>{
+
+
+box.remove();
+
+
+},5000);
+}
