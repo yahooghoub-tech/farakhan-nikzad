@@ -34,3 +34,28 @@ body{font-family:Vazirmatn,Tahoma,sans-serif;background:linear-gradient(135deg,#
 .action-buttons button{width:100%}
 .student-name{font-size:15px}
 }
+@media(max-width:768px){
+
+    .student-row{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    }
+    
+    .action-buttons{
+    display:flex;
+    flex-direction:column;
+    }
+    
+    button{
+    width:100%;
+    }
+    
+    }
+    @media(min-width:769px) and (max-width:1100px){
+
+        .student-row{
+        flex-wrap:wrap;
+        }
+        
+        }

@@ -519,7 +519,31 @@ resetButton.addEventListener(
                 
                 document.body.appendChild(box);
                 
-                
+                const audio =
+                new Audio(
+                "https://آدرس-سایت-شما/notification.mp3"
+                );
+
+
+                audio.volume=1;
+
+
+                audio.play()
+                .then(()=>{
+
+                console.log(
+                "صدای اعلان پخش شد"
+                );
+
+                })
+                .catch(error=>{
+
+                console.log(
+                "خطای پخش صدا:",
+                error
+                );
+
+                });
                 
                 
                 const speech=
