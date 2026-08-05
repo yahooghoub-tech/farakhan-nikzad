@@ -521,7 +521,7 @@ resetButton.addEventListener(
                 
                 const audio =
                 new Audio(
-                "https://آدرس-سایت-شما/notification.mp3"
+                "https://farakhan.vercel.app/notification.mp3"
                 );
 
 
