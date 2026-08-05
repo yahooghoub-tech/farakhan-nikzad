@@ -7,6 +7,41 @@ SUPABASE_KEY
 );
 
 
+let notificationAudio =
+new Audio("notification.mp3");
+
+
+const enableSound =
+document.getElementById("enableSound");
+
+
+enableSound.onclick=function(){
+
+
+notificationAudio.play()
+.then(()=>{
+
+
+notificationAudio.pause();
+
+notificationAudio.currentTime=0;
+
+
+console.log(
+"صدای اعلان فعال شد"
+);
+
+
+})
+.catch(error=>{
+
+console.log(error);
+
+});
+
+
+};
+
 const teacherClass="ششم-1";
 
 
