@@ -59,3 +59,96 @@ body{font-family:Vazirmatn,Tahoma,sans-serif;background:linear-gradient(135deg,#
         }
         
         }
+        .call-notification{
+
+            position:fixed;
+            
+            top:20px;
+            
+            right:20px;
+            
+            background:
+            rgba(0,120,255,0.85);
+            
+            color:white;
+            
+            padding:20px 30px;
+            
+            border-radius:20px;
+            
+            font-size:20px;
+            
+            text-align:center;
+            
+            z-index:9999;
+            
+            box-shadow:
+            0 0 20px rgba(0,0,0,.3);
+            
+            animation:
+            showNotif .4s ease;
+            
+            }
+            
+            
+            
+            .call-notification strong{
+            
+            display:block;
+            
+            font-size:26px;
+            
+            margin-top:10px;
+            
+            }
+            
+            
+            
+            @keyframes showNotif{
+            
+            from{
+            
+            transform:translateY(-50px);
+            
+            opacity:0;
+            
+            }
+            
+            
+            to{
+            
+            transform:translateY(0);
+            
+            opacity:1;
+            
+            }
+            
+            }
+            
+            
+            
+            @media(max-width:600px){
+            
+            
+            .call-notification{
+            
+            right:10px;
+            
+            left:10px;
+            
+            top:15px;
+            
+            font-size:18px;
+            
+            }
+            
+            
+            
+            .call-notification strong{
+            
+            font-size:22px;
+            
+            }
+            
+            
+            }

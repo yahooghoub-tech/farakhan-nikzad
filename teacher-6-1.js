@@ -329,10 +329,10 @@ async function loadTeacherCalls(){
             
             }
             
+            showCallNotification(
+                payload.new.student_name
+                );
             
-            alert(
-            "فراخوان جدید: "+payload.new.student_name
-            );
             
             createStudentCard(
             payload.new
@@ -494,3 +494,69 @@ resetButton.addEventListener(
             return "";
             
             }
+            function showCallNotification(studentName){
+
+
+                const box=document.createElement("div");
+                
+                
+                box.className="call-notification";
+                
+                
+                box.innerHTML=`
+                
+                <div>
+                📢 فراخوان جدید
+                </div>
+                
+                <strong>
+                ${studentName}
+                </strong>
+                
+                `;
+                
+                
+                
+                document.body.appendChild(box);
+                
+                
+                
+                
+                const speech=
+                new SpeechSynthesisUtterance();
+                
+                
+                speech.text=
+                "فراخوان جدید. دانش آموز "+
+                studentName;
+                
+                
+                speech.lang=
+                "fa-IR";
+                
+                
+                speech.rate=0.9;
+                
+                
+                speech.pitch=1;
+                
+                
+                
+                window.speechSynthesis.speak(
+                speech
+                );
+                
+                
+                
+                
+                setTimeout(()=>{
+                
+                
+                box.remove();
+                
+                
+                },5000);
+                
+                
+                
+                }
