@@ -339,59 +339,82 @@ const students=[
         
         
         
-        const resetButton=
-        document.getElementById("resetCalls");
-        
-        
-        resetButton.addEventListener("click",function(){
-        
-        
-        const confirmReset=
-        confirm("تمام فراخوان‌ها پاک شوند؟");
-        
-        
-        if(!confirmReset){
-        return;
-        }
-        
-        
-        
-        document.querySelectorAll(".students-list")
-        .forEach(box=>{
-        
-        box.innerHTML="";
-        
-        });
-        
-        
-        
-        document.querySelectorAll(".class-header span")
-        .forEach(count=>{
-        
-        count.innerText="0";
-        
-        });
-        
-        
-        
-        speechText.innerText=
-        "منتظر شنیدن نام دانش‌آموز...";
-        
-        
-        micStatus.innerText=
-        "میکروفون فعال است و در حال شنیدن...";
-        
-        
-        
-        console.log(
-        "تمام فراخوان‌ها پاک شدند"
-        );
-        
-        
-        });
-        
-        
-        
+            const resetButton =
+            document.getElementById("resetCalls");
+            
+            
+            resetButton.addEventListener(
+            "click",
+            async function(){
+            
+            
+            const confirmReset=
+            confirm("تمام فراخوان‌ها پاک شوند؟");
+            
+            
+            if(!confirmReset){
+            return;
+            }
+            
+            
+            // حذف از دیتابیس calls
+            
+            const {error}=await supabaseClient
+            .from("calls")
+            .delete()
+            .gte("id",0);
+            
+            
+            
+            if(error){
+            
+            console.error(
+            "خطا در حذف فراخوان‌ها:",
+            error
+            );
+            
+            return;
+            
+            }
+            
+            
+            
+            // پاک کردن کارت‌ها
+            
+            document.querySelectorAll(".students-list")
+            .forEach(box=>{
+            
+            box.innerHTML="";
+            
+            });
+            
+            
+            
+            // صفر کردن تعدادها
+            
+            document.querySelectorAll(".class-header span")
+            .forEach(count=>{
+            
+            count.innerText="0";
+            
+            });
+            
+            
+            speechText.innerText=
+            "منتظر شنیدن نام دانش‌آموز...";
+            
+            
+            micStatus.innerText=
+            "میکروفون فعال است و در حال شنیدن...";
+            
+            
+            console.log(
+            "تمام فراخوان‌ها از دیتابیس حذف شدند"
+            );
+            
+            
+            });
+       
         /*
         تابع تغییر وضعیت دانش‌آموز
         بعد از دریافت پاسخ معلم
@@ -447,14 +470,13 @@ const students=[
             data.forEach(call=>{
             
             
-            const student={
-            
-            name:call.student_name,
-            
-            className:call.class_name
-            
-            };
-            
+                const student={
+
+                    name:call.student_name,
+                    
+                    className:call.class_name.replaceAll(" ","-")
+                    
+                    };
             
             addStudentToClass(student);
             
@@ -463,3 +485,4 @@ const students=[
             
             
             }
+            
