@@ -372,6 +372,59 @@ speech
             
             
             });
+
+            supabaseClient
+.channel("teacher-delete-calls")
+.on(
+"postgres_changes",
+{
+event:"DELETE",
+schema:"public",
+table:"calls"
+},
+payload=>{
+
+
+console.log(
+"حذف فراخوان توسط ناظم:",
+payload.old
+);
+
+
+
+const card =
+document.querySelector(
+`.student-card[data-id="${payload.old.id}"]`
+);
+
+
+
+if(card){
+
+card.remove();
+
+console.log(
+"کارت حذف شد"
+);
+
+}
+
+
+})
+.subscribe((status)=>{
+
+
+console.log(
+"Delete Realtime:",
+status
+);
+
+
+});
+
+
+
+
 resetButton.addEventListener(
     "click",
     async function(){
