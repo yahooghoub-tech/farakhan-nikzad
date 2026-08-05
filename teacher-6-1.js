@@ -392,10 +392,12 @@ resetButton.addEventListener(
     
     
     
-    const {error}=await supabaseClient
-    .from("calls")
-    .delete()
-    .eq("class_name",teacherClass);
+    studentsList.innerHTML=
+`
+<div class="empty-box">
+هنوز فراخوانی ثبت نشده است
+</div>
+`;
     
     
     
