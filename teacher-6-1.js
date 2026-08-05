@@ -248,18 +248,23 @@ filter:`class_name=eq.${teacherClass}`
 payload=>{
 
 
-console.log(
-"فراخوان جدید:",
-payload.new
-);
-
-
-createStudentCard(
-payload.new
-);
-
-
-}
+    console.log(
+    "فراخوان جدید دریافت شد:",
+    payload.new
+    );
+    
+    
+    alert(
+    "فراخوان جدید: "+payload.new.student_name
+    );
+    
+    
+    createStudentCard(
+    payload.new
+    );
+    
+    
+    }
 )
 .subscribe((status)=>{
 
