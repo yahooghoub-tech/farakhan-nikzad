@@ -361,3 +361,26 @@ resetButton.addEventListener(
         return html;
         
         }
+        function getStatusClass(status){
+
+            if(status==="فراخوان شد"){
+            
+            return "status-called";
+            
+            }
+            
+            if(status==="دریافت فراخوان"){
+            
+            return "status-received";
+            
+            }
+            
+            if(status==="ارسال شد"){
+            
+            return "status-sent";
+            
+            }
+            
+            return "";
+            
+            }
