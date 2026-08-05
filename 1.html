@@ -3,27 +3,49 @@
 
 <head>
 <meta charset="UTF-8">
-<title>تست میکروفون</title>
+<title>تست تشخیص صدا</title>
 
 <style>
+
 body{
 font-family:tahoma;
-text-align:center;
 background:#111827;
 color:white;
+text-align:center;
 padding:40px;
 }
 
 button{
 font-size:22px;
-padding:15px 30px;
+padding:15px 35px;
 border-radius:15px;
+cursor:pointer;
 }
 
 #status{
-margin-top:30px;
-font-size:25px;
+margin-top:20px;
+font-size:20px;
+color:#22c55e;
 }
+
+
+#result{
+
+margin:30px auto;
+max-width:600px;
+
+background:#1f2937;
+
+padding:25px;
+
+border-radius:15px;
+
+font-size:28px;
+
+min-height:80px;
+
+}
+
 </style>
 
 </head>
@@ -32,10 +54,13 @@ font-size:25px;
 <body>
 
 
-<h1>تست Vosk</h1>
+<h1>
+🎤 تست تشخیص گفتار
+</h1>
+
 
 <button id="start">
-🎤 شروع گوش دادن
+شروع گوش دادن
 </button>
 
 
@@ -44,38 +69,110 @@ font-size:25px;
 </div>
 
 
+
+<div id="result">
+متن اینجا نمایش داده می‌شود...
+</div>
+
+
+
 <script>
+
 
 const status =
 document.getElementById("status");
 
 
+const result =
+document.getElementById("result");
+
+
+
+let recognition;
+
+
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+
+
+if(SpeechRecognition){
+
+
+recognition =
+new SpeechRecognition();
+
+
+recognition.lang="fa-IR";
+
+recognition.continuous=true;
+
+recognition.interimResults=true;
+
+
+
+recognition.onresult=function(event){
+
+
+let text="";
+
+
+for(
+let i=event.resultIndex;
+i<event.results.length;
+i++
+){
+
+text +=
+event.results[i][0].transcript;
+
+}
+
+
+result.innerHTML=text;
+
+
+};
+
+
+
+recognition.onstart=function(){
+
+status.innerHTML=
+"🎤 در حال شنیدن...";
+
+};
+
+
+
+recognition.onerror=function(e){
+
+status.innerHTML=
+"خطا: "+e.error;
+
+};
+
+
+
+}
+else{
+
+status.innerHTML=
+"مرورگر پشتیبانی نمی‌کند";
+
+}
+
+
+
+
 document
 .getElementById("start")
-.onclick = async()=>{
+.onclick=function(){
 
 
-try{
-
-const stream =
-await navigator.mediaDevices.getUserMedia({
-audio:true
-});
-
-
-status.innerHTML =
-"✅ میکروفون فعال شد";
-
-
-}
-catch(e){
-
-status.innerHTML =
-"❌ اجازه میکروفون داده نشد";
-
-console.log(e);
-
-}
+recognition.start();
 
 
 };
