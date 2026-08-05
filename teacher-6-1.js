@@ -77,7 +77,14 @@ async function loadTeacherCalls(){
     loadTeacherCalls();
     function createStudentCard(call){
 
-
+        const oldCard=document.querySelector(
+            `.student-card[data-id="${call.id}"]`
+            );
+            
+            if(oldCard){
+            return;
+            }
+            
         const card=document.createElement("div");
         
         card.className="student-card";
