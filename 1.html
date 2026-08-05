@@ -2,81 +2,194 @@
 <html lang="fa" dir="rtl">
 
 <head>
+
 <meta charset="UTF-8">
-<title>تست تشخیص صدا</title>
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>تست سیستم تشخیص صدا</title>
+
 
 <style>
 
+*{
+box-sizing:border-box;
+}
+
+
 body{
+
 font-family:tahoma;
+
 background:#111827;
+
 color:white;
+
 text-align:center;
-padding:40px;
-}
 
-button{
-font-size:22px;
-padding:15px 35px;
-border-radius:15px;
-cursor:pointer;
-}
+padding:30px;
 
-#status{
-margin-top:20px;
-font-size:20px;
-color:#22c55e;
 }
 
 
-#result{
+.container{
 
-margin:30px auto;
 max-width:600px;
+
+margin:auto;
 
 background:#1f2937;
 
 padding:25px;
 
-border-radius:15px;
-
-font-size:28px;
-
-min-height:80px;
+border-radius:20px;
 
 }
 
+
+
+button{
+
+width:90%;
+
+padding:15px;
+
+font-size:22px;
+
+border:none;
+
+border-radius:15px;
+
+margin:10px;
+
+cursor:pointer;
+
+}
+
+
+
+#start{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+
+#stop{
+
+background:#dc2626;
+
+color:white;
+
+}
+
+
+
+.status{
+
+margin:20px;
+
+font-size:20px;
+
+color:#22c55e;
+
+}
+
+
+
+#result{
+
+background:#374151;
+
+min-height:100px;
+
+padding:25px;
+
+border-radius:15px;
+
+font-size:26px;
+
+margin-top:20px;
+
+line-height:2;
+
+}
+
+
+
 </style>
 
+
 </head>
+
 
 
 <body>
 
 
+<div class="container">
+
+
 <h1>
-🎤 تست تشخیص گفتار
+🎤 تست تشخیص صدا
 </h1>
 
 
+
 <button id="start">
+
 شروع گوش دادن
+
 </button>
 
 
-<div id="status">
+
+<button id="stop">
+
+توقف
+
+</button>
+
+
+
+<div class="status" id="status">
+
 خاموش
+
 </div>
 
 
 
 <div id="result">
-متن اینجا نمایش داده می‌شود...
+
+متن تشخیص داده شده اینجا نمایش داده می‌شود
+
 </div>
 
 
 
+</div>
+
+
+
+<script src="vosk-test.js"></script>
+
 <script>
+    //====================================
+// تست میکروفون دائم
+// آماده اتصال Vosk
+//====================================
+
+
+const startBtn =
+document.getElementById("start");
+
+
+const stopBtn =
+document.getElementById("stop");
 
 
 const status =
@@ -88,99 +201,166 @@ document.getElementById("result");
 
 
 
-let recognition;
+let stream = null;
+
+let recorder = null;
+
+let chunks = [];
 
 
 
-const SpeechRecognition =
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
+//====================================
+// شروع میکروفون
+//====================================
+
+
+startBtn.onclick = async()=>{
+
+
+try{
+
+
+stream =
+await navigator.mediaDevices.getUserMedia({
+
+audio:true
+
+});
 
 
 
-if(SpeechRecognition){
-
-
-recognition =
-new SpeechRecognition();
-
-
-recognition.lang="fa-IR";
-
-recognition.continuous=true;
-
-recognition.interimResults=true;
+recorder =
+new MediaRecorder(stream);
 
 
 
-recognition.onresult=function(event){
+recorder.ondataavailable = e=>{
 
 
-let text="";
+if(e.data.size > 0){
+
+chunks.push(e.data);
+
+}
+
+};
 
 
-for(
-let i=event.resultIndex;
-i<event.results.length;
-i++
-){
 
-text +=
-event.results[i][0].transcript;
+recorder.start(1000);
+
+
+
+status.innerHTML =
+"🎤 میکروفون فعال است و در حال گوش دادن...";
+
+
+
+result.innerHTML =
+"منتظر صدای شما هستم...";
+
+
+
+// شروع حلقه پردازش
+
+listenLoop();
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+status.innerHTML =
+"❌ دسترسی میکروفون رد شد";
+
 
 }
 
 
-result.innerHTML=text;
-
 
 };
 
 
 
-recognition.onstart=function(){
 
-status.innerHTML=
-"🎤 در حال شنیدن...";
-
-};
+//====================================
+// توقف
+//====================================
 
 
-
-recognition.onerror=function(e){
-
-status.innerHTML=
-"خطا: "+e.error;
-
-};
+stopBtn.onclick = ()=>{
 
 
+if(recorder){
 
-}
-else{
-
-status.innerHTML=
-"مرورگر پشتیبانی نمی‌کند";
+recorder.stop();
 
 }
 
 
+if(stream){
+
+stream.getTracks().forEach(
+track=>track.stop()
+);
+
+}
 
 
-document
-.getElementById("start")
-.onclick=function(){
-
-
-recognition.start();
+status.innerHTML =
+"⛔ متوقف شد";
 
 
 };
 
 
+
+
+//====================================
+// حلقه دریافت صدا
+//====================================
+
+
+function listenLoop(){
+
+
+
+setInterval(()=>{
+
+
+
+if(chunks.length){
+
+
+console.log(
+"دریافت صدا:",
+chunks.length
+);
+
+
+// اینجا در مرحله بعد
+// صدا به Vosk ارسال می‌شود
+
+
+
+chunks=[];
+
+
+}
+
+
+
+},2000);
+
+
+
+}
 </script>
-
-
 </body>
 
 </html>
