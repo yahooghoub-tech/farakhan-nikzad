@@ -149,27 +149,53 @@ async function loadTeacherCalls(){
         const sendButton=
         card.querySelector(".send-btn");
         
-        
-        
         receiveButton.onclick=function(){
+
+            if(call.status!=="فراخوان شد"){
+            
+            return;
+            
+            }
+            
+            
+            updateCallStatus(
+            call.id,
+            "دریافت فراخوان"
+            );
+            
+            
+            receiveButton.disabled=true;
+            
+            
+            };
+            
+            
+            
+            sendButton.onclick=function(){
+            
+            if(
+            call.status==="ارسال شد"
+            ){
+            
+            return;
+            
+            }
+            
+            
+            updateCallStatus(
+            call.id,
+            "ارسال شد"
+            );
+            
+            
+            receiveButton.disabled=true;
+            
+            sendButton.disabled=true;
+            
+            
+            };
         
-        updateCallStatus(
-        call.id,
-        "دریافت فراخوان"
-        );
-        
-        };
-        
-        
-        
-        sendButton.onclick=function(){
-        
-        updateCallStatus(
-        call.id,
-        "ارسال شد"
-        );
-        
-        };
+      
         
         
         
