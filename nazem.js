@@ -130,7 +130,25 @@ const students=[
     
     }
     
-    
+    function findMultipleStudents(text){
+
+
+        students.forEach(student=>{
+        
+        
+        if(text.includes(student.name)){
+        
+        
+        sendTeacherMessage(student);
+        
+        
+        }
+        
+        
+        });
+        
+        
+        }
     
     recognition.onresult=function(event){
     
@@ -146,7 +164,7 @@ const students=[
     speechText.innerText=text;
     
     
-    findStudentFromText(text);
+    findMultipleStudents(text);
     
     };
     
@@ -205,27 +223,25 @@ const students=[
         
         card.className="student-card";
         
-        
         card.innerHTML=`
+
+        <div class="student-row">
         
-        <div class="student-name">
+        <span class="student-name">
         ${student.name}
-        </div>
+        </span>
         
-        
-        <div class="student-status status-called">
+        <span class="student-status status-called">
         فراخوان شد
-        </div>
+        </span>
         
+        <span class="student-time">
+        ${date} ${time}
+        </span>
         
-        <div class="student-time">
-        📅 ${date}
-        <br>
-        ⏰ ${time}
         </div>
         
         `;
-        
         
         
         classBox.appendChild(card);
