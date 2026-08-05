@@ -1,6 +1,6 @@
-const SUPABASE_URL="آدرس پروژه Supabase شما";
-const SUPABASE_KEY="کلید Publishable شما";
+const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 
+const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
