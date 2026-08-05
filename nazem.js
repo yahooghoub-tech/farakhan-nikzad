@@ -663,6 +663,54 @@ recognition.onresult=function(event){
             
             });
 
+
+            supabaseClient
+.channel("nazem-delete-update")
+.on(
+"postgres_changes",
+{
+event:"DELETE",
+schema:"public",
+table:"calls"
+},
+payload=>{
+
+
+console.log(
+"حذف فراخوان:",
+payload.old
+);
+
+
+
+const card =
+document.querySelector(
+`.student-card[data-id="${payload.old.id}"]`
+);
+
+
+
+if(card){
+
+card.remove();
+
+}
+
+
+
+})
+.subscribe(
+(status)=>{
+
+
+console.log(
+"Nazem Delete Realtime:",
+status
+);
+
+
+});
+
             supabaseClient
 .channel("nazem-new-call")
 .on(
