@@ -7,7 +7,6 @@ SUPABASE_KEY
 );
 
 
-
 const teacherClass="ششم-1";
 
 
@@ -392,12 +391,10 @@ resetButton.addEventListener(
     
     
     
-    studentsList.innerHTML=
-`
-<div class="empty-box">
-هنوز فراخوانی ثبت نشده است
-</div>
-`;
+    const {error}=await supabaseClient
+    .from("calls")
+    .delete()
+    .eq("class_name",teacherClass);
     
     
     
