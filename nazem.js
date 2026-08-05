@@ -66,7 +66,7 @@ recognition.lang="fa-IR";
 
 recognition.continuous=true;
 
-recognition.interimResults=true;
+recognition.interimResults=false;
 
 
 
@@ -248,7 +248,11 @@ recognition.onresult=function(event){
     
     
     
-        if(bestStudent && bestScore>0.70){
+        if(
+            bestStudent &&
+            bestScore>0.80 &&
+            text.length >= bestStudent.name.length-2
+            ){
     
     
             console.log(
@@ -258,7 +262,11 @@ recognition.onresult=function(event){
             );
     
     
-            sendTeacherMessage(bestStudent);
+            setTimeout(()=>{
+
+                sendTeacherMessage(bestStudent);
+                
+                },1500);
     
     
         }
