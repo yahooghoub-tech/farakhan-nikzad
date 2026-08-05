@@ -99,9 +99,40 @@ min-height:100px;
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js"></script>
 
 <script>
+let model;
+let recognizer;
 
+
+async function loadVosk(){
+
+
+status.innerHTML =
+"در حال بارگذاری مدل...";
+
+
+model =
+await Vosk.createModel(
+"./model"
+);
+
+
+recognizer =
+new model.KaldiRecognizer(
+16000
+);
+
+
+status.innerHTML =
+"✅ مدل آماده است";
+
+
+}
+
+
+loadVosk();
 
 const textBox =
 document.getElementById("text");
