@@ -254,7 +254,14 @@ payload.new
 
 }
 )
-.subscribe();
+.subscribe((status)=>{
+
+    console.log(
+    "Realtime Status:",
+    status
+    );
+    
+    });
 resetButton.addEventListener(
     "click",
     async function(){
