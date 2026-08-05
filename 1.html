@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<title>تست میکروفون</title>
+
+<style>
+body{
+font-family:tahoma;
+text-align:center;
+background:#111827;
+color:white;
+padding:40px;
+}
+
+button{
+font-size:22px;
+padding:15px 30px;
+border-radius:15px;
+}
+
+#status{
+margin-top:30px;
+font-size:25px;
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>تست Vosk</h1>
+
+<button id="start">
+🎤 شروع گوش دادن
+</button>
+
+
+<div id="status">
+خاموش
+</div>
+
+
+<script>
+
+const status =
+document.getElementById("status");
+
+
+document
+.getElementById("start")
+.onclick = async()=>{
+
+
+try{
+
+const stream =
+await navigator.mediaDevices.getUserMedia({
+audio:true
+});
+
+
+status.innerHTML =
+"✅ میکروفون فعال شد";
+
+
+}
+catch(e){
+
+status.innerHTML =
+"❌ اجازه میکروفون داده نشد";
+
+console.log(e);
+
+}
+
+
+};
+
+
+</script>
+
+
+</body>
+
+</html>
