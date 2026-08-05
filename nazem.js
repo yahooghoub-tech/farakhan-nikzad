@@ -367,17 +367,24 @@ recognition.onresult=function(event){
         </span>
         
         
-        <span class="student-status status-called">
-        فراخوان شد
+                <span class="student-status ${getStatusClass(student.status)}">
+        ${student.status || "فراخوان شد"}
         </span>
         
         
         <span class="student-time">
-        
-        ${student.called_date || ""}
-        ${student.called_time || ""}
-        
-        </span>
+
+⏰ ${student.called_time || ""}
+
+<br>
+
+📥 ${student.received_time || ""}
+
+<br>
+
+📤 ${student.sent_time || ""}
+
+</span>
         
         
         </div>
@@ -551,31 +558,43 @@ recognition.onresult=function(event){
             data.forEach(call=>{
             
             
-            const student={
-            
-            
-            id:call.id,
-            
-            
-            name:call.student_name,
-            
-            
-            className:
-            call.class_name.replaceAll(
-            " ",
-            "-"
-            ),
-            
-            
-            called_date:
-            call.called_date,
-            
-            
-            called_time:
-            call.called_time
-            
-            
-            };
+                const student={
+
+
+                    id:call.id,
+                    
+                    
+                    name:call.student_name,
+                    
+                    
+                    className:
+                    call.class_name.replaceAll(
+                    " ",
+                    "-"
+                    ),
+                    
+                    
+                    status:
+                    call.status,
+                    
+                    
+                    called_date:
+                    call.called_date,
+                    
+                    
+                    called_time:
+                    call.called_time,
+                    
+                    
+                    received_time:
+                    call.received_time,
+                    
+                    
+                    sent_time:
+                    call.sent_time
+                    
+                    
+                    };
             
             
             
