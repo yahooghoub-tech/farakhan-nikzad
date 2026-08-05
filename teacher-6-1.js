@@ -76,6 +76,16 @@ async function loadTeacherCalls(){
     
     loadTeacherCalls();
     function createStudentCard(call){
+        if(call.class_name.trim() !== teacherClass.trim()){
+
+            console.log(
+            "کارت کلاس دیگر ساخته نشد:",
+            call.class_name
+            );
+            
+            return;
+            
+            }
 
         const oldCard=document.querySelector(
             `.student-card[data-id="${call.id}"]`
