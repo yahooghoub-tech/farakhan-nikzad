@@ -2,120 +2,70 @@
 <html lang="fa" dir="rtl">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>تست Vosk فراخوان</title>
-
+<title>تست تبدیل صدا به متن</title>
 
 <style>
 
 body{
-
 font-family:tahoma;
-
 background:#111827;
-
 color:white;
-
 text-align:center;
-
 padding:30px;
-
 }
-
 
 .box{
-
 max-width:600px;
-
 margin:auto;
-
 background:#1f2937;
-
 padding:25px;
-
 border-radius:20px;
-
 }
-
-
 
 button{
-
-width:90%;
-
-padding:15px;
-
-margin:10px;
-
+padding:15px 30px;
 font-size:20px;
-
-border-radius:15px;
-
 border:0;
-
+border-radius:15px;
+margin:10px;
 cursor:pointer;
-
 }
-
 
 #start{
-
 background:#16a34a;
-
 color:white;
-
 }
-
 
 #stop{
-
 background:#dc2626;
-
 color:white;
-
 }
-
-
 
 #status{
-
 margin:20px;
-
 font-size:20px;
-
-color:#22c55e;
-
 }
-
-
 
 #text{
 
 background:#374151;
 
-border-radius:15px;
-
 padding:25px;
+
+border-radius:15px;
 
 font-size:28px;
 
 min-height:100px;
 
-line-height:2;
-
 }
-
-
 
 </style>
 
-
 </head>
-
 
 
 <body>
@@ -123,284 +73,159 @@ line-height:2;
 
 <div class="box">
 
-
-<h1>
-🎤 تست Vosk
-</h1>
-
+<h1>🎤 تست تشخیص صدا</h1>
 
 
 <button id="start">
-
-شروع گوش دادن
-
+شروع
 </button>
 
 
 <button id="stop">
-
 توقف
-
 </button>
 
 
-
 <div id="status">
-
 خاموش
-
 </div>
-
 
 
 <div id="text">
-
 متن اینجا نمایش داده می‌شود
+</div>
+
 
 </div>
 
 
 
-</div>
+<script>
 
-<script src="https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js"></script>
 
-<script src="vosk-test.js"></script>
-<script>//====================================
-    // Vosk Test - Microphone Stream
-    //====================================
-    
-    
-    const startBtn =
-    document.getElementById("start");
-    
-    
-    const stopBtn =
-    document.getElementById("stop");
-    
-    
-    const status =
-    document.getElementById("status");
-    
-    
-    const textBox =
-    document.getElementById("text");
-    
-    
-    
-    let audioContext;
-    
-    let stream;
-    
-    let processor;
-    
-    let source;
-    
-    let isRunning=false;
-    
-    
-    
-    //====================================
-    // شروع میکروفون
-    //====================================
-    
-    
-    startBtn.onclick = async()=>{
-    
-    
-    if(isRunning)
-    return;
-    
-    
-    
-    try{
-    
-    
-    stream =
-    await navigator.mediaDevices.getUserMedia({
-    
-    audio:{
-    echoCancellation:true,
-    noiseSuppression:true,
-    autoGainControl:true
-    }
-    
-    });
-    
-    
-    
-    audioContext =
-    new AudioContext({
-    sampleRate:16000
-    });
-    
-    
-    
-    source =
-    audioContext
-    .createMediaStreamSource(stream);
-    
-    
-    
-    processor =
-    audioContext
-    .createScriptProcessor(
-    4096,
-    1,
-    1
-    );
-    
-    
-    
-    source.connect(processor);
-    
-    
-    processor.connect(
-    audioContext.destination
-    );
-    
-    
-    
-    processor.onaudioprocess =
-    (event)=>{
-    
-    
-    if(!isRunning)
-    return;
-    
-    
-    
-    const input =
-    event.inputBuffer
-    .getChannelData(0);
-    
-    
-    
-    // اینجا صدا به Vosk ارسال می‌شود
-    
-    sendToVosk(input);
-    
-    
-    
-    };
-    
-    
-    
-    isRunning=true;
-    
-    
-    
-    status.innerHTML=
-    "🎤 میکروفون روشن است و دائم گوش می‌دهد";
-    
-    
-    
-    textBox.innerHTML=
-    "منتظر صحبت شما...";
-    
-    
-    
-    }
-    
-    catch(error){
-    
-    
-    console.log(error);
-    
-    
-    status.innerHTML=
-    "❌ خطا در دسترسی میکروفون";
-    
-    
-    }
-    
-    
-    
-    };
-    
-    
-    
-    
-    //====================================
-    // توقف کامل
-    //====================================
-    
-    
-    stopBtn.onclick=()=>{
-    
-    
-    isRunning=false;
-    
-    
-    
-    if(processor){
-    
-    processor.disconnect();
-    
-    }
-    
-    
-    
-    if(source){
-    
-    source.disconnect();
-    
-    }
-    
-    
-    
-    if(audioContext){
-    
-    audioContext.close();
-    
-    }
-    
-    
-    
-    if(stream){
-    
-    stream
-    .getTracks()
-    .forEach(
-    track=>track.stop()
-    );
-    
-    }
-    
-    
-    
-    status.innerHTML=
-    "⛔ متوقف شد";
-    
-    };
-    
-    
-    
-    
-    //====================================
-    // ارسال صدا به Vosk
-    // (فعلا تست)
-    //====================================
-    
-    
-    function sendToVosk(audioData){
-    
-    
-    /*
-    در مرحله بعد این قسمت
-    به Vosk Recognizer وصل می‌شود
-    */
-    
-    
-    console.log(
-    "دریافت نمونه صدا:",
-    audioData.length
-    );
-    
-    
-    }</script>
+const textBox =
+document.getElementById("text");
+
+
+const status =
+document.getElementById("status");
+
+
+let recognition;
+
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+
+
+if(!SpeechRecognition){
+
+status.innerHTML =
+"مرورگر پشتیبانی نمی‌کند";
+
+}
+else{
+
+
+recognition =
+new SpeechRecognition();
+
+
+recognition.lang="fa-IR";
+
+
+recognition.continuous=true;
+
+
+recognition.interimResults=true;
+
+
+
+recognition.onstart=()=>{
+
+status.innerHTML =
+"🎤 در حال گوش دادن...";
+
+};
+
+
+
+recognition.onresult=(event)=>{
+
+
+let text="";
+
+
+for(
+let i=event.resultIndex;
+i<event.results.length;
+i++
+){
+
+text +=
+event.results[i][0].transcript;
+
+}
+
+
+textBox.innerHTML=text;
+
+
+};
+
+
+
+recognition.onend=()=>{
+
+
+if(recognition){
+
+recognition.start();
+
+}
+
+
+};
+
+
+
+}
+
+
+
+document
+.getElementById("start")
+.onclick=()=>{
+
+
+recognition.start();
+
+
+};
+
+
+
+document
+.getElementById("stop")
+.onclick=()=>{
+
+
+recognition.stop();
+
+
+status.innerHTML=
+"متوقف شد";
+
+
+};
+
+
+
+</script>
+
 
 </body>
-
 
 </html>
