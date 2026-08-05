@@ -236,44 +236,71 @@ async function loadTeacherCalls(){
             
             }
             supabaseClient
-.channel("teacher-calls")
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"calls",
-filter:`class_name=eq.${teacherClass}`
-},
-payload=>{
-
-
-    console.log(
-    "فراخوان جدید دریافت شد:",
-    payload.new
-    );
-    
-    
-    alert(
-    "فراخوان جدید: "+payload.new.student_name
-    );
-    
-    
-    createStudentCard(
-    payload.new
-    );
-    
-    
-    }
-)
-.subscribe((status)=>{
-
-    console.log(
-    "Realtime Status:",
-    status
-    );
-    
-    });
+            .channel("teacher-calls")
+            .on(
+            "postgres_changes",
+            {
+            event:"INSERT",
+            schema:"public",
+            table:"calls"
+            },
+            payload=>{
+            
+            
+            console.log(
+            "فراخوان جدید دریافت شد:",
+            payload.new
+            );
+            
+            
+            const callClass = payload.new.class_name.trim();
+            const myClass = teacherClass.trim();
+            
+            
+            console.log(
+            "کلاس دریافتی:",
+            "["+callClass+"]"
+            );
+            
+            
+            console.log(
+            "کلاس معلم:",
+            "["+myClass+"]"
+            );
+            
+            
+            if(callClass !== myClass){
+            
+            console.log(
+            "این فراخوان مربوط به این کلاس نیست"
+            );
+            
+            return;
+            
+            }
+            
+            
+            alert(
+            "فراخوان جدید: "+payload.new.student_name
+            );
+            
+            createStudentCard(
+            payload.new
+            );
+            
+            
+            }
+            )
+            .subscribe((status)=>{
+            
+            
+            console.log(
+            "Realtime Status:",
+            status
+            );
+            
+            
+            });
 resetButton.addEventListener(
     "click",
     async function(){
