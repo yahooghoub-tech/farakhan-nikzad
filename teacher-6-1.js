@@ -148,6 +148,20 @@ async function loadTeacherCalls(){
         
         const sendButton=
         card.querySelector(".send-btn");
+        if(call.status==="دریافت فراخوان"){
+
+            receiveButton.disabled=true;
+            
+            }
+            
+            
+            if(call.status==="ارسال شد"){
+            
+            receiveButton.disabled=true;
+            
+            sendButton.disabled=true;
+            
+            }
         
         receiveButton.onclick=function(){
 
@@ -323,7 +337,28 @@ async function loadTeacherCalls(){
             createStudentCard(
             payload.new
             );
-            
+            const speech=
+new SpeechSynthesisUtterance();
+
+
+speech.text=
+"فراخوان جدید. دانش آموز "+
+payload.new.student_name;
+
+
+speech.lang=
+"fa-IR";
+
+
+speech.rate=0.9;
+
+
+speech.pitch=1;
+
+
+window.speechSynthesis.speak(
+speech
+);
             
             }
             )
