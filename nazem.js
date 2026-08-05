@@ -168,24 +168,100 @@ recognition.onresult=function(event){
     };
     
     
-    
-    function findMultipleStudents(text){
-    
-    
-    students.forEach(student=>{
-    
-    
-    if(text.includes(student.name)){
-    
-    
-    sendTeacherMessage(student);
-    
+    function normalizeText(text){
+
+        return text
+        .replace(/ي/g,"ی")
+        .replace(/ك/g,"ک")
+        .replace(/\s+/g," ")
+        .trim();
     
     }
     
     
-    });
     
+    function similarity(a,b){
+    
+        a=normalizeText(a);
+        b=normalizeText(b);
+    
+    
+        let longer =
+        a.length>b.length ? a:b;
+    
+    
+        let shorter =
+        a.length>b.length ? b:a;
+    
+    
+        let distance=0;
+    
+    
+        for(let i=0;i<shorter.length;i++){
+    
+            if(shorter[i]!==longer[i]){
+    
+                distance++;
+    
+            }
+    
+        }
+    
+    
+        return 1-(distance/longer.length);
+    
+    }
+    
+    
+    
+    
+    function findMultipleStudents(text){
+    
+        text=normalizeText(text);
+    
+    
+        let bestStudent=null;
+        let bestScore=0;
+    
+    
+    
+        students.forEach(student=>{
+    
+    
+            let score=
+            similarity(
+                text,
+                student.name
+            );
+    
+    
+    
+            if(score>bestScore){
+    
+                bestScore=score;
+                bestStudent=student;
+    
+            }
+    
+    
+        });
+    
+    
+    
+        if(bestStudent && bestScore>0.70){
+    
+    
+            console.log(
+            "دانش آموز پیدا شد:",
+            bestStudent,
+            bestScore
+            );
+    
+    
+            sendTeacherMessage(bestStudent);
+    
+    
+        }
     
     }
     
