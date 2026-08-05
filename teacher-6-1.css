@@ -1,0 +1,36 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:linear-gradient(135deg,#081b33,#12395a);min-height:100vh;color:white}
+.app{width:100%;max-width:1200px;margin:auto;padding:15px}
+.header{width:100%;display:flex;justify-content:space-between;align-items:center;gap:15px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border-radius:20px;padding:20px;margin-bottom:20px}
+.header-title h1{font-size:28px;margin-bottom:8px}
+.header-title p{font-size:15px;color:#d7e8ff}
+.reset-btn{border:none;background:#e53935;color:white;padding:12px 18px;border-radius:14px;font-size:15px;cursor:pointer}
+.calls-section{background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:20px;padding:20px}
+.section-title{text-align:center;margin-bottom:20px}
+.section-title h2{font-size:22px;margin-bottom:8px}
+.section-title p{font-size:14px;color:#d7e8ff}
+.students-list{display:flex;flex-direction:column;gap:10px}
+.student-card{background:rgba(255,255,255,.14);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;border:1px solid rgba(255,255,255,.2)}
+.student-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.student-name{font-size:16px;font-weight:700}
+.student-status{padding:5px 10px;border-radius:10px;font-size:13px;font-weight:700}
+.status-called{background:#ff9800;color:white}
+.status-received{background:#2196f3;color:white}
+.status-sent{background:#4caf50;color:white}
+.student-time{font-size:12px;color:#d8e8ff}
+.action-buttons{display:flex;gap:8px;width:100%}
+.action-buttons button{flex:1;border:none;padding:9px;border-radius:12px;font-size:13px;cursor:pointer;color:white}
+.receive-btn{background:#1565c0}
+.send-btn{background:#2e7d32}
+.empty-box{text-align:center;padding:30px;color:#d7e8ff;font-size:15px}
+@media(max-width:600px){
+.app{padding:8px}
+.header{flex-direction:column;align-items:stretch;text-align:center;padding:15px}
+.header-title h1{font-size:22px}
+.reset-btn{width:100%}
+.calls-section{padding:12px}
+.student-row{flex-direction:column;align-items:stretch;text-align:center}
+.action-buttons{flex-direction:column}
+.action-buttons button{width:100%}
+.student-name{font-size:15px}
+}
