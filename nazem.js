@@ -40,6 +40,22 @@ document.getElementById("speechText");
 const resetButton =
 document.getElementById("resetCalls");
 
+//====================================
+// نرمال سازی متن فارسی
+//====================================
+
+function normalizeText(text){
+
+    return text
+    .replace(/ي/g,"ی")
+    .replace(/ى/g,"ی")
+    .replace(/ك/g,"ک")
+    .replace(/‌/g,"")
+    .replace(/\s+/g,"")
+    .trim();
+    
+    }
+    
 
 //====================================
 // لیست دانش آموزان
@@ -278,23 +294,24 @@ className:"سوم-1"
 }
 
 ];
-
 //====================================
-// نرمال سازی متن فارسی
+// ساخت لیست نرمال شده دانش آموزان
 //====================================
 
-function normalizeText(text){
+const normalizedStudents =
+students.map(student=>{
 
-    return text
-    .replace(/ي/g,"ی")
-    .replace(/ى/g,"ی")
-    .replace(/ك/g,"ک")
-    .replace(/‌/g,"")
-    .replace(/\s+/g,"")
-    .trim();
-    
-    }
-    
+return {
+
+...student,
+
+normalizedName:
+
+};
+
+});
+
+
     
     //====================================
     // الگوریتم فاصله و شباهت متن
@@ -422,14 +439,11 @@ function normalizeText(text){
         
         
         
-        students.forEach(student=>{
+        normalizedStudents.forEach(student=>{
         
         
-        const studentName =
-        normalizeText(
-        student.name
-        );
-        
+            const studentName =
+            student.normalizedName;
         
         
         // پیدا کردن اسم کامل داخل متن
