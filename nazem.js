@@ -183,8 +183,8 @@ function levenshtein(a,b){
     recognition=new webkitSpeechRecognition();
     recognition.lang="fa-IR";
     recognition.continuous=true;
-    recognition.interimResults=false;
-    recognition.maxAlternatives=3;
+recognition.interimResults=false;
+recognition.maxAlternatives=3;
     recognition.onstart=function(){
     if(micStatus){
     micStatus.innerText="میکروفون فعال است و در حال شنیدن...";
@@ -200,10 +200,16 @@ function levenshtein(a,b){
     restartMic();
     };
     recognition.onend=function(){
-    if(isListening){
-    restartMic();
-    }
-    };
+
+        console.log("میکروفون متوقف شد");
+        
+        if(isListening){
+        
+        restartMic();
+        
+        }
+        
+        };
     recognition.onresult=function(event){
 
         let text="";
@@ -242,14 +248,29 @@ function levenshtein(a,b){
     micStatus.innerText="مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند";
     }
     }
-    function restartMic(){
-    setTimeout(()=>{
-    try{
-    recognition.start();
-    }catch(e){}
-    },1000);
-    }
+    let restartTimer;
 
+function restartMic(){
+
+clearTimeout(restartTimer);
+
+restartTimer=setTimeout(()=>{
+
+if(isListening){
+
+try{
+
+recognition.start();
+
+console.log("میکروفون دوباره فعال شد");
+
+}catch(e){}
+
+}
+
+},3000);
+
+}
     async function sendTeacherMessage(student){
         const {data:exist,error:checkError}=await supabaseClient
         .from("calls")
