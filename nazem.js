@@ -178,11 +178,25 @@ function levenshtein(a,b){
     text+=event.results[i][0].transcript;
     }
     if(text.trim()!==""){
-    speechBuffer+=" "+text;
-    if(speechText){
-    speechText.innerText=speechBuffer.trim();
-    }
-    findMultipleStudents(speechBuffer);
+    
+        if(text.trim()!==""){
+
+            if(!speechBuffer.includes(text.trim())){
+            
+            speechBuffer+=" "+text.trim();
+            
+            }
+            
+            if(speechText){
+            
+            speechText.innerText=speechBuffer.trim();
+            
+            }
+            
+            findMultipleStudents(text);
+            
+            }
+            
     }
     };
     recognition.start();
