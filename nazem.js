@@ -116,13 +116,31 @@ function levenshtein(a,b){
     const input=normalizeText(text);
     normalizedStudents.forEach(student=>{
     const studentName=student.normalizedName;
+  
     if(input.includes(studentName)){
-    console.log("تشخیص مستقیم:",student.name);
-    if(canCall(student)){
-    sendTeacherMessage(student);
-    }
-    return;
-    }
+
+        console.log("تشخیص مستقیم:",student.name);
+        
+        if(canCall(student)){
+        
+        sendTeacherMessage(student);
+        
+        speechBuffer="";
+        
+        if(speechText){
+        
+        speechText.innerText="منتظر شنیدن نام دانش‌آموز...";
+        
+        }
+        
+        }
+        
+        return;
+        
+        }
+
+
+
     const words=input.split("");
     let found=false;
     for(let i=0;i<words.length;i++){
@@ -139,12 +157,26 @@ function levenshtein(a,b){
     break;
     }
     }
+    
     if(found){
-    console.log("تشخیص با شباهت:",student.name);
-    if(canCall(student)){
-    sendTeacherMessage(student);
-    }
-    }
+
+        console.log("تشخیص با شباهت:",student.name);
+        
+        if(canCall(student)){
+        
+        sendTeacherMessage(student);
+        
+        speechBuffer="";
+        
+        if(speechText){
+        
+        speechText.innerText="منتظر شنیدن نام دانش‌آموز...";
+        
+        }
+        
+        }
+        
+        } 
     });
     }
     if("webkitSpeechRecognition" in window){
