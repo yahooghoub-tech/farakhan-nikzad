@@ -412,7 +412,7 @@ function normalizeText(text){
     function findMultipleStudents(text){
 
         console.log(
-        "متن کامل میکروفون:",
+        "متن تشخیص داده شده:",
         text
         );
         
@@ -432,9 +432,24 @@ function normalizeText(text){
         
         
         
-        if(
-        input.includes(studentName)
-        ){
+        let score =
+        similarity(
+        input,
+        studentName
+        );
+        
+        
+        
+        console.log(
+        student.name,
+        score
+        );
+        
+        
+        
+        // قبول غلط املایی جزئی
+        
+        if(score >= 0.75){
         
         
         console.log(
