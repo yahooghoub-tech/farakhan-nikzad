@@ -412,7 +412,7 @@ function normalizeText(text){
     function findMultipleStudents(text){
 
         console.log(
-        "متن کامل:",
+        "متن کامل میکروفون:",
         text
         );
         
@@ -426,22 +426,24 @@ function normalizeText(text){
         
         
         const studentName =
-        normalizeText(student.name);
-        
-        
-        
-        let score =
-        similarity(
-        input,
-        studentName
+        normalizeText(
+        student.name
         );
         
         
         
-        // بررسی وجود مستقیم اسم
+        // پیدا کردن اسم کامل داخل متن
+        
         if(
         input.includes(studentName)
         ){
+        
+        
+        console.log(
+        "تشخیص مستقیم:",
+        student.name
+        );
+        
         
         
         if(canCall(student)){
@@ -457,14 +459,80 @@ function normalizeText(text){
         
         
         
-        // بررسی غلط املایی
-        if(score >= 0.70){
+        // بررسی غلط املایی در هر بخش از متن
+        
+        const words =
+        input.split(" ");
+        
+        
+        
+        let found=false;
+        
+        
+        
+        for(
+        let i=0;
+        i<words.length;
+        i++
+        ){
+        
+        
+        let part="";
+        
+        
+        
+        for(
+        let j=i;
+        j<words.length && j<i+4;
+        j++
+        ){
+        
+        
+        part += words[j];
+        
+        
+        let score =
+        similarity(
+        part,
+        studentName
+        );
+        
+        
+        
+        if(score>=0.78){
+        
+        
+        found=true;
+        
+        break;
+        
+        
+        }
+        
+        
+        }
+        
+        
+        
+        if(found){
+        
+        break;
+        
+        }
+        
+        
+        }
+        
+        
+        
+        
+        
+        if(found){
         
         
         console.log(
-        "تشخیص با شباهت:",
-        student.name,
-        score
+        "تشخیص با غلط املایی:",
+        student.name
         );
         
         
@@ -477,6 +545,7 @@ function normalizeText(text){
         
         
         }
+        
         
         
         });
