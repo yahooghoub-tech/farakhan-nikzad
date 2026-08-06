@@ -151,7 +151,7 @@ function levenshtein(a,b){
     recognition=new webkitSpeechRecognition();
     recognition.lang="fa-IR";
     recognition.continuous=true;
-    recognition.interimResults=true;
+    recognition.interimResults=false;
     recognition.maxAlternatives=3;
     recognition.onstart=function(){
     if(micStatus){
@@ -173,32 +173,37 @@ function levenshtein(a,b){
     }
     };
     recognition.onresult=function(event){
-    let text="";
-    for(let i=event.resultIndex;i<event.results.length;i++){
-    text+=event.results[i][0].transcript;
-    }
-    if(text.trim()!==""){
-    
-        if(text.trim()!==""){
 
-            if(!speechBuffer.includes(text.trim())){
-            
-            speechBuffer+=" "+text.trim();
-            
-            }
-            
-            if(speechText){
-            
-            speechText.innerText=speechBuffer.trim();
-            
-            }
-            
-            findMultipleStudents(text);
-            
-            }
-            
-    }
-    };
+        let text="";
+        
+        for(
+        let i=event.resultIndex;
+        i<event.results.length;
+        i++
+        ){
+        
+        text+=event.results[i][0].transcript;
+        
+        }
+        
+        
+        if(text.trim()!==""){
+        
+        speechBuffer+=" "+text.trim();
+        
+        
+        if(speechText){
+        
+        speechText.innerText=speechBuffer.trim();
+        
+        }
+        
+        
+        findMultipleStudents(text);
+        
+        }
+        
+        };
     recognition.start();
     }else{
     if(micStatus){
