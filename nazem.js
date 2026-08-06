@@ -191,16 +191,17 @@ recognition.onresult=function(event){
     
     };
     
-    
     function findMultipleStudents(text){
 
         console.log("🎤 متن:", text);
     
         students.forEach(student=>{
     
+            console.log("در حال بررسی:", student.name);
+    
             if(text.includes(student.name)){
     
-                console.log("✅ پیدا شد:", student.name, student.className);
+                console.log("✅ پیدا شد:", student.name);
     
                 sendTeacherMessage(student);
     
