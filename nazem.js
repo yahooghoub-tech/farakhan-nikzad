@@ -306,12 +306,11 @@ return {
 ...student,
 
 normalizedName:
+normalizeText(student.name)
 
 };
 
 });
-
-
     
     //====================================
     // الگوریتم فاصله و شباهت متن
