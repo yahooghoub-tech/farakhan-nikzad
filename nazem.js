@@ -1,704 +1,452 @@
-//====================================
-// تنظیمات Supabase
-//====================================
 const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+console.log("Supabase connected");
 
-//====================================
-// متغیرهای اصلی
-//====================================
-let students=[];
-let normalizedStudents=[];
-let activeCalls=[];
 let recognition;
-let isListening=false;
-let isRestarting=false;
-let restartTimer=null;
-let lastRecognizedText="";
-let lastCallTime=0;
-let callLock=false;
+let isListening=true;
+let speechBuffer="";
 
-//====================================
-// نرمال سازی متن فارسی
-//====================================
+const micStatus=document.getElementById("micStatus");
+const micIcon=document.getElementById("micIcon");
+const speechText=document.getElementById("speechText");
+const resetButton=document.getElementById("resetCalls");
+
 function normalizeText(text){
-if(!text)return"";
 return text
-.toString()
-.trim()
-.toLowerCase()
 .replace(/ي/g,"ی")
 .replace(/ى/g,"ی")
 .replace(/ك/g,"ک")
 .replace(/‌/g,"")
 .replace(/\s+/g,"")
-.replace(/[،,.!?]/g,"");
+.trim();
 }
 
-//====================================
-// آماده سازی اسامی دانش آموزان
-//====================================
-function prepareStudentSearch(){
-normalizedStudents=students.map(student=>{
-let name=student.name||student.student_name||"";
-let normalized=normalizeText(name);
+const students=[
+{name:"مهان احمدی",className:"ششم-1"},
+{name:"پارسا بکایی",className:"ششم-1"},
+{name:"مهدی حسین زاده سیف",className:"ششم-1"},
+{name:"آرین خلج زاده",className:"ششم-1"},
+{name:"محسن دمرچلی",className:"ششم-1"},
+{name:"آرتین رضایی",className:"ششم-1"},
+{name:"علیسان صفیاری",className:"ششم-1"},
+{name:"آرتین عابدی",className:"ششم-1"},
+{name:"آراد عبدالله کرمی",className:"ششم-1"},
+{name:"مهیار غلامی",className:"ششم-1"},
+{name:"امیرپارسا فخرآبادی",className:"ششم-1"},
+{name:"سپهر فرج نژاد",className:"ششم-1"},
+{name:"رایان فرهبد",className:"ششم-1"},
+{name:"مهراد فخری",className:"ششم-1"},
+{name:"امیرحسین قابضی",className:"ششم-1"},
+{name:"آراد قیاسی",className:"ششم-1"},
+{name:"آرشا کیاپاشا",className:"ششم-1"},
+{name:"مهربد کاهانی",className:"ششم-1"},
+{name:"مهراد مظفر",className:"ششم-1"},
+{name:"عماد مظلومی نیا",className:"ششم-1"},
+{name:"آرتین محمدبیگی",className:"ششم-1"},
+{name:"میثم نگهداری",className:"ششم-1"},
+{name:"مازیار نگهداری",className:"ششم-1"},
+{name:"ساتیار امیری",className:"سوم-1"},
+{name:"پارسا تقی زاده",className:"سوم-1"},
+{name:"رایان جمشیدی",className:"سوم-1"},
+{name:"رادین جمشیدی",className:"سوم-1"},
+{name:"کارن جهانی",className:"سوم-1"},
+{name:"بهراد حسینی نژاد",className:"سوم-1"},
+{name:"نویان خدامرادی",className:"سوم-1"},
+{name:"فرداد خدایاری",className:"سوم-1"},
+{name:"آدرین سلاجقه",className:"سوم-1"},
+{name:"شهریار سلگی",className:"سوم-1"},
+{name:"آراد شریفی",className:"سوم-1"},
+{name:"آرین صفری",className:"سوم-1"},
+{name:"رایان عیسی زاده",className:"سوم-1"},
+{name:"آرشان عیوض نژاد",className:"سوم-1"},
+{name:"کارن کاردان",className:"سوم-1"},
+{name:"رادمان کامکار",className:"سوم-1"},
+{name:"آرمان کرمیان",className:"سوم-1"},
+{name:"رهام ماندگارمقدم",className:"سوم-1"},
+{name:"رادمان مرادیان نژاد",className:"سوم-1"},
+{name:"مهراد ناصری",className:"سوم-1"},
+{name:"آریا نصیرمحمدی",className:"سوم-1"},
+{name:"آریا نعمتی",className:"سوم-1"}
+];
+
+const normalizedStudents=students.map(student=>{
 return{
-id:student.id,
-name:name,
-class_name:student.class_name,
-searchName:normalized,
-length:normalized.length
+...student,
+normalizedName:normalizeText(student.name)
 };
 });
-console.log("Student search ready:",normalizedStudents.length);
-}
-//====================================
-// Levenshtein
-//====================================
 function levenshtein(a,b){
-    if(a===b)return 0;
-    if(!a)return b.length;
-    if(!b)return a.length;
-    if(Math.abs(a.length-b.length)>5)return 99;
-    let prev=[],curr=[];
-    for(let i=0;i<=b.length;i++)prev[i]=i;
-    for(let i=1;i<=a.length;i++){
-    curr[0]=i;
-    for(let j=1;j<=b.length;j++){
-    let cost=a[i-1]===b[j-1]?0:1;
-    curr[j]=Math.min(
-    curr[j-1]+1,
-    prev[j]+1,
-    prev[j-1]+cost
+    const matrix=[];
+    for(let i=0;i<=b.length;i++){
+    matrix[i]=[i];
+    }
+    for(let j=0;j<=a.length;j++){
+    matrix[0][j]=j;
+    }
+    for(let i=1;i<=b.length;i++){
+    for(let j=1;j<=a.length;j++){
+    if(b[i-1]===a[j-1]){
+    matrix[i][j]=matrix[i-1][j-1];
+    }else{
+    matrix[i][j]=Math.min(
+    matrix[i-1][j-1]+1,
+    matrix[i][j-1]+1,
+    matrix[i-1][j]+1
     );
     }
-    let temp=prev;
-    prev=curr;
-    curr=temp;
     }
-    return prev[b.length];
     }
-    
-    //====================================
-    // درصد شباهت
-    //====================================
+    return matrix[b.length][a.length];
+    }
     function similarity(a,b){
-    if(!a||!b)return 0;
-    if(a===b)return 100;
-    let max=Math.max(a.length,b.length);
-    let distance=levenshtein(a,b);
-    return Math.round((1-distance/max)*100);
+    let longer=a.length>b.length?a:b;
+    let shorter=a.length>b.length?b:a;
+    if(longer.length===0){
+    return 1;
     }
-    
-    //====================================
-    // بررسی مشابه بودن نام
-    //====================================
-    function isSimilarName(input,name){
-    if(!input||!name)return false;
-    if(input.includes(name)||name.includes(input))return true;
-    if(Math.abs(input.length-name.length)>5)return false;
-    return similarity(input,name)>=85;
+    let distance=levenshtein(longer,shorter);
+    return(longer.length-distance)/longer.length;
     }
-    
-    //====================================
-    // پیدا کردن دانش آموز
-    //====================================
-    function findStudent(text){
-    let input=normalizeText(text);
-    if(!input||input.length<4)return null;
-    for(let student of normalizedStudents){
-    if(input===student.searchName)return student;
+    function canCall(student){
+    return true;
     }
-    for(let student of normalizedStudents){
-    if(input.includes(student.searchName)||student.searchName.includes(input)){
-    return student;
-    }
-    }
-    let best=null;
-    let bestScore=0;
-    for(let student of normalizedStudents){
-    if(Math.abs(input.length-student.length)>5)continue;
-    let score=similarity(input,student.searchName);
-    if(score>bestScore){
-    bestScore=score;
-    best=student;
-    }
-    }
-    if(bestScore>=85)return best;
-    return null;
-    }
-    
-    //====================================
-    // پیدا کردن چند اسم داخل جمله
-    //====================================
     function findMultipleStudents(text){
-    if(!text)return[];
-    let result=[];
-    let words=text.split(/\s+/);
-    let checked=new Set();
+    console.log("متن دریافتی:",text);
+    const input=normalizeText(text);
+    normalizedStudents.forEach(student=>{
+    const studentName=student.normalizedName;
+    if(input.includes(studentName)){
+    console.log("تشخیص مستقیم:",student.name);
+    if(canCall(student)){
+    sendTeacherMessage(student);
+    }
+    return;
+    }
+    const words=input.split("");
+    let found=false;
     for(let i=0;i<words.length;i++){
     let part="";
-    for(let j=i;j<words.length&&j<i+3;j++){
+    for(let j=i;j<words.length&&j<i+30;j++){
     part+=words[j];
-    let clean=normalizeText(part);
-    if(clean.length<4)continue;
-    if(checked.has(clean))continue;
-    checked.add(clean);
-    let student=findStudent(clean);
-    if(student&&!result.find(x=>x.id===student.id)){
-    result.push(student);
+    let score=similarity(part,studentName);
+    if(score>=0.78){
+    found=true;
+    break;
     }
     }
+    if(found){
+    break;
     }
-    return result;
     }
-    
-//====================================
-// راه اندازی تشخیص صدا
-//====================================
-function initSpeech(){
-    const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SpeechRecognition){
-    alert("مرورگر شما از تشخیص صدا پشتیبانی نمی کند");
-    return;
+    if(found){
+    console.log("تشخیص با شباهت:",student.name);
+    if(canCall(student)){
+    sendTeacherMessage(student);
     }
-    recognition=new SpeechRecognition();
+    }
+    });
+    }
+    if("webkitSpeechRecognition" in window){
+    recognition=new webkitSpeechRecognition();
     recognition.lang="fa-IR";
     recognition.continuous=true;
-    recognition.interimResults=false;
-    recognition.maxAlternatives=5;
-    
-    //====================================
-    // شروع میکروفون
-    //====================================
-    recognition.onstart=()=>{
-    isListening=true;
-    console.log("Microphone started");
-    let micButton=document.getElementById("micButton");
-    if(micButton){
-    micButton.classList.add("active");
+    recognition.interimResults=true;
+    recognition.maxAlternatives=3;
+    recognition.onstart=function(){
+    if(micStatus){
+    micStatus.innerText="میکروفون فعال است و در حال شنیدن...";
+    }
+    if(micIcon){
+    micIcon.classList.add("mic-active");
     }
     };
-    
-    //====================================
-    // دریافت متن صدا
-    //====================================
-    recognition.onresult=(event)=>{
-    let result=event.results[event.results.length-1];
-    let text=result[0].transcript.trim();
-    if(!text||text.length<4)return;
-    console.log("Voice:",text);
-    
-    // نمایش متن تشخیص داده شده
-    let voiceBox=document.getElementById("voiceText");
-    if(voiceBox){
-    voiceBox.innerText=text;
+    recognition.onerror=function(){
+    if(micStatus){
+    micStatus.innerText="خطا در میکروفون - تلاش مجدد";
     }
-    
-    if(text===lastRecognizedText)return;
-    lastRecognizedText=text;
-    
-    let studentsFound=findMultipleStudents(text);
-    
-    if(studentsFound.length){
-    studentsFound.forEach(student=>{
-    sendCall(student);
-    });
+    restartMic();
+    };
+    recognition.onend=function(){
+    if(isListening){
+    restartMic();
     }
     };
-    
-    //====================================
-    // خطای میکروفون
-    //====================================
-    recognition.onerror=(event)=>{
-    console.log("Speech error:",event.error);
-    if(event.error==="not-allowed"){
-    isListening=false;
+    recognition.onresult=function(event){
+    let text="";
+    for(let i=event.resultIndex;i<event.results.length;i++){
+    text+=event.results[i][0].transcript;
+    }
+    if(text.trim()!==""){
+    speechBuffer+=" "+text;
+    if(speechText){
+    speechText.innerText=speechBuffer.trim();
+    }
+    findMultipleStudents(speechBuffer);
     }
     };
-    
-    //====================================
-    // اتصال مجدد خودکار
-    //====================================
-    recognition.onend=()=>{
-    isListening=false;
-    
-    let micButton=document.getElementById("micButton");
-    if(micButton){
-    micButton.classList.remove("active");
+    recognition.start();
+    }else{
+    if(micStatus){
+    micStatus.innerText="مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند";
     }
-    
-    if(!isRestarting){
-    isRestarting=true;
-    clearTimeout(restartTimer);
-    
-    restartTimer=setTimeout(()=>{
+    }
+    function restartMic(){
+    setTimeout(()=>{
     try{
     recognition.start();
-    }
-    catch(e){
-    console.log(e);
-    }
-    isRestarting=false;
-    },500);
-    }
-    
-    };
-    
-    }
-    
-    //====================================
-    // شروع گوش دادن
-    //====================================
-    function startListening(){
-    if(!recognition)initSpeech();
-    try{
-    recognition.start();
-    }
-    catch(e){
-    console.log(e);
-    }
-    }
-    
-    //====================================
-    // توقف گوش دادن
-    //====================================
-    function stopListening(){
-    if(recognition){
-    recognition.stop();
-    }
-    isListening=false;
-    }
-    
-//====================================
-// ارسال فراخوان
-//====================================
-async function sendCall(student){
-    if(!student)return;
-    
-    let now=Date.now();
-    
-    if(callLock)return;
-    
-    if(lastCallTime&&now-lastCallTime<1200)return;
-    
-    lastCallTime=now;
-    callLock=true;
-    
-    try{
-    
-    let callData={
-    student_name:student.name,
-    class_name:student.class_name,
-    status:"waiting"
-    };
-    
-    let{data,error}=await supabaseClient
-    .from("calls")
-    .insert([callData])
-    .select()
-    .single();
-    
-    if(error){
-    console.log("Call error:",error);
-    return;
-    }
-    
-    console.log("Call sent:",data);
-    
-    activeCalls.push(data);
-    
-    setLastStudent(student);
-    
-    showCall(data);
-    
-    }
-    catch(error){
-    console.log(error);
-    }
-    finally{
-    
-    setTimeout(()=>{
-    callLock=false;
-    },300);
-    
-    }
-    
-    }
-    
-    
-    //====================================
-    // نمایش آخرین دانش آموز
-    //====================================
-    function setLastStudent(student){
-    if(!student)return;
-    
-    let element=document.querySelector("#lastStudent");
-    
-    if(element){
-    element.innerHTML=
-    `${student.name} - ${student.class_name}`;
-    }
-    
-    }
-    
-    
-    //====================================
-    // دریافت آنلاین فراخوان ها
-    //====================================
-    function subscribeCalls(){
-    
-    supabaseClient
-    .channel("calls-realtime")
-    .on(
-    "postgres_changes",
-    {
-    event:"INSERT",
-    schema:"public",
-    table:"calls"
-    },
-    payload=>{
-    
-    let call=payload.new;
-    
-    if(!call)return;
-    
-    console.log("New call:",call);
-    
-    
-    if(activeCalls.find(x=>x.id===call.id)){
-    return;
-    }
-    
-    
-    activeCalls.push(call);
-    
-    showCall(call);
-    
-    }
-    )
-    .subscribe(status=>{
-    console.log(
-    "Realtime status:",
-    status
-    );
-    });
-    
-    }
-    
-    
-    //====================================
-    // نمایش دانش آموز در کلاس مربوطه
-    //====================================
-    function showCall(call){
-    
-    if(!call)return;
-    
-    
-    // پیدا کردن باکس کلاس
-    
-    let classBox=document.getElementById(
-    "class-"+call.class_name
-    );
-    
-    
-    if(!classBox){
-    
-    console.log(
-    "Class box not found:",
-    call.class_name
-    );
-    
-    return;
-    
-    }
-    
-    
-    // ساخت کارت
-    
-    let card=document.createElement("div");
-    
-    card.className="student-item";
-    
-    card.dataset.id=call.id;
-    
-    
-    card.innerHTML=`
-    
-    <div class="student-name">
-    ${call.student_name}
-    </div>
-    
-    `;
-    
-    
-    // اضافه کردن به کلاس
-    
-    classBox.prepend(card);
-    
-    
-    
-    // افزایش شمارنده
-    
-    let count=document.getElementById(
-    "count-"+call.class_name
-    );
-    
-    
-    if(count){
-    
-    let number=parseInt(count.innerText)||0;
-    
-    count.innerText=number+1;
-    
-    }
-    
-    
-    }
-    
-    
-    //====================================
-    // حذف فراخوان از صفحه
-    //====================================
-    function removeCall(id){
-    
-    activeCalls=
-    activeCalls.filter(call=>call.id!==id);
-    
-    
-    let card=document.querySelector(
-    `.student-item[data-id="${id}"]`
-    );
-    
-    
-    if(card){
-    card.remove();
-    }
-    
-    }
-    
-//====================================
-// دریافت لیست دانش آموزان
-//====================================
-async function loadStudents(){
-
-    try{
-    
-    let{data,error}=await supabaseClient
-    .from("students")
-    .select("*");
-    
-    
-    console.log("DATA:",data);
-    console.log("ERROR:",error);
-    
-    
-    students=data||[];
-    
-    console.log(
-    "Students loaded:",
-    students.length
-    );
-    
-    
-    prepareStudentSearch();
-    
-    
-    }
-    catch(error){
-    
-    console.log(
-    "Load students error:",
-    error
-    );
-    
-    }
-    
-    }
-    
-    
-    //====================================
-    // دانش آموزان یک کلاس
-    //====================================
-    function getStudentsByClass(className){
-    
-    return normalizedStudents.filter(
-    student=>
-    student.class_name===className
-    );
-    
-    }
-    
-    
-    //====================================
-    // گرفتن شناسه کلاس
-    //====================================
-    function getClassId(className){
-    
-    return classMap[className]||null;
-    
-    }
-    
-    
-    //====================================
-    // حذف همه فراخوان ها
-    //====================================
-    async function resetAllCalls(){
-    
-    try{
-    
-    let{error}=await supabaseClient
-    .from("calls")
-    .delete()
-    .neq("id",0);
-    
-    
-    if(error){
-    
-    console.log(
-    "Reset error:",
-    error
-    );
-    
-    return;
-    
-    }
-    
-    
-    activeCalls=[];
-    
-    
-    // پاک کردن لیست تمام کلاس ها
-    
-    document
-    .querySelectorAll(".students-list")
-    .forEach(box=>{
-    
-    box.innerHTML="";
-    
-    });
-    
-    
-    // صفر کردن تعداد کلاس ها
-    
-    document
-    .querySelectorAll("[id^='count-']")
-    .forEach(count=>{
-    
-    count.innerText="0";
-    
-    });
-    
-    
-    console.log(
-    "All calls removed"
-    );
-    
-    
-    }
-    catch(error){
-    
-    console.log(error);
-    
-    }
-    
-    }
-    
-    
-    //====================================
-    // حذف یک فراخوان
-    //====================================
-    async function deleteCall(id){
-    
-    if(!id)return;
-    
-    
-    try{
-    
-    let{error}=await supabaseClient
-    .from("calls")
-    .delete()
-    .eq("id",id);
-    
-    
-    if(error){
-    
-    console.log(error);
-    
-    return;
-    
-    }
-    
-    
-    removeCall(id);
-    
-    
-    }
-    catch(error){
-    
-    console.log(error);
-    
-    }
-    
-    }
-    
-    
-    //====================================
-    // صدای هشدار
-    //====================================
-    function playAlert(){
-    
-    let audio=document.querySelector(
-    "#alertSound"
-    );
-    
-    
-    if(audio){
-    
-    audio.currentTime=0;
-    
-    audio.play();
-    
-    }
-    
-    }
-    
-    
-    //====================================
-    // اجرای اولیه سیستم
-    //====================================
-    async function initNazem(){
-    
-    await loadStudents();
-    
-    subscribeCalls();
-    
-    initSpeech();
-    
-    console.log(
-    "Nazem system ready"
-    );
-    
-    }
-    
-    
-    //====================================
-    // شروع نهایی
-    //====================================
-    document.addEventListener(
-    "DOMContentLoaded",
-    async()=>{
-    
-    await initNazem();
-    
-    
-    setTimeout(()=>{
-    
-    startListening();
-    
+    }catch(e){}
     },1000);
-    
-    
     }
-    );
+
+    async function sendTeacherMessage(student){
+        const {data:exist,error:checkError}=await supabaseClient
+        .from("calls")
+        .select("id")
+        .eq("student_name",student.name)
+        .eq("class_name",student.className)
+        .neq("status","ارسال شد");
+        if(checkError){
+        console.error(checkError);
+        return;
+        }
+        if(exist.length>0){
+        console.log("این دانش آموز قبلا فراخوان شده");
+        return;
+        }
+        const now=new Date();
+        const calledDate=new Intl.DateTimeFormat("fa-IR",{
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit"
+        }).format(now);
+        const calledTime=now.toLocaleTimeString("fa-IR",{
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+        });
+        const {data,error}=await supabaseClient
+        .from("calls")
+        .insert([
+        {
+        student_name:student.name,
+        class_name:student.className,
+        status:"فراخوان شد",
+        called_date:calledDate,
+        called_time:calledTime
+        }
+        ])
+        .select();
+        if(error){
+        console.error("خطا در ثبت فراخوان:",error);
+        return;
+        }
+        console.log("فراخوان ثبت شد:",data);
+        }
+        function getStatusClass(status){
+        if(status==="فراخوان شد"){
+        return"status-called";
+        }
+        if(status==="دریافت فراخوان"){
+        return"status-received";
+        }
+        if(status==="ارسال شد"){
+        return"status-sent";
+        }
+        return"";
+        }
+        function addStudentToClass(student){
+        const classBox=document.getElementById("class-"+student.className);
+        const countBox=document.getElementById("count-"+student.className);
+        if(!classBox){
+        return;
+        }
+        const oldCard=document.querySelector(`.student-card[data-id="${student.id}"]`);
+        if(oldCard){
+        return;
+        }
+        const card=document.createElement("div");
+        card.className="student-card";
+        card.dataset.id=student.id;
+        card.innerHTML=`
+        <div class="student-row">
+        <span class="student-name">${student.name}</span>
+        <span class="student-status ${getStatusClass(student.status)}">${student.status||"فراخوان شد"}</span>
+        <span class="student-time">
+        ⏰ ${student.called_time||""}
+        <br>
+        📥 ${student.received_time||""}
+        <br>
+        📤 ${student.sent_time||""}
+        </span>
+        </div>
+        `;
+        classBox.appendChild(card);
+        if(countBox){
+        countBox.innerText=classBox.children.length;
+        }
+        }
+        function updateNazemCard(call){
+        const card=document.querySelector(`.student-card[data-id="${call.id}"]`);
+        if(!card){
+        return;
+        }
+        const status=card.querySelector(".student-status");
+        if(status){
+        status.innerText=call.status;
+        status.className="student-status "+getStatusClass(call.status);
+        }
+        const time=card.querySelector(".student-time");
+        if(time){
+        time.innerHTML=`
+        ⏰ ${call.called_time||""}
+        <br>
+        📥 ${call.received_time||""}
+        <br>
+        📤 ${call.sent_time||""}
+        `;
+        }
+        }
+
+
+        async function loadCalls(){
+            const {data,error}=await supabaseClient
+            .from("calls")
+            .select("*")
+            .order("id",{ascending:true});
+            if(error){
+            console.error("خطا در دریافت فراخوان‌ها:",error);
+            return;
+            }
+            data.forEach(call=>{
+            const student={
+            id:call.id,
+            name:call.student_name,
+            className:call.class_name.replaceAll(" ","-"),
+            status:call.status,
+            called_date:call.called_date,
+            called_time:call.called_time,
+            received_time:call.received_time,
+            sent_time:call.sent_time
+            };
+            addStudentToClass(student);
+            });
+            }
+            loadCalls();
+            
+            supabaseClient
+            .channel("nazem-status-update")
+            .on(
+            "postgres_changes",
+            {
+            event:"UPDATE",
+            schema:"public",
+            table:"calls"
+            },
+            payload=>{
+            console.log("تغییر وضعیت:",payload.new);
+            updateNazemCard(payload.new);
+            }
+            )
+            .subscribe(status=>{
+            console.log("Nazem Realtime UPDATE:",status);
+            });
+            
+            supabaseClient
+            .channel("nazem-delete-update")
+            .on(
+            "postgres_changes",
+            {
+            event:"DELETE",
+            schema:"public",
+            table:"calls"
+            },
+            payload=>{
+            console.log("حذف فراخوان:",payload.old);
+            const card=document.querySelector(`.student-card[data-id="${payload.old.id}"]`);
+            if(card){
+            card.remove();
+            }
+            }
+            )
+            .subscribe(status=>{
+            console.log("Nazem Realtime DELETE:",status);
+            });
+            
+            supabaseClient
+            .channel("nazem-new-call")
+            .on(
+            "postgres_changes",
+            {
+            event:"INSERT",
+            schema:"public",
+            table:"calls"
+            },
+            payload=>{
+            console.log("فراخوان جدید:",payload.new);
+            const student={
+            id:payload.new.id,
+            name:payload.new.student_name,
+            className:payload.new.class_name.replaceAll(" ","-"),
+            status:payload.new.status,
+            called_date:payload.new.called_date,
+            called_time:payload.new.called_time,
+            received_time:payload.new.received_time,
+            sent_time:payload.new.sent_time
+            };
+            addStudentToClass(student);
+            }
+            )
+            .subscribe(status=>{
+            console.log("Nazem Realtime INSERT:",status);
+            });
+            
+            if(resetButton){
+            resetButton.addEventListener("click",async function(){
+            const confirmReset=confirm("تمام فراخوان‌ها پاک شوند؟");
+            if(!confirmReset){
+            return;
+            }
+            const {error}=await supabaseClient
+            .from("calls")
+            .delete()
+            .gte("id",0);
+            if(error){
+            console.error("خطا در حذف فراخوان‌ها:",error);
+            return;
+            }
+            document.querySelectorAll(".students-list")
+            .forEach(box=>{
+            box.innerHTML="";
+            });
+            document.querySelectorAll(".class-header span")
+            .forEach(count=>{
+            count.innerText="0";
+            });
+            speechBuffer="";
+            if(speechText){
+            speechText.innerText="منتظر شنیدن نام دانش‌آموز...";
+            }
+            if(micStatus){
+            micStatus.innerText="میکروفون فعال است و در حال شنیدن...";
+            }
+            console.log("تمام فراخوان‌ها حذف شدند");
+            });
+            }
+
+            window.addEventListener("beforeunload",function(){
+                isListening=false;
+                if(recognition){
+                try{
+                recognition.stop();
+                }catch(e){}
+                }
+                });
+                
+                document.addEventListener("visibilitychange",function(){
+                if(document.visibilityState==="visible"&&isListening){
+                restartMic();
+                }
+                });
+                
+                console.log("Nazem JS Loaded Successfully");
