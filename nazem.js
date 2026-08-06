@@ -409,11 +409,10 @@ function normalizeText(text){
     //====================================
     // پیدا کردن دانش آموز از متن
     //====================================
-    
     function findMultipleStudents(text){
 
         console.log(
-        "متن کامل:",
+        "متن کامل میکروفون:",
         text
         );
         
@@ -432,7 +431,6 @@ function normalizeText(text){
         );
         
         
-        // بررسی وجود اسم کامل داخل متن
         
         if(
         input.includes(studentName)
@@ -458,12 +456,10 @@ function normalizeText(text){
         }
         
         
-        
         });
         
         
         }
-    
     
     //====================================
     // فعال سازی میکروفون
@@ -487,8 +483,7 @@ function normalizeText(text){
     true;
     
     
-    recognition.interimResults =
-    false;
+    recognition.interimResults=true;
     
     
     recognition.maxAlternatives =
@@ -559,37 +554,40 @@ function normalizeText(text){
     
     
     recognition.onresult=function(event){
-    
-    
-    let text="";
-    
-    
-    for(
-    let i=event.resultIndex;
-    i<event.results.length;
-    i++
-    ){
-    
-    text +=
-    event.results[i][0].transcript;
-    
-    }
-    
-    
-    
-    if(speechText){
-    
-    speechText.innerText =
-    text;
-    
-    }
-    
-    
-    
-    findMultipleStudents(text);
-    
-    
-    };
+
+        let text="";
+        
+        
+        for(
+        let i=event.resultIndex;
+        i<event.results.length;
+        i++
+        ){
+        
+        if(event.results[i].isFinal){
+        
+        text +=
+        event.results[i][0].transcript;
+        
+        }
+        
+        }
+        
+        
+        
+        if(speechText){
+        
+        speechText.innerText =
+        text;
+        
+        }
+        
+        
+        
+        findMultipleStudents(text);
+        
+        
+        };
     
     
     
