@@ -411,64 +411,58 @@ function normalizeText(text){
     //====================================
     
     function findMultipleStudents(text){
-    
-    
-    console.log(
-    "متن تشخیص داده شده:",
-    text
-    );
-    
-    
-    const input =
-    normalizeText(text);
-    
-    
-    
-    students.forEach(student=>{
-    
-    
-    const studentName =
-    normalizeText(
-    student.name
-    );
-    
-    
-    
-    const score =
-    similarity(
-    input,
-    studentName
-    );
-    
-    
-    
-    console.log(
-    student.name,
-    score
-    );
-    
-    
-    
-    if(score>=0.75){
-    
-    
-    if(canCall(student)){
-    
-    
-    sendTeacherMessage(student);
-    
-    
-    }
-    
-    
-    }
-    
-    
-    });
-    
-    
-    }
-    
+
+        console.log(
+        "متن کامل:",
+        text
+        );
+        
+        
+        const input =
+        normalizeText(text);
+        
+        
+        
+        students.forEach(student=>{
+        
+        
+        const studentName =
+        normalizeText(
+        student.name
+        );
+        
+        
+        // بررسی وجود اسم کامل داخل متن
+        
+        if(
+        input.includes(studentName)
+        ){
+        
+        
+        console.log(
+        "دانش آموز پیدا شد:",
+        student.name
+        );
+        
+        
+        
+        if(canCall(student)){
+        
+        
+        sendTeacherMessage(student);
+        
+        
+        }
+        
+        
+        }
+        
+        
+        
+        });
+        
+        
+        }
     
     
     //====================================
