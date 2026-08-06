@@ -48,9 +48,35 @@ const students=[
     {name:"عماد مظلومی نیا",className:"ششم-1"},
     {name:"آرتین محمدبیگی",className:"ششم-1"},
     {name:"میثم نگهداری",className:"ششم-1"},
-    {name:"مازیار نگهداری",className:"ششم-1"}
+    {name:"مازیار نگهداری",className:"ششم-1"},
     
-    ];
+    // این لیست دانش‌آموزان کلاس سوم 1 است
+        {name:"ساتیار امیری",className:"سوم-1"},
+        {name:"پارسا تقی زاده",className:"سوم-1"},
+        {name:"رایان جمشیدی",className:"سوم-1"},
+        {name:"رادین جمشیدی",className:"سوم-1"},
+        {name:"کارن جهانی",className:"سوم-1"},
+        {name:"بهراد حسینی نژاد",className:"سوم-1"},
+        {name:"نویان خدامرادی",className:"سوم-1"},
+        {name:"فرداد خدایاری",className:"سوم-1"},
+        {name:"آدرین سلاجقه",className:"سوم-1"},
+        {name:"شهریار سلگی",className:"سوم-1"},
+        {name:"آراد شریفی",className:"سوم-1"},
+        {name:"آرین صفری",className:"سوم-1"},
+        {name:"رایان عیسی زاده",className:"سوم-1"},
+        {name:"آرشان عیوض نژاد",className:"سوم-1"},
+        {name:"کارن کاردان",className:"سوم-1"},
+        {name:"رادمان کامکار",className:"سوم-1"},
+        {name:"آرمان کرمیان",className:"سوم-1"},
+        {name:"رهام ماندگارمقدم",className:"سوم-1"},
+        {name:"رادمان مرادیان نژاد",className:"سوم-1"},
+        {name:"مهراد ناصری",className:"سوم-1"},
+        {name:"آریا نصیرمحمدی",className:"سوم-1"},
+        {name:"آریا نعمتی",className:"سوم-1"}
+
+        // این لیست دانش‌آموزان کلاس پنجم 2 است
+        
+        ];
 
 
 
@@ -166,27 +192,23 @@ recognition.onresult=function(event){
     };
     
     
-    
     function findMultipleStudents(text){
+
+        console.log("🎤 متن:", text);
     
+        students.forEach(student=>{
     
-    students.forEach(student=>{
+            if(text.includes(student.name)){
     
+                console.log("✅ پیدا شد:", student.name, student.className);
     
-    if(text.includes(student.name)){
+                sendTeacherMessage(student);
     
+            }
     
-    sendTeacherMessage(student);
-    
-    
-    }
-    
-    
-    });
-    
+        });
     
     }
-    
     
     
     async function sendTeacherMessage(student){
