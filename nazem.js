@@ -412,7 +412,7 @@ function normalizeText(text){
     function findMultipleStudents(text){
 
         console.log(
-        "متن تشخیص داده شده:",
+        "متن کامل:",
         text
         );
         
@@ -426,9 +426,7 @@ function normalizeText(text){
         
         
         const studentName =
-        normalizeText(
-        student.name
-        );
+        normalizeText(student.name);
         
         
         
@@ -440,30 +438,40 @@ function normalizeText(text){
         
         
         
+        // بررسی وجود مستقیم اسم
+        if(
+        input.includes(studentName)
+        ){
+        
+        
+        if(canCall(student)){
+        
+        sendTeacherMessage(student);
+        
+        }
+        
+        
+        return;
+        
+        }
+        
+        
+        
+        // بررسی غلط املایی
+        if(score >= 0.70){
+        
+        
         console.log(
+        "تشخیص با شباهت:",
         student.name,
         score
         );
         
         
         
-        // قبول غلط املایی جزئی
-        
-        if(score >= 0.75){
-        
-        
-        console.log(
-        "دانش آموز پیدا شد:",
-        student.name
-        );
-        
-        
-        
         if(canCall(student)){
         
-        
         sendTeacherMessage(student);
-        
         
         }
         
