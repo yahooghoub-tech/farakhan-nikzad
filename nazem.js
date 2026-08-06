@@ -545,3 +545,19 @@ async function resetAllCalls(){
     
     }
     );
+    document.addEventListener("DOMContentLoaded",()=>{
+        initNazem();
+        
+        setTimeout(()=>{
+        startListening();
+        },1000);
+        
+        });
+        recognition.onstart=()=>{
+            isListening=true;
+            document.getElementById("micButton").classList.add("active");
+            };
+            recognition.onend=()=>{
+                isListening=false;
+                document.getElementById("micButton").classList.remove("active");
+                };
