@@ -389,38 +389,24 @@ function subscribeCalls(){
 // دریافت لیست دانش آموزان
 //====================================
 async function loadStudents(){
-
     try{
-    
     let{data,error}=await supabaseClient
     .from("students")
-    .select("*")
-    .order("name");
+    .select("*");
     
-    if(error){
-    console.log("Students load error:",error);
-    return;
-    }
+    console.log("DATA:",data);
+    console.log("ERROR:",error);
     
     students=data||[];
     
-    console.log(
-    "Students loaded:",
-    students.length
-    );
+    console.log("Students loaded:",students.length);
     
     prepareStudentSearch();
     
     }
     catch(error){
-    
-    console.log(
-    "Load students error:",
-    error
-    );
-    
+    console.log("Load students error:",error);
     }
-    
     }
     
     //====================================
