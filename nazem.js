@@ -183,6 +183,16 @@ recognition.onresult=function(event){
     
     speechText.innerText=text;
     
+    function normalizeText(text){
+
+        return text
+            .replace(/ي/g,"ی")
+            .replace(/ك/g,"ک")
+            .replace(/‌/g,"")
+            .replace(/\s+/g," ")
+            .trim();
+    
+    }
     
     
     findMultipleStudents(text);
@@ -190,6 +200,7 @@ recognition.onresult=function(event){
     
     
     };
+    
     
     function findMultipleStudents(text){
 
@@ -200,15 +211,19 @@ recognition.onresult=function(event){
             console.log("در حال بررسی:", student.name);
     
             if(text.includes(student.name)){
-    
-                console.log("✅ پیدا شد:", student.name);
-    
-                sendTeacherMessage(student);
-    
-            }
-    
-        });
-    
+                const input = normalizeText(text);
+
+                students.forEach(student=>{
+                
+                    const studentName = normalizeText(student.name);
+                
+                    if(input.includes(studentName)){
+                
+                        sendTeacherMessage(student);
+                
+                    }
+                
+                });
     }
     
     
