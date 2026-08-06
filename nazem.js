@@ -1,1364 +1,500 @@
 //====================================
 // تنظیمات Supabase
 //====================================
-
-const SUPABASE_URL =
-"https://ghnpiijihybuhfetnxjp.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
-
-
-const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
+const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
+const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 //====================================
 // متغیرهای اصلی
 //====================================
-
-let students = [];
-
-let normalizedStudents = [];
-
-let activeCalls = [];
-
+let students=[];
+let normalizedStudents=[];
+let activeCalls=[];
 let recognition;
-
-let isListening = false;
-
-let isRestarting = false;
-
-let restartTimer = null;
-
-let lastRecognizedText = "";
-
-let lastCallTime = 0;
-
-let callLock = false;
-
+let isListening=false;
+let isRestarting=false;
+let restartTimer=null;
+let lastRecognizedText="";
+let lastCallTime=0;
+let callLock=false;
 
 //====================================
-// نرمال سازی سریع متن فارسی
+// نرمال سازی متن فارسی
 //====================================
-
 function normalizeText(text){
-
-    if(!text) return "";
-
-    return text
-    .toString()
-    .trim()
-    .toLowerCase()
-
-    // تبدیل حروف عربی به فارسی
-    .replace(/ي/g,"ی")
-    .replace(/ى/g,"ی")
-    .replace(/ك/g,"ک")
-
-    // حذف نیم فاصله
-    .replace(/‌/g,"")
-
-    // حذف فاصله‌ها
-    .replace(/\s+/g,"")
-
-    // حذف علائم
-    .replace(/[،,.!?]/g,"");
-
+if(!text)return"";
+return text
+.toString()
+.trim()
+.toLowerCase()
+.replace(/ي/g,"ی")
+.replace(/ى/g,"ی")
+.replace(/ك/g,"ک")
+.replace(/‌/g,"")
+.replace(/\s+/g,"")
+.replace(/[،,.!?]/g,"");
 }
 
-
-
 //====================================
-// آماده سازی نام دانش آموزان
-// فقط یک بار بعد از دریافت لیست اجرا می شود
+// آماده سازی اسامی دانش آموزان
 //====================================
-
 function prepareStudentSearch(){
-
-
-    normalizedStudents =
-    students.map(student=>{
-
-
-        let name =
-        student.name ||
-        student.student_name ||
-        "";
-
-
-        let normalized =
-        normalizeText(name);
-
-
-
-        return {
-
-            id:student.id,
-
-            name:name,
-
-            class_name:
-            student.class_name,
-
-            searchName:
-            normalized,
-
-            length:
-            normalized.length
-
-        };
-
-
-    });
-
-
-
-    console.log(
-        "Student search ready:",
-        normalizedStudents.length
-    );
-
-
+normalizedStudents=students.map(student=>{
+let name=student.name||student.student_name||"";
+let normalized=normalizeText(name);
+return{
+id:student.id,
+name:name,
+class_name:student.class_name,
+searchName:normalized,
+length:normalized.length
+};
+});
+console.log("Student search ready:",normalizedStudents.length);
 }
-
 //====================================
-// Levenshtein سریع و کم مصرف
+// Levenshtein
 //====================================
-
 function levenshtein(a,b){
-
-    if(a===b)
-        return 0;
-
-
-    if(!a)
-        return b.length;
-
-
-    if(!b)
-        return a.length;
-
-
-    // اگر اختلاف طول زیاد باشد
-    // اصلاً محاسبه نکن
-    if(Math.abs(a.length-b.length)>5)
-        return 99;
-
-
-
-    let prev=[];
-
-    let curr=[];
-
-
-
-    for(let i=0;i<=b.length;i++)
-        prev[i]=i;
-
-
-
+    if(a===b)return 0;
+    if(!a)return b.length;
+    if(!b)return a.length;
+    if(Math.abs(a.length-b.length)>5)return 99;
+    let prev=[],curr=[];
+    for(let i=0;i<=b.length;i++)prev[i]=i;
     for(let i=1;i<=a.length;i++){
-
-
-        curr[0]=i;
-
-
-
-        for(let j=1;j<=b.length;j++){
-
-
-            let cost =
-            a[i-1]===b[j-1]
-            ?0
-            :1;
-
-
-
-            curr[j]=Math.min(
-
-                curr[j-1]+1,
-
-                prev[j]+1,
-
-                prev[j-1]+cost
-
-            );
-
-
-        }
-
-
-
-        let temp=prev;
-
-        prev=curr;
-
-        curr=temp;
-
-
+    curr[0]=i;
+    for(let j=1;j<=b.length;j++){
+    let cost=a[i-1]===b[j-1]?0:1;
+    curr[j]=Math.min(
+    curr[j-1]+1,
+    prev[j]+1,
+    prev[j-1]+cost
+    );
     }
-
-
-
+    let temp=prev;
+    prev=curr;
+    curr=temp;
+    }
     return prev[b.length];
-
-}
-
-
-
-
-//====================================
-// درصد شباهت اسم
-//====================================
-
-function similarity(a,b){
-
-
-    if(!a || !b)
-        return 0;
-
-
-    if(a===b)
-        return 100;
-
-
-
-    let max =
-    Math.max(
-        a.length,
-        b.length
-    );
-
-
-
-    let distance =
-    levenshtein(a,b);
-
-
-
-    let percent =
-    Math.round(
-        (1-distance/max)*100
-    );
-
-
-
-    return percent;
-
-
-}
-
-
-
-
-//====================================
-// بررسی مشابه بودن اسم
-//====================================
-
-function isSimilarName(input,name){
-
-
-    if(!input || !name)
-        return false;
-
-
-
-    if(
-        input.includes(name) ||
-        name.includes(input)
-    )
-        return true;
-
-
-
-    if(
-        Math.abs(
-            input.length-name.length
-        )>5
-    )
-        return false;
-
-
-
-    return similarity(
-        input,
-        name
-    )>=85;
-
-
-}
-
-
-
-
-
-//====================================
-// پیدا کردن یک دانش آموز
-//====================================
-
-function findStudent(text){
-
-
-    let input =
-    normalizeText(text);
-
-
-
-    if(
-        !input ||
-        input.length<4
-    )
-        return null;
-
-
-
-
-    // تطبیق دقیق
-
-    for(let student of normalizedStudents){
-
-
-        if(
-            input ===
-            student.searchName
-        ){
-
-            return student;
-
-        }
-
-
     }
-
-
-
-
-
-    // وجود اسم داخل جمله
-
-    for(let student of normalizedStudents){
-
-
-        if(
-
-            input.includes(
-                student.searchName
-            )
-
-            ||
-
-            student.searchName.includes(
-                input
-            )
-
-        ){
-
-            return student;
-
-        }
-
-
+    
+    //====================================
+    // درصد شباهت
+    //====================================
+    function similarity(a,b){
+    if(!a||!b)return 0;
+    if(a===b)return 100;
+    let max=Math.max(a.length,b.length);
+    let distance=levenshtein(a,b);
+    return Math.round((1-distance/max)*100);
     }
-
-
-
-
-
-
-    // بررسی شباهت
-
+    
+    //====================================
+    // بررسی مشابه بودن نام
+    //====================================
+    function isSimilarName(input,name){
+    if(!input||!name)return false;
+    if(input.includes(name)||name.includes(input))return true;
+    if(Math.abs(input.length-name.length)>5)return false;
+    return similarity(input,name)>=85;
+    }
+    
+    //====================================
+    // پیدا کردن دانش آموز
+    //====================================
+    function findStudent(text){
+    let input=normalizeText(text);
+    if(!input||input.length<4)return null;
+    for(let student of normalizedStudents){
+    if(input===student.searchName)return student;
+    }
+    for(let student of normalizedStudents){
+    if(input.includes(student.searchName)||student.searchName.includes(input)){
+    return student;
+    }
+    }
     let best=null;
-
     let bestScore=0;
-
-
-
     for(let student of normalizedStudents){
-
-
-        if(
-            Math.abs(
-                input.length -
-                student.length
-            )>5
-        )
-            continue;
-
-
-
-        let score =
-        similarity(
-            input,
-            student.searchName
-        );
-
-
-
-        if(score>bestScore){
-
-            bestScore=score;
-
-            best=student;
-
-        }
-
-
+    if(Math.abs(input.length-student.length)>5)continue;
+    let score=similarity(input,student.searchName);
+    if(score>bestScore){
+    bestScore=score;
+    best=student;
     }
-
-
-
-
-    if(bestScore>=85)
-        return best;
-
-
-
+    }
+    if(bestScore>=85)return best;
     return null;
-
-
-}
-
-
-
-
-
-
-//====================================
-// پیدا کردن چند دانش آموز داخل جمله
-//====================================
-
-function findMultipleStudents(text){
-
-
-    if(!text)
-        return [];
-
-
-
-    let result=[];
-
-
-    let words =
-    text.split(/\s+/);
-
-
-
-    let checked =
-    new Set();
-
-
-
-
-
-    for(
-        let i=0;
-        i<words.length;
-        i++
-    ){
-
-
-        let part="";
-
-
-
-        for(
-            let j=i;
-            j<words.length &&
-            j<i+3;
-            j++
-        ){
-
-
-            part += words[j];
-
-
-
-            let clean =
-            normalizeText(part);
-
-
-
-            if(clean.length<4)
-                continue;
-
-
-
-            if(
-                checked.has(clean)
-            )
-                continue;
-
-
-
-            checked.add(clean);
-
-
-
-            let student =
-            findStudent(clean);
-
-
-
-            if(
-                student &&
-                !result.find(
-                    x=>x.id===student.id
-                )
-            ){
-
-                result.push(student);
-
-            }
-
-
-        }
-
-
     }
-
-
-
+    
+    //====================================
+    // پیدا کردن چند اسم داخل جمله
+    //====================================
+    function findMultipleStudents(text){
+    if(!text)return[];
+    let result=[];
+    let words=text.split(/\s+/);
+    let checked=new Set();
+    for(let i=0;i<words.length;i++){
+    let part="";
+    for(let j=i;j<words.length&&j<i+3;j++){
+    part+=words[j];
+    let clean=normalizeText(part);
+    if(clean.length<4)continue;
+    if(checked.has(clean))continue;
+    checked.add(clean);
+    let student=findStudent(clean);
+    if(student&&!result.find(x=>x.id===student.id)){
+    result.push(student);
+    }
+    }
+    }
     return result;
-
-
-}
-
+    }
+    
 //====================================
 // راه اندازی تشخیص صدا
 //====================================
-
 function initSpeech(){
-
-
-    const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-    
-    
-    
+    const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
     if(!SpeechRecognition){
-    
-    alert(
-    "مرورگر شما از تشخیص صدا پشتیبانی نمی کند"
-    );
-    
+    alert("مرورگر شما از تشخیص صدا پشتیبانی نمی کند");
     return;
-    
     }
-    
-    
-    
-    recognition =
-    new SpeechRecognition();
-    
-    
-    
+    recognition=new SpeechRecognition();
     recognition.lang="fa-IR";
-    
     recognition.continuous=true;
-    
     recognition.interimResults=false;
-    
     recognition.maxAlternatives=5;
-    
-    
-    
-    
     
     //====================================
     // شروع میکروفون
     //====================================
-    
     recognition.onstart=()=>{
-    
-    
     isListening=true;
-    
-    
-    console.log(
-    "Microphone started"
-    );
-    
-    
-    
-    let micButton =
-    document.getElementById(
-    "micButton"
-    );
-    
-    
+    console.log("Microphone started");
+    let micButton=document.getElementById("micButton");
     if(micButton){
-    
-    micButton.classList.add(
-    "active"
-    );
-    
+    micButton.classList.add("active");
     }
-    
-    
     };
-    
-    
-    
-    
     
     //====================================
     // دریافت متن صدا
     //====================================
-    
     recognition.onresult=(event)=>{
+    let result=event.results[event.results.length-1];
+    let text=result[0].transcript.trim();
+    if(!text||text.length<4)return;
+    console.log("Voice:",text);
     
-    
-    let result =
-    event.results[
-    event.results.length-1
-    ];
-    
-    
-    
-    let text =
-    result[0]
-    .transcript
-    .trim();
-    
-    
-    
-    if(
-    !text ||
-    text.length<4
-    )
-    return;
-    
-    
-    
-    
-    console.log(
-    "Voice:",
-    text
-    );
-    
-    
-    
-    
-    // نمایش متن روی صفحه
-    
-    let voiceBox =
-    document.getElementById(
-    "voiceText"
-    );
-    
-    
+    // نمایش متن تشخیص داده شده
+    let voiceBox=document.getElementById("voiceText");
     if(voiceBox){
-    
     voiceBox.innerText=text;
-    
     }
     
-    
-    
-    
-    
-    
-    // جلوگیری از تکرار پشت سرهم
-    
-    if(
-    text===lastRecognizedText
-    )
-    return;
-    
-    
-    
+    if(text===lastRecognizedText)return;
     lastRecognizedText=text;
     
+    let studentsFound=findMultipleStudents(text);
     
-    
-    
-    
-    // پیدا کردن اسم‌ها
-    
-    let studentsFound =
-    findMultipleStudents(text);
-    
-    
-    
-    
-    
-    if(
-    studentsFound.length
-    ){
-    
-    
-    studentsFound.forEach(
-    student=>{
-    
+    if(studentsFound.length){
+    studentsFound.forEach(student=>{
     sendCall(student);
-    
+    });
     }
-    
-    );
-    
-    
-    }
-    
-    
-    
     };
     
-    
-    
-    
-    
-    
     //====================================
-    // خطاهای میکروفون
+    // خطای میکروفون
     //====================================
-    
     recognition.onerror=(event)=>{
-    
-    
-    console.log(
-    "Speech error:",
-    event.error
-    );
-    
-    
-    
-    if(
-    event.error==="not-allowed"
-    ){
-    
+    console.log("Speech error:",event.error);
+    if(event.error==="not-allowed"){
     isListening=false;
-    
     }
-    
-    
     };
     
-    
-    
-    
-    
-    
     //====================================
-    // وقتی کروم میکروفون را قطع کرد
-    // دوباره وصل شود
+    // اتصال مجدد خودکار
     //====================================
-    
     recognition.onend=()=>{
-    
-    
     isListening=false;
     
-    
-    
-    let micButton =
-    document.getElementById(
-    "micButton"
-    );
-    
-    
-    
+    let micButton=document.getElementById("micButton");
     if(micButton){
-    
-    micButton.classList.remove(
-    "active"
-    );
-    
+    micButton.classList.remove("active");
     }
-    
-    
-    
-    
     
     if(!isRestarting){
-    
-    
     isRestarting=true;
+    clearTimeout(restartTimer);
     
-    
-    
-    clearTimeout(
-    restartTimer
-    );
-    
-    
-    
-    restartTimer =
-    setTimeout(()=>{
-    
-    
+    restartTimer=setTimeout(()=>{
     try{
-    
-    
     recognition.start();
-    
-    
-    
     }
-    
     catch(e){
-    
-    
     console.log(e);
-    
-    
     }
-    
-    
-    
     isRestarting=false;
-    
-    
-    
     },500);
-    
-    
-    
     }
-    
-    
     
     };
     
-    
-    
-    
     }
-    
-    
-    
-    
-    
-    
     
     //====================================
     // شروع گوش دادن
     //====================================
-    
     function startListening(){
-    
-    
-    if(!recognition)
-    
-    initSpeech();
-    
-    
-    
+    if(!recognition)initSpeech();
     try{
-    
-    
     recognition.start();
-    
-    
     }
-    
     catch(e){
-    
     console.log(e);
-    
+    }
     }
     
-    
-    }
-    
-    
-    
-    
-    
-    
     //====================================
-    // توقف میکروفون
+    // توقف گوش دادن
     //====================================
-    
     function stopListening(){
-    
-    
     if(recognition){
-    
     recognition.stop();
-    
     }
-    
-    
     isListening=false;
-    
-    
     }
     
 //====================================
-// ارسال فراخوان به Supabase
+// ارسال فراخوان
 //====================================
-
 async function sendCall(student){
-
-
-    if(!student)
-    return;
+    if(!student)return;
     
+    let now=Date.now();
     
+    if(callLock)return;
     
-    let now =
-    Date.now();
-    
-    
-    
-    // جلوگیری از ارسال تکراری سریع
-    
-    if(callLock)
-    return;
-    
-    
-    
-    if(
-    lastCallTime &&
-    now-lastCallTime<1200
-    )
-    return;
-    
-    
+    if(lastCallTime&&now-lastCallTime<1200)return;
     
     lastCallTime=now;
-    
     callLock=true;
-    
-    
     
     try{
     
-    
     let callData={
-    
-    
-    student_name:
-    student.name,
-    
-    
-    class_name:
-    student.class_name,
-    
-    
-    status:
-    "waiting"
-    
-    
+    student_name:student.name,
+    class_name:student.class_name,
+    status:"waiting"
     };
     
-    
-    
-    
-    
-    let {
-    data,
-    error
-    }
-    =
-    await supabaseClient
-    
+    let{data,error}=await supabaseClient
     .from("calls")
-    
-    .insert(
-    [callData]
-    )
-    
+    .insert([callData])
     .select()
-    
     .single();
     
-    
-    
-    
-    
     if(error){
-    
-    
-    console.log(
-    "Call error:",
-    error
-    );
-    
-    
+    console.log("Call error:",error);
     return;
-    
-    
     }
     
-    
-    
-    
-    
-    
-    console.log(
-    "Call sent:",
-    data
-    );
-    
-    
-    
+    console.log("Call sent:",data);
     
     activeCalls.push(data);
     
-    
-    
     setLastStudent(student);
     
-    
+    showCall(data);
     
     }
-    
     catch(error){
-    
-    
     console.log(error);
-    
-    
     }
-    
-    
-    
     finally{
     
-    
     setTimeout(()=>{
-    
-    
     callLock=false;
-    
-    
     },300);
     
-    
-    
     }
     
-    
     }
-    
-    
-    
-    
-    
     
     
     //====================================
     // نمایش آخرین دانش آموز
     //====================================
-    
     function setLastStudent(student){
+    if(!student)return;
     
-    
-    if(!student)
-    return;
-    
-    
-    
-    let element =
-    document.querySelector(
-    "#lastStudent"
-    );
-    
-    
+    let element=document.querySelector("#lastStudent");
     
     if(element){
-    
-    
-    element.innerHTML =
-    
-    `${student.name}
-    -
-    ${student.class_name}`;
-    
+    element.innerHTML=
+    `${student.name} - ${student.class_name}`;
+    }
     
     }
     
     
-    
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     //====================================
-    // دریافت فراخوان‌های جدید Realtime
+    // دریافت آنلاین فراخوان ها
     //====================================
-    
     function subscribeCalls(){
     
-    
-    
     supabaseClient
-    
-    .channel(
-    "calls-realtime"
-    )
-    
+    .channel("calls-realtime")
     .on(
-    
     "postgres_changes",
-    
     {
-    
     event:"INSERT",
-    
     schema:"public",
-    
     table:"calls"
-    
     },
-    
-    
     payload=>{
     
+    let call=payload.new;
+    
+    if(!call)return;
+    
+    console.log("New call:",call);
     
     
-    let call =
-    payload.new;
-    
-    
-    
-    if(!call)
+    if(activeCalls.find(x=>x.id===call.id)){
     return;
-    
-    
-    
-    
-    
-    console.log(
-    "New call:",
-    call
-    );
-    
-    
-    
-    
-    
-    
-    if(
-    activeCalls.find(
-    x=>x.id===call.id
-    )
-    
-    )
-    return;
-    
-    
-    
+    }
     
     
     activeCalls.push(call);
     
-    
-    
     showCall(call);
     
-    
-    
     }
-    
-    
     )
-    
-    .subscribe(
-    status=>{
-    
-    
+    .subscribe(status=>{
     console.log(
     "Realtime status:",
     status
     );
-    
-    
-    }
-    );
-    
-    
+    });
     
     }
     
     
-    
-    
-    
-    
-    
     //====================================
-    // نمایش کارت فراخوان
+    // نمایش دانش آموز در کلاس مربوطه
     //====================================
-    
     function showCall(call){
     
+    if(!call)return;
     
     
-    let box =
-    document.querySelector(
-    "#callsContainer"
+    // پیدا کردن باکس کلاس
+    
+    let classBox=document.getElementById(
+    "class-"+call.class_name
     );
     
     
+    if(!classBox){
     
-    if(!box)
+    console.log(
+    "Class box not found:",
+    call.class_name
+    );
+    
     return;
     
+    }
     
     
+    // ساخت کارت
+    
+    let card=document.createElement("div");
+    
+    card.className="student-item";
+    
+    card.dataset.id=call.id;
     
     
-    let card =
-    document.createElement(
-    "div"
-    );
-    
-    
-    
-    card.className =
-    "student-card";
-    
-    
-    
-    card.dataset.id =
-    call.id;
-    
-    
-    
-    
-    
-    card.innerHTML =
-    
-    `
+    card.innerHTML=`
     
     <div class="student-name">
-    
     ${call.student_name}
-    
-    </div>
-    
-    
-    <div class="student-class">
-    
-    ${call.class_name}
-    
     </div>
     
     `;
     
     
+    // اضافه کردن به کلاس
+    
+    classBox.prepend(card);
     
     
     
-    box.prepend(card);
+    // افزایش شمارنده
     
+    let count=document.getElementById(
+    "count-"+call.class_name
+    );
+    
+    
+    if(count){
+    
+    let number=parseInt(count.innerText)||0;
+    
+    count.innerText=number+1;
+    
+    }
     
     
     }
     
     
-    
-    
-    
-    
     //====================================
-    // حذف فراخوان از لیست صفحه
+    // حذف فراخوان از صفحه
     //====================================
-    
     function removeCall(id){
     
+    activeCalls=
+    activeCalls.filter(call=>call.id!==id);
     
     
-    activeCalls =
-    
-    activeCalls.filter(
-    
-    call=>
-    
-    call.id!==id
-    
+    let card=document.querySelector(
+    `.student-item[data-id="${id}"]`
     );
-    
-    
-    
-    
-    
-    let card =
-    document.querySelector(
-    
-    `.student-card[data-id="${id}"]`
-    
-    );
-    
-    
-    
     
     
     if(card){
-    
     card.remove();
-    
     }
-    
-    
     
     }
     
 //====================================
 // دریافت لیست دانش آموزان
 //====================================
-
 async function loadStudents(){
-
 
     try{
     
-    
-    let {
-    
-    data,
-    
-    error
-    
-    }
-    
-    =
-    
-    await supabaseClient
-    
+    let{data,error}=await supabaseClient
     .from("students")
-    
     .select("*");
     
     
+    console.log("DATA:",data);
+    console.log("ERROR:",error);
     
     
-    
-    console.log(
-    "DATA:",
-    data
-    );
-    
-    
-    
-    console.log(
-    "ERROR:",
-    error
-    );
-    
-    
-    
-    
-    
-    students =
-    data || [];
-    
-    
-    
-    
+    students=data||[];
     
     console.log(
     "Students loaded:",
@@ -1366,391 +502,203 @@ async function loadStudents(){
     );
     
     
-    
-    
-    
     prepareStudentSearch();
     
     
-    
     }
-    
     catch(error){
-    
     
     console.log(
     "Load students error:",
     error
     );
     
+    }
     
     }
     
     
-    
-    }
-    
-    
-    
-    
-    
-    
-    
     //====================================
-    // دریافت دانش آموزان یک کلاس
+    // دانش آموزان یک کلاس
     //====================================
-    
     function getStudentsByClass(className){
     
-    
-    
     return normalizedStudents.filter(
-    
     student=>
-    
     student.class_name===className
-    
     );
-    
-    
     
     }
     
     
-    
-    
-    
-    
-    
     //====================================
-    // پیدا کردن کلاس
+    // گرفتن شناسه کلاس
     //====================================
-    
     function getClassId(className){
     
-    
-    return classMap[className] || null;
-    
+    return classMap[className]||null;
     
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    //====================================
-    // شروع اولیه سیستم
-    //====================================
-    
-    async function initNazem(){
-    
-    
-    
-    await loadStudents();
-    
-    
-    
-    
-    subscribeCalls();
-    
-    
-    
-    
-    initSpeech();
-    
-    
-    
-    
-    console.log(
-    
-    "Nazem system ready"
-    
-    );
-    
-    
-    
-    }
-    
-    
-    
-    
-    
-    
-    
     
     
     //====================================
     // حذف همه فراخوان ها
     //====================================
-    
     async function resetAllCalls(){
-    
-    
     
     try{
     
-    
-    let {
-    
-    error
-    
-    }
-    
-    =
-    
-    await supabaseClient
-    
+    let{error}=await supabaseClient
     .from("calls")
-    
     .delete()
-    
-    .neq(
-    
-    "id",
-    
-    0
-    
-    );
-    
-    
-    
+    .neq("id",0);
     
     
     if(error){
     
-    
     console.log(
-    
     "Reset error:",
-    
     error
-    
     );
-    
     
     return;
     
-    
     }
-    
-    
-    
     
     
     activeCalls=[];
     
     
+    // پاک کردن لیست تمام کلاس ها
     
-    
-    
-    let box =
-    
-    document.querySelector(
-    
-    "#callsContainer"
-    
-    );
-    
-    
-    
-    
-    
-    if(box){
-    
+    document
+    .querySelectorAll(".students-list")
+    .forEach(box=>{
     
     box.innerHTML="";
     
-    
-    }
-    
+    });
     
     
+    // صفر کردن تعداد کلاس ها
     
+    document
+    .querySelectorAll("[id^='count-']")
+    .forEach(count=>{
+    
+    count.innerText="0";
+    
+    });
     
     
     console.log(
-    
     "All calls removed"
-    
     );
     
     
-    
     }
-    
     catch(error){
-    
     
     console.log(error);
     
-    
     }
     
-    
-    
     }
-    
-    
-    
-    
-    
-    
     
     
     //====================================
     // حذف یک فراخوان
     //====================================
-    
     async function deleteCall(id){
     
-    
-    
-    if(!id)
-    return;
-    
+    if(!id)return;
     
     
     try{
     
-    
-    
-    let {
-    
-    error
-    
-    }
-    
-    =
-    
-    await supabaseClient
-    
+    let{error}=await supabaseClient
     .from("calls")
-    
     .delete()
-    
-    .eq(
-    
-    "id",
-    
-    id
-    
-    );
-    
-    
-    
+    .eq("id",id);
     
     
     if(error){
-    
     
     console.log(error);
     
     return;
     
-    
     }
-    
-    
-    
     
     
     removeCall(id);
     
     
-    
     }
-    
     catch(error){
-    
     
     console.log(error);
     
-    
     }
     
-    
-    
     }
-    
-    
-    
-    
-    
-    
     
     
     //====================================
     // صدای هشدار
     //====================================
-    
     function playAlert(){
     
-    
-    
-    let audio =
-    
-    document.querySelector(
-    
+    let audio=document.querySelector(
     "#alertSound"
-    
     );
-    
-    
     
     
     if(audio){
     
-    
     audio.currentTime=0;
-    
     
     audio.play();
     
-    
+    }
     
     }
     
     
+    //====================================
+    // اجرای اولیه سیستم
+    //====================================
+    async function initNazem(){
+    
+    await loadStudents();
+    
+    subscribeCalls();
+    
+    initSpeech();
+    
+    console.log(
+    "Nazem system ready"
+    );
     
     }
     
     
-    
-    
-    
-    
-    
     //====================================
-    // اجرای نهایی سیستم
+    // شروع نهایی
     //====================================
-    
-    
     document.addEventListener(
-    
     "DOMContentLoaded",
+    async()=>{
     
-    ()=>{
-    
-    
-    initNazem();
-    
-    
+    await initNazem();
     
     
     setTimeout(()=>{
     
-    
     startListening();
-    
-    
     
     },1000);
     
     
-    
     }
-    
     );
