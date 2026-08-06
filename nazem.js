@@ -512,7 +512,7 @@ normalizeText(student.name)
         
         
         
-        if(score>=0.70){
+        if(score>=0.80){
         
         
         found=true;
