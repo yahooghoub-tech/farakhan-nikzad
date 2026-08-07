@@ -518,25 +518,30 @@ recognition.onresult=function(event){
     
     
     
-    function findMultipleStudents(text){
-    
-    
-    students.forEach(student=>{
-    
-    
-    if(text.includes(student.name)){
-    
-    
-    sendTeacherMessage(student);
-    
-    
-    }
-    
-    
-    });
-    
-    
-    }
+   // این تابع متن دریافتی از میکروفون را یکسان سازی می‌کند
+// فاصله‌ها را حذف می‌کند تا:
+// "علیسان صفیاری"
+// و
+// "علیسانصفیاری"
+// یکی حساب شوند
+
+function normalizeText(text){
+
+    return text
+
+    // حذف فاصله‌های اضافی بین کلمات
+    .replace(/\s+/g,"")
+
+    // تبدیل ی عربی به ی فارسی
+    .replace(/ي/g,"ی")
+
+    // تبدیل ک عربی به ک فارسی
+    .replace(/ك/g,"ک")
+
+    // حذف فاصله اول و آخر متن
+    .trim();
+
+}
     
     
     
