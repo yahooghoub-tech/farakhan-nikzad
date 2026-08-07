@@ -520,14 +520,16 @@ recognition.onresult=function(event){
     function normalizeText(text){
 
         return text
+        .toLowerCase()
         .replace(/ي/g,"ی")
         .replace(/ى/g,"ی")
         .replace(/ك/g,"ک")
+        .replace(/ۀ/g,"ه")
         .replace(/\s+/g,"")
+        .replace(/[^\u0600-\u06FF]/g,"")
         .trim();
-        
-        }
-        
+    
+    }
         
         
         function levenshtein(a,b){
@@ -618,42 +620,30 @@ recognition.onresult=function(event){
         }
         
         
-        
         function findMultipleStudents(text){
 
 
-            let words =
-            normalizeText(text)
-            .split(" ");
-            
-            
-            
-            for(let i=0;i<words.length;i++){
-            
-            
-            for(let j=i+1;j<words.length;j++){
-            
-            
-            let possibleName =
-            words.slice(i,j+1).join(" ");
+            let cleanText =
+            normalizeText(text);
             
             
             
             students.forEach(student=>{
             
             
-            let score =
-            similarity(
-            possibleName,
-            student.name
-            );
+            let cleanName =
+            normalizeText(student.name);
             
             
             
-            if(score>=0.60){
+            if(
+            cleanText.includes(cleanName)
+            ){
             
             
-            if(!calledStudents.includes(student.name)){
+            if(
+            !calledStudents.includes(student.name)
+            ){
             
             
             calledStudents.push(student.name);
@@ -664,9 +654,7 @@ recognition.onresult=function(event){
             
             console.log(
             "فراخوان شد:",
-            student.name,
-            "شباهت:",
-            score
+            student.name
             );
             
             
@@ -676,17 +664,12 @@ recognition.onresult=function(event){
             }
             
             
-            
             });
             
             
             }
-            
-            
-            }
-            
-            
-            }
+        
+        
     
     
     
