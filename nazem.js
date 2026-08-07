@@ -402,7 +402,20 @@ const students=[
     
     ];
 
+    let sensitiveNames = [
 
+        "آرتین عابدی",
+        "آبتین عابدی",
+        "آروین عابدی",
+        
+        "مبین دمرچلی",
+        "محسن دمرچلی",
+        
+        "آرتین رضایی",
+        "آرسیس رضایی",
+        "آرسین رضایی"
+        
+        ];
 
 
 if("webkitSpeechRecognition" in window){
@@ -620,6 +633,69 @@ recognition.onresult=function(event){
         }
 
 
+        function isSensitiveMatch(student, text){
+
+
+            let studentParts =
+            student.name.split(" ");
+            
+            
+            let textParts =
+            text.split(" ");
+            
+            
+            
+            let studentFirst =
+            normalizeText(studentParts[0]);
+            
+            
+            let studentLast =
+            normalizeText(
+            studentParts[studentParts.length-1]
+            );
+            
+            
+            
+            let textFirst =
+            normalizeText(textParts[0]);
+            
+            
+            let textLast =
+            normalizeText(
+            textParts[textParts.length-1]
+            );
+            
+            
+            
+            let firstScore =
+            similarity(
+            studentFirst,
+            textFirst
+            );
+            
+            
+            
+            let lastScore =
+            similarity(
+            studentLast,
+            textLast
+            );
+            
+            
+            
+            return (
+            firstScore >= 0.90 &&
+            lastScore >= 0.90
+            );
+            
+            
+            }
+
+
+
+
+
+
         function isSimilarName(student,text){
 
 
@@ -713,7 +789,45 @@ recognition.onresult=function(event){
             student.name
             );
             
-            
+            let isSensitive =
+sensitiveNames.includes(student.name);
+
+if(isSensitive){
+
+
+    if(
+    isSensitiveMatch(
+    student,
+    possibleName
+    )
+    ){
+
+
+        if(
+        !calledStudents.includes(student.name)
+        ){
+
+            calledStudents.push(student.name);
+
+            sendTeacherMessage(student);
+
+
+            console.log(
+            "اسم حساس فراخوان شد:",
+            student.name
+            );
+
+        }
+
+    }
+
+
+    return;
+
+}
+
+
+
             
             if(score >= 0.80){
             
