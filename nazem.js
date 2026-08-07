@@ -619,31 +619,41 @@ recognition.onresult=function(event){
         
         
         
-        
         function findMultipleStudents(text){
 
 
-            let cleanText =
-            normalizeText(text);
+            let words =
+            normalizeText(text)
+            .split(" ");
+            
+            
+            
+            for(let i=0;i<words.length;i++){
+            
+            
+            for(let j=i+1;j<words.length;j++){
+            
+            
+            let possibleName =
+            words.slice(i,j+1).join(" ");
             
             
             
             students.forEach(student=>{
             
             
-            let cleanName =
-            normalizeText(student.name);
+            let score =
+            similarity(
+            possibleName,
+            student.name
+            );
             
             
             
-            if(
-            cleanText.includes(cleanName)
-            ){
+            if(score>=0.75){
             
             
-            if(
-            !calledStudents.includes(student.name)
-            ){
+            if(!calledStudents.includes(student.name)){
             
             
             calledStudents.push(student.name);
@@ -654,7 +664,9 @@ recognition.onresult=function(event){
             
             console.log(
             "فراخوان شد:",
-            student.name
+            student.name,
+            "شباهت:",
+            score
             );
             
             
@@ -666,6 +678,12 @@ recognition.onresult=function(event){
             
             
             });
+            
+            
+            }
+            
+            
+            }
             
             
             }
