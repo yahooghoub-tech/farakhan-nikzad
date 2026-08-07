@@ -9,11 +9,9 @@ SUPABASE_KEY
 
 console.log("Supabase connected");
 
+
 let recognition;
-
 let isListening=true;
-
-let restarting=false;
 
 
 const micStatus=document.getElementById("micStatus");
@@ -417,7 +415,7 @@ recognition.lang="fa-IR";
 
 recognition.continuous=true;
 
-recognition.interimResults=false;
+recognition.interimResults=true;
 
 
 
@@ -434,45 +432,28 @@ micIcon.classList.add(
 };
 
 
-recognition.onerror=function(event){
+
+recognition.onerror=function(){
+
+micStatus.innerText=
+"خطا در میکروفون - تلاش مجدد";
 
 
-    console.log(
-    "خطای میکروفون:",
-    event.error
-    );
-    
-    
-    
-    if(
-    event.error!=="not-allowed"
-    ){
-    
-    restartMic();
-    
-    }
-    
-    
-    };
+restartMic();
+
+};
+
 
 
 recognition.onend=function(){
 
+if(isListening){
 
-    console.log(
-    "میکروفون متوقف شد - شروع دوباره"
-    );
-    
-    
-    
-    if(isListening){
-    
-    restartMic();
-    
-    }
-    
-    
-    };
+restartMic();
+
+}
+
+};
 
 
 
@@ -490,45 +471,24 @@ micStatus.innerText=
 }
 
 
+
 function restartMic(){
 
 
-    if(restarting){
-    return;
-    }
-    
-    
-    restarting=true;
-    
-    
-    setTimeout(()=>{
-    
-    
-    try{
-    
-    
-    recognition.start();
-    
-    
-    }
-    catch(e){
-    
-    
-    console.log(
-    "میکروفون هنوز فعال است"
-    );
-    
-    
-    }
-    
-    
-    restarting=false;
-    
-    
-    },1000);
-    
-    
-    }
+setTimeout(()=>{
+
+
+try{
+
+recognition.start();
+
+}catch(e){}
+
+
+},1000);
+
+
+}
 recognition.onresult=function(event){
 
     let text="";
@@ -558,92 +518,25 @@ recognition.onresult=function(event){
     
     
     
-    function normalizeText(text){
-
-        return text
-        .replace(/ي/g,"ی")
-        .replace(/ى/g,"ی")
-        .replace(/ك/g,"ک")
-        .replace(/\s+/g,"")
-        .trim();
-        
-        }
-        
-        
-        
-        function similarity(a,b){
-        
-        a=normalizeText(a);
-        
-        b=normalizeText(b);
-        
-        
-        let longer =
-        a.length>b.length ? a : b;
-        
-        
-        let shorter =
-        a.length>b.length ? b : a;
-        
-        
-        let distance=0;
-        
-        
-        for(let i=0;i<shorter.length;i++){
-        
-        if(shorter[i]!==longer[i]){
-        
-        distance++;
-        
-        }
-        
-        }
-        
-        
-        distance += longer.length-shorter.length;
-        
-        
-        return 1-(distance/longer.length);
-        
-        }
-        
-        
-        
-        
-        function findMultipleStudents(text){
-        
-        
-        students.forEach(student=>{
-        
-        
-        let score =
-        similarity(
-        text,
-        student.name
-        );
-        
-        
-        
-        console.log(
-        student.name,
-        score
-        );
-        
-        
-        
-        if(score > 0.75){
-        
-        
-        sendTeacherMessage(student);
-        
-        
-        }
-        
-        
-        });
-        
-        
-        }
+    function findMultipleStudents(text){
+    
+    
+    students.forEach(student=>{
+    
+    
+    if(text.includes(student.name)){
+    
+    
+    sendTeacherMessage(student);
+    
+    
+    }
+    
+    
+    });
+    
+    
+    }
     
     
     
