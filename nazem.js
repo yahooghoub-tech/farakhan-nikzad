@@ -677,10 +677,29 @@ recognition.onresult=function(event){
             cleanName
             );
             
-            
+            let nameParts = student.name.split(" ");
+
+let firstName =
+normalizeText(nameParts[0]);
+
+
+let voiceParts =
+text.split(" ");
+
+
+let voiceFirstName =
+normalizeText(voiceParts[0]);
+
+
+let firstScore =
+similarity(
+voiceFirstName,
+firstName
+);
             
             if(
-            score >= 0.80
+                score >= 0.80 &&
+                firstScore >= 0.90
             ){
             
             
