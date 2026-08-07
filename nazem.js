@@ -508,7 +508,7 @@ recognition.onresult=function(event){
     
     speechText.innerText=text;
     
-    
+    console.log("متن میکروفون:", text);
     
     findMultipleStudents(text);
     
@@ -619,6 +619,7 @@ recognition.onresult=function(event){
         
         }
         
+
         function findMultipleStudents(text){
 
 
@@ -635,9 +636,12 @@ recognition.onresult=function(event){
             
             
             
-            if(
-            cleanText.includes(cleanName)
-            ){
+            let index =
+            cleanText.indexOf(cleanName);
+            
+            
+            
+            if(index !== -1){
             
             
             if(
@@ -662,14 +666,56 @@ recognition.onresult=function(event){
             
             }
             
+            else{
+            
+            
+            // بررسی غلط املایی
+            
+            let score =
+            similarity(
+            cleanText,
+            cleanName
+            );
+            
+            
+            
+            if(
+            score >= 0.80
+            ){
+            
+            
+            if(
+            !calledStudents.includes(student.name)
+            ){
+            
+            
+            calledStudents.push(student.name);
+            
+            
+            sendTeacherMessage(student);
+            
+            
+            console.log(
+            "فراخوان با شباهت:",
+            student.name,
+            score
+            );
+            
+            
+            }
+            
+            
+            }
+            
+            
+            }
+            
+            
             
             });
             
             
-            
             }
-        
-    
     
     
     async function sendTeacherMessage(student){
