@@ -627,10 +627,6 @@ recognition.onresult=function(event){
             
             
             
-            let foundStudents = [];
-            
-            
-            
             students.forEach(student=>{
             
             
@@ -639,32 +635,9 @@ recognition.onresult=function(event){
             
             
             
-            let score =
-            similarity(
-            cleanText,
-            cleanName
-            );
-            
-            
-            
             if(
             cleanText.includes(cleanName)
-            ||
-            score >= 0.85
             ){
-            
-            
-            foundStudents.push(student);
-            
-            
-            }
-            
-            
-            });
-            
-            
-            
-            foundStudents.forEach(student=>{
             
             
             if(
@@ -687,11 +660,14 @@ recognition.onresult=function(event){
             }
             
             
+            }
+            
+            
             });
             
             
+            
             }
-       
         
     
     
