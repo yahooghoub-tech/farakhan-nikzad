@@ -517,27 +517,149 @@ recognition.onresult=function(event){
     };
     
     
+    // این تابع فاصله و تفاوت حروف فارسی و عربی را یکسان می‌کند
+// تا مقایسه دقیق‌تر شود
+function normalizeText(text){
+
+    return text
+
+    // حذف فاصله بین کلمات
+    .replace(/\s+/g,"")
+
+    // تبدیل ی عربی به ی فارسی
+    .replace(/ي/g,"ی")
+
+    // تبدیل ک عربی به ک فارسی
+    .replace(/ك/g,"ک")
+
+    // حذف فاصله‌های اضافی ابتدا و انتها
+    .trim();
+
+}
+
+
+
+// این تابع تعداد تفاوت دو متن را محاسبه می‌کند
+// مثال:
+// امیرپارسا
+// امیرپارسای
+// فقط یک حرف تفاوت دارند
+
+function levenshtein(a,b){
+
+
+    let matrix=[];
+
+
+    // ساخت جدول مقایسه
+    for(let i=0;i<=b.length;i++){
+
+        matrix[i]=[i];
+
+    }
+
+
+    for(let j=0;j<=a.length;j++){
+
+        matrix[0][j]=j;
+
+    }
+
+
+
+    // بررسی تک تک حروف
+    for(let i=1;i<=b.length;i++){
+
+        for(let j=1;j<=a.length;j++){
+
+
+            if(b[i-1]===a[j-1]){
+
+
+                // اگر حرف یکی بود، هزینه صفر است
+                matrix[i][j]=matrix[i-1][j-1];
+
+
+            }else{
+
+
+                // اگر فرق داشت، کمترین تغییر را حساب می‌کنیم
+                matrix[i][j]=Math.min(
+
+                    matrix[i-1][j-1]+1,
+                    matrix[i][j-1]+1,
+                    matrix[i-1][j]+1
+
+                );
+
+
+            }
+
+        }
+
+    }
+
+
+    return matrix[b.length][a.length];
+
+}
+
+
+
+// این تابع درصد شباهت دو متن را برمی‌گرداند
+function similarity(a,b){
+
+
+    let maxLength=Math.max(
+        a.length,
+        b.length
+    );
+
+
+    let distance=levenshtein(a,b);
+
+
+    return 1-(distance/maxLength);
+
+
+}
+
+
+
     
-    function findMultipleStudents(text){
-    
-    
+    f// این تابع اسم گفته شده توسط ناظم را با لیست دانش آموزان بررسی می‌کند
+function findMultipleStudents(text){
+
+
+    // تبدیل متن گفته شده به حالت استاندارد
+    // فقط برای مقایسه استفاده می‌شود
+    let cleanText = normalizeText(text);
+
+
+
     students.forEach(student=>{
-    
-    
-    if(text.includes(student.name)){
-    
-    
-    sendTeacherMessage(student);
-    
-    
-    }
-    
-    
+
+
+        // تبدیل اسم ثبت شده دانش آموز به حالت استاندارد
+        let cleanName = normalizeText(student.name);
+
+
+
+        // بررسی شباهت اسم‌ها
+        if(cleanText.includes(cleanName)){
+
+
+            // اگر اسم پیدا شد، فراخوان ارسال شود
+            sendTeacherMessage(student);
+
+
+        }
+
+
     });
-    
-    
-    }
-    
+
+
+}
     
     
     async function sendTeacherMessage(student){
