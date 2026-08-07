@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>پنل ناظم - سیستم فراخوان خروج</title>
 <link rel="stylesheet" href="nazem.css">
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
 
@@ -223,6 +224,21 @@
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
         <script src="nazem.js"></script>
-        
+        <script>
+            if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"service-worker.js"
+)
+.then(()=>{
+
+console.log(
+" PWA فعال شد"
+);
+
+});
+
+}
+        </script>
         </body>
         </html>
