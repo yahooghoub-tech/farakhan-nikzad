@@ -9,9 +9,11 @@ SUPABASE_KEY
 
 console.log("Supabase connected");
 
-
 let recognition;
+
 let isListening=true;
+
+let restarting=false;
 
 
 const micStatus=document.getElementById("micStatus");
@@ -415,7 +417,7 @@ recognition.lang="fa-IR";
 
 recognition.continuous=true;
 
-recognition.interimResults=true;
+recognition.interimResults=false;
 
 
 
@@ -432,28 +434,45 @@ micIcon.classList.add(
 };
 
 
-
-recognition.onerror=function(){
-
-micStatus.innerText=
-"خطا در میکروفون - تلاش مجدد";
+recognition.onerror=function(event){
 
 
-restartMic();
-
-};
-
+    console.log(
+    "خطای میکروفون:",
+    event.error
+    );
+    
+    
+    
+    if(
+    event.error!=="not-allowed"
+    ){
+    
+    restartMic();
+    
+    }
+    
+    
+    };
 
 
 recognition.onend=function(){
 
-if(isListening){
 
-restartMic();
-
-}
-
-};
+    console.log(
+    "میکروفون متوقف شد - شروع دوباره"
+    );
+    
+    
+    
+    if(isListening){
+    
+    restartMic();
+    
+    }
+    
+    
+    };
 
 
 
@@ -471,24 +490,45 @@ micStatus.innerText=
 }
 
 
-
 function restartMic(){
 
 
-setTimeout(()=>{
-
-
-try{
-
-recognition.start();
-
-}catch(e){}
-
-
-},1000);
-
-
-}
+    if(restarting){
+    return;
+    }
+    
+    
+    restarting=true;
+    
+    
+    setTimeout(()=>{
+    
+    
+    try{
+    
+    
+    recognition.start();
+    
+    
+    }
+    catch(e){
+    
+    
+    console.log(
+    "میکروفون هنوز فعال است"
+    );
+    
+    
+    }
+    
+    
+    restarting=false;
+    
+    
+    },1000);
+    
+    
+    }
 recognition.onresult=function(event){
 
     let text="";
