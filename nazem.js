@@ -618,30 +618,104 @@ recognition.onresult=function(event){
         
         
         }
-        
 
+
+        function isSimilarName(student,text){
+
+
+            let studentParts =
+            student.name.split(" ");
+            
+            
+            
+            let voiceParts =
+            text.split(" ");
+            
+            
+            
+            let studentFirstName =
+            normalizeText(studentParts[0]);
+            
+            
+            let studentLastName =
+            normalizeText(
+            studentParts[studentParts.length-1]
+            );
+            
+            
+            
+            let voiceFirstName =
+            normalizeText(voiceParts[0]);
+            
+            
+            let voiceLastName =
+            normalizeText(
+            voiceParts[voiceParts.length-1]
+            );
+            
+            
+            
+            let firstScore =
+            similarity(
+            studentFirstName,
+            voiceFirstName
+            );
+            
+            
+            
+            let lastScore =
+            similarity(
+            studentLastName,
+            voiceLastName
+            );
+            
+            
+            
+            if(
+            firstScore >= 0.90 &&
+            lastScore >= 0.90
+            ){
+            
+            return true;
+            
+            }
+            
+            
+            
+            return false;
+            
+            
+            }
+
+        
         function findMultipleStudents(text){
 
 
-            let cleanText =
-            normalizeText(text);
+            let words =
+            text.split(" ");
+            
+            
+            
+            for(let i=0;i<words.length;i++){
+            
+            
+            let possibleName =
+            words.slice(i,i+3).join(" ");
             
             
             
             students.forEach(student=>{
             
             
-            let cleanName =
-            normalizeText(student.name);
+            let score =
+            similarity(
+            possibleName,
+            student.name
+            );
             
             
             
-            let index =
-            cleanText.indexOf(cleanName);
-            
-            
-            
-            if(index !== -1){
+            if(score >= 0.80){
             
             
             if(
@@ -657,66 +731,8 @@ recognition.onresult=function(event){
             
             console.log(
             "فراخوان شد:",
-            student.name
-            );
-            
-            
-            }
-            
-            
-            }
-            
-            else{
-            
-            
-            // بررسی غلط املایی
-            
-            let score =
-            similarity(
-            cleanText,
-            cleanName
-            );
-            
-            let nameParts = student.name.split(" ");
-
-let firstName =
-normalizeText(nameParts[0]);
-
-
-let voiceParts =
-text.split(" ");
-
-
-let voiceFirstName =
-normalizeText(voiceParts[0]);
-
-
-let firstScore =
-similarity(
-voiceFirstName,
-firstName
-);
-            
-            if(
-                score >= 0.80 &&
-                firstScore >= 0.90
-            ){
-            
-            
-            if(
-            !calledStudents.includes(student.name)
-            ){
-            
-            
-            calledStudents.push(student.name);
-            
-            
-            sendTeacherMessage(student);
-            
-            
-            console.log(
-            "فراخوان با شباهت:",
             student.name,
+            "امتیاز:",
             score
             );
             
@@ -727,11 +743,10 @@ firstName
             }
             
             
-            }
-            
-            
-            
             });
+            
+            
+            }
             
             
             }
