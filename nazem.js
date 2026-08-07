@@ -509,109 +509,6 @@ recognition.onresult=function(event){
     speechText.innerText=text;
     
     
-// این تابع متن را برای مقایسه آماده می‌کند
-// فاصله‌ها، تفاوت حروف عربی و فارسی را اصلاح می‌کند
-// فقط برای مقایسه است و متن داخل کادر را تغییر نمی‌دهد
-
-function normalizeName(text){
-
-    return text
-
-    // حذف فاصله‌ها
-    // مثال:
-    // امیر پارسا فخر آبادی
-    // تبدیل می‌شود به:
-    // امیرپارسا فخرآبادی
-    .replace(/\s+/g,"")
-
-    // تبدیل ی عربی به ی فارسی
-    .replace(/ي/g,"ی")
-
-    // تبدیل ک عربی به ک فارسی
-    .replace(/ك/g,"ک")
-
-    .trim();
-
-}
-
-
-
-// محاسبه فاصله بین دو متن
-// برای پیدا کردن غلط املایی کوچک استفاده می‌شود
-
-function editDistance(a,b){
-
-    let matrix=[];
-
-
-    for(let i=0;i<=b.length;i++){
-
-        matrix[i]=[i];
-
-    }
-
-
-    for(let j=0;j<=a.length;j++){
-
-        matrix[0][j]=j;
-
-    }
-
-
-
-    for(let i=1;i<=b.length;i++){
-
-        for(let j=1;j<=a.length;j++){
-
-
-            if(b[i-1]===a[j-1]){
-
-                matrix[i][j]=matrix[i-1][j-1];
-
-            }
-            else{
-
-                matrix[i][j]=Math.min(
-
-                    matrix[i-1][j-1]+1,
-                    matrix[i][j-1]+1,
-                    matrix[i-1][j]+1
-
-                );
-
-            }
-
-        }
-
-    }
-
-
-    return matrix[b.length][a.length];
-
-}
-
-
-
-// تبدیل اختلاف حروف به درصد شباهت
-
-function nameSimilarity(a,b){
-
-
-    let maxLength=Math.max(
-        a.length,
-        b.length
-    );
-
-
-    let distance=editDistance(a,b);
-
-
-    return 1-(distance/maxLength);
-
-}
-
-
-
     
     findMultipleStudents(text);
     
@@ -621,51 +518,25 @@ function nameSimilarity(a,b){
     
     
     
-    // بررسی اسم گفته شده توسط ناظم با تمام دانش آموزان
-
-function findMultipleStudents(text){
-
-
-    // متن گفته شده توسط میکروفون
-    let voiceName =
-    normalizeName(text);
-
-
-
+    function findMultipleStudents(text){
+    
+    
     students.forEach(student=>{
-
-
-        // اسم ذخیره شده دانش آموز
-        let studentName =
-        normalizeName(student.name);
-
-
-
-        // محاسبه میزان شباهت
-        let score =
-        nameSimilarity(
-            voiceName,
-            studentName
-        );
-
-
-
-        // اگر شباهت بیشتر از 85 درصد بود
-        // آن را همان دانش آموز در نظر بگیر
-
-        if(score >= 0.85){
-
-
-            sendTeacherMessage(student);
-
-
-        }
-
-
+    
+    
+    if(text.includes(student.name)){
+    
+    
+    sendTeacherMessage(student);
+    
+    
+    }
+    
+    
     });
-
-
-}
+    
+    
+    }
     
     
     
