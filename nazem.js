@@ -25,14 +25,22 @@ console.log("Supabase connected");
 // متغیرهای اصلی
 //====================================
 
-let recognition;
+let recognition = null;
 
 let isListening = true;
 
 let speechBuffer = "";
 
-let restartTimer;
+let restartTimer = null;
 
+let lastDetectedText = "";
+
+
+
+
+//====================================
+// عناصر HTML
+//====================================
 
 
 const micStatus =
@@ -58,16 +66,27 @@ document.getElementById("resetCalls");
 
 function normalizeText(text){
 
+
 return text
+
 .replace(/ي/g,"ی")
+
 .replace(/ى/g,"ی")
+
 .replace(/ك/g,"ک")
+
 .replace(/ۀ/g,"ه")
+
 .replace(/‌/g," ")
+
 .replace(/\s+/g," ")
+
 .trim();
 
+
 }
+
+
 
 
 
@@ -77,6 +96,7 @@ return text
 
 
 const students=[
+
 
 {name:"مهان احمدی",className:"ششم-1"},
 
@@ -123,6 +143,7 @@ const students=[
 {name:"میثم نگهداری",className:"ششم-1"},
 
 {name:"مازیار نگهداری",className:"ششم-1"},
+
 
 
 {name:"ساتیار امیری",className:"سوم-1"},
@@ -173,23 +194,33 @@ const students=[
 
 
 
+
+
 //====================================
-// ساخت نسخه قابل مقایسه اسامی
+// ساخت نسخه قابل مقایسه
 //====================================
 
 
 const normalizedStudents =
+
 students.map(student=>{
+
 
 return {
 
+
 ...student,
 
+
 normalizedName:
+
 normalizeText(student.name)
+
 .replace(/\s+/g,"")
 
+
 };
+
 
 });
 
@@ -199,17 +230,16 @@ console.log(
 "Students loaded:",
 normalizedStudents.length
 );
-
-
 //====================================
 // الگوریتم Levenshtein
-// برای تشخیص غلط املایی
 //====================================
 
 
 function levenshtein(a,b){
 
+
     const matrix=[];
+    
     
     
     for(let i=0;i<=b.length;i++){
@@ -217,6 +247,7 @@ function levenshtein(a,b){
     matrix[i]=[i];
     
     }
+    
     
     
     for(let j=0;j<=a.length;j++){
@@ -227,12 +258,17 @@ function levenshtein(a,b){
     
     
     
+    
     for(let i=1;i<=b.length;i++){
+    
     
     for(let j=1;j<=a.length;j++){
     
     
-    if(b[i-1]===a[j-1]){
+    
+    if(
+    b[i-1]===a[j-1]
+    ){
     
     
     matrix[i][j]=
@@ -258,20 +294,28 @@ function levenshtein(a,b){
     }
     
     
+    
     }
     
     
+    
     }
+    
     
     
     return matrix[b.length][a.length];
     
+    
     }
     
     
     
+    
+    
+    
+    
     //====================================
-    // محاسبه درصد شباهت
+    // درصد شباهت دو متن
     //====================================
     
     
@@ -280,6 +324,7 @@ function levenshtein(a,b){
     
     let longer =
     a.length>b.length ? a:b;
+    
     
     
     let shorter =
@@ -306,16 +351,19 @@ function levenshtein(a,b){
     return (
     longer.length-distance
     )
-    / longer.length;
+    /longer.length;
     
     
     }
     
     
     
+    
+    
+    
+    
     //====================================
-    // بررسی امکان فراخوان
-    // فعلا همیشه مجاز است
+    // جلوگیری از فراخوان اضافی
     //====================================
     
     
@@ -327,16 +375,21 @@ function levenshtein(a,b){
     
     
     
+    
+    
+    
+    
     //====================================
-    // تشخیص نام دانش آموز
+    // پیدا کردن دانش آموز
     //====================================
     
     
     function findMultipleStudents(text){
     
     
+    
     console.log(
-    "متن دریافتی:",
+    "متن برای بررسی:",
     text
     );
     
@@ -347,13 +400,26 @@ function levenshtein(a,b){
     
     
     
+    // حذف فاصله برای مقایسه
+    
     let compareInput =
     input.replace(/\s+/g,"");
     
     
     
     
-    // بررسی تمام دانش آموزان
+    // اگر متن خیلی کوتاه بود
+    // بررسی نکن
+    
+    if(compareInput.length<4){
+    
+    return;
+    
+    }
+    
+    
+    
+    
     
     for(let student of normalizedStudents){
     
@@ -364,9 +430,12 @@ function levenshtein(a,b){
     
     
     
-    //------------------------------------
-    // تشخیص مستقیم
-    //------------------------------------
+    
+    
+    
+    //===============================
+    // تشخیص دقیق
+    //===============================
     
     
     if(
@@ -388,7 +457,12 @@ function levenshtein(a,b){
     
     
     
+    }
+    
+    
+    
     speechBuffer="";
+    
     
     
     if(speechText){
@@ -399,19 +473,23 @@ function levenshtein(a,b){
     }
     
     
-    }
-    
     
     return;
     
     
+    
     }
     
     
     
-    //------------------------------------
+    
+    
+    
+    
+    //===============================
     // تشخیص با غلط املایی
-    //------------------------------------
+    //===============================
+    
     
     
     let score =
@@ -422,14 +500,8 @@ function levenshtein(a,b){
     
     
     
-    console.log(
-    student.name,
-    score
-    );
-    
-    
-    
     if(score>=0.78){
+    
     
     
     console.log(
@@ -446,8 +518,12 @@ function levenshtein(a,b){
     sendTeacherMessage(student);
     
     
+    }
+    
+    
     
     speechBuffer="";
+    
     
     
     if(speechText){
@@ -458,32 +534,30 @@ function levenshtein(a,b){
     }
     
     
-    }
-    
-    
     
     return;
     
     
+    
+    }
+    
+    
+    
     }
     
     
-    
-    }
     
     
     
     console.log(
-    "نامی پیدا نشد"
+    "دانش آموز پیدا نشد"
     );
     
     
     
     }
-
-
     //====================================
-// تنظیم میکروفون
+// راه اندازی Speech Recognition
 //====================================
 
 
@@ -501,31 +575,31 @@ if(
     "fa-IR";
     
     
-    // گوش دادن مداوم
     
     recognition.continuous =
     true;
     
     
-    // فقط نتیجه نهایی
     
     recognition.interimResults =
-    false;
+    true;
     
     
-    // چند پیشنهاد برای تشخیص بهتر
     
     recognition.maxAlternatives =
     3;
     
     
     
-    //------------------------------------
+    
+    
+    //====================================
     // شروع میکروفون
-    //------------------------------------
+    //====================================
     
     
     recognition.onstart=function(){
+    
     
     
     console.log(
@@ -557,71 +631,12 @@ if(
     
     
     
-    //------------------------------------
-    // دریافت خطای میکروفون
-    //------------------------------------
-    
-    
-    recognition.onerror=function(event){
-    
-    
-    console.log(
-    "Speech Error:",
-    event.error
-    );
     
     
     
-    if(
-    event.error!=="no-speech" &&
-    event.error!=="aborted"
-    ){
-    
-    
-    restartMic();
-    
-    
-    }
-    
-    
-    
-    };
-    
-    
-    
-    
-    //------------------------------------
-    // وقتی Chrome میکروفون را بست
-    //------------------------------------
-    
-    
-    recognition.onend=function(){
-    
-    
-    console.log(
-    "Microphone stopped"
-    );
-    
-    
-    
-    if(isListening){
-    
-    
-    restartMic();
-    
-    
-    }
-    
-    
-    
-    };
-    
-    
-    
-    
-    //------------------------------------
-    // دریافت متن صدا
-    //------------------------------------
+    //====================================
+    // دریافت نتیجه صدا
+    //====================================
     
     
     recognition.onresult=function(event){
@@ -631,6 +646,8 @@ if(
     let text="";
     
     
+    
+    // گرفتن متن حتی از نتیجه موقت
     
     for(
     let i=event.resultIndex;
@@ -647,9 +664,9 @@ if(
     
     
     
-    
     let cleanText =
     text.trim();
+    
     
     
     
@@ -658,29 +675,49 @@ if(
     
     
     console.log(
-    "Speech:",
+    "متن تشخیص داده شده:",
     cleanText
     );
     
     
     
-    // فقط آخرین جمله نگهداری می‌شود
-    // جلوگیری از تکرار
     
-    
-    speechBuffer =
-    cleanText;
-    
+    //--------------------------------
+    // نمایش فوری در کادر
+    //--------------------------------
     
     
     if(speechText){
     
     
     speechText.innerText =
-    speechBuffer;
+    cleanText;
     
     
     }
+    
+    
+    
+    // جلوگیری از پردازش تکراری
+    
+    if(
+    cleanText === lastDetectedText
+    ){
+    
+    return;
+    
+    }
+    
+    
+    
+    lastDetectedText =
+    cleanText;
+    
+    
+    
+    speechBuffer =
+    cleanText;
+    
     
     
     
@@ -702,9 +739,97 @@ if(
     
     
     
+    
+    
+    
+    //====================================
+    // خطای میکروفون
+    //====================================
+    
+    
+    recognition.onerror=function(event){
+    
+    
+    
+    console.log(
+    "Speech Error:",
+    event.error
+    );
+    
+    
+    
+    if(
+    event.error !== "no-speech" &&
+    event.error !== "aborted"
+    ){
+    
+    
+    restartMic();
+    
+    
+    }
+    
+    
+    
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    //====================================
+    // پایان خودکار میکروفون
+    //====================================
+    
+    
+    recognition.onend=function(){
+    
+    
+    
+    console.log(
+    "Microphone Ended"
+    );
+    
+    
+    
+    if(isListening){
+    
+    
+    restartMic();
+    
+    
+    }
+    
+    
+    
+    };
+    
+    
+    
+    
+    
+    
     // شروع اولیه
     
+    try{
+    
+    
     recognition.start();
+    
+    
+    
+    }
+    
+    catch(e){
+    
+    
+    console.log(e);
+    
+    
+    }
     
     
     
@@ -715,15 +840,16 @@ if(
     
     if(micStatus){
     
-    
     micStatus.innerText =
     "مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند";
     
-    
     }
     
     
     }
+    
+    
+    
     
     
     
@@ -747,11 +873,11 @@ if(
     setTimeout(()=>{
     
     
+    
     if(
     isListening &&
     recognition
     ){
-    
     
     
     try{
@@ -762,7 +888,7 @@ if(
     
     
     console.log(
-    "Microphone restarted"
+    "Microphone Restarted"
     );
     
     
@@ -772,8 +898,9 @@ if(
     catch(e){
     
     
+    
     console.log(
-    "Restart ignored"
+    "Already started"
     );
     
     
@@ -786,16 +913,13 @@ if(
     
     
     
-    },500);
+    },700);
     
     
     
     }
-
-
-    
-//====================================
-// ارسال فراخوان به جدول calls
+    //====================================
+// ارسال فراخوان به Supabase
 //====================================
 
 
@@ -803,45 +927,68 @@ async function sendTeacherMessage(student){
 
 
 
-    // جلوگیری از ثبت دوباره
+    console.log(
+    "ارسال فراخوان:",
+    student.name
+    );
+    
+    
+    
+    
+    // بررسی اینکه قبلا فراخوان نشده باشد
+    
     
     const {
     data:exist,
     error:checkError
     }=await supabaseClient
     
+    
     .from("calls")
     
+    
     .select("id")
+    
     
     .eq(
     "student_name",
     student.name
     )
     
+    
     .eq(
     "class_name",
     student.className
     )
     
+    
     .limit(1);
     
     
     
+    
+    
     if(checkError){
+    
     
     console.error(
     "خطا در بررسی تکرار:",
     checkError
     );
     
+    
     return;
+    
     
     }
     
     
     
+    
+    
+    
     if(
+    exist &&
     exist.length>0
     ){
     
@@ -860,10 +1007,14 @@ async function sendTeacherMessage(student){
     
     
     
-    // تاریخ و زمان
+    
+    
+    // تاریخ و ساعت
+    
     
     const now =
     new Date();
+    
     
     
     
@@ -871,12 +1022,18 @@ async function sendTeacherMessage(student){
     new Intl.DateTimeFormat(
     "fa-IR",
     {
+    
     year:"numeric",
+    
     month:"2-digit",
+    
     day:"2-digit"
+    
     }
-    )
-    .format(now);
+    
+    ).format(now);
+    
+    
     
     
     
@@ -884,16 +1041,23 @@ async function sendTeacherMessage(student){
     now.toLocaleTimeString(
     "fa-IR",
     {
+    
     hour:"2-digit",
+    
     minute:"2-digit",
+    
     second:"2-digit"
+    
     }
+    
     );
     
     
     
     
-    // ثبت در دیتابیس
+    
+    
+    // ثبت در جدول calls
     
     
     const {
@@ -901,7 +1065,9 @@ async function sendTeacherMessage(student){
     error
     }=await supabaseClient
     
+    
     .from("calls")
+    
     
     .insert([
     
@@ -931,7 +1097,11 @@ async function sendTeacherMessage(student){
     
     ])
     
+    
     .select();
+    
+    
+    
     
     
     
@@ -953,7 +1123,7 @@ async function sendTeacherMessage(student){
     
     
     console.log(
-    "فراخوان ثبت شد:",
+    "ثبت شد:",
     data
     );
     
@@ -965,48 +1135,61 @@ async function sendTeacherMessage(student){
     
     
     
+    
+    
     //====================================
-    // کلاس وضعیت کارت
+    // کلاس CSS وضعیت
     //====================================
     
     
     function getStatusClass(status){
     
     
-    if(status==="فراخوان شد"){
+    
+    switch(status){
+    
+    
+    
+    case "فراخوان شد":
     
     return "status-called";
     
-    }
     
     
-    
-    if(status==="دریافت فراخوان"){
+    case "دریافت فراخوان":
     
     return "status-received";
     
-    }
     
     
-    
-    if(status==="ارسال شد"){
+    case "ارسال شد":
     
     return "status-sent";
     
-    }
     
     
+    default:
     
     return "";
     
+    
+    
     }
+    
+    
+    
+    }
+    
+    
+    
+    
     
     
     
     
     
     //====================================
-    // اضافه کردن دانش آموز به کارت ناظم
+    // ساخت کارت دانش آموز
     //====================================
     
     
@@ -1028,6 +1211,8 @@ async function sendTeacherMessage(student){
     
     
     
+    
+    
     if(!classBox){
     
     console.log(
@@ -1043,12 +1228,15 @@ async function sendTeacherMessage(student){
     
     
     
+    
     // جلوگیری از کارت تکراری
     
     
     const oldCard =
     document.querySelector(
+    
     `.student-card[data-id="${student.id}"]`
+    
     );
     
     
@@ -1058,6 +1246,8 @@ async function sendTeacherMessage(student){
     return;
     
     }
+    
+    
     
     
     
@@ -1076,6 +1266,9 @@ async function sendTeacherMessage(student){
     
     card.dataset.id =
     student.id;
+    
+    
+    
     
     
     
@@ -1114,14 +1307,14 @@ async function sendTeacherMessage(student){
     
     📤 ${student.sent_time || ""}
     
-    
     </span>
-    
     
     
     </div>
     
+    
     `;
+    
     
     
     
@@ -1129,6 +1322,8 @@ async function sendTeacherMessage(student){
     classBox.appendChild(
     card
     );
+    
+    
     
     
     
@@ -1141,6 +1336,7 @@ async function sendTeacherMessage(student){
     }
     
     
+    
     }
     
     
@@ -1148,8 +1344,11 @@ async function sendTeacherMessage(student){
     
     
     
+    
+    
+    
     //====================================
-    // بروزرسانی کارت بعد از تغییر وضعیت
+    // بروزرسانی کارت هنگام تغییر وضعیت
     //====================================
     
     
@@ -1159,8 +1358,12 @@ async function sendTeacherMessage(student){
     
     const card =
     document.querySelector(
+    
     `.student-card[data-id="${call.id}"]`
+    
     );
+    
+    
     
     
     
@@ -1173,10 +1376,14 @@ async function sendTeacherMessage(student){
     
     
     
+    
+    
     const status =
     card.querySelector(
     ".student-status"
     );
+    
+    
     
     
     
@@ -1190,11 +1397,15 @@ async function sendTeacherMessage(student){
     
     status.className =
     "student-status "+
-    getStatusClass(call.status);
+    getStatusClass(
+    call.status
+    );
     
     
     
     }
+    
+    
     
     
     
@@ -1207,18 +1418,26 @@ async function sendTeacherMessage(student){
     
     
     
+    
+    
     if(time){
+    
     
     
     time.innerHTML = `
     
+    
     ⏰ ${call.called_time || ""}
     
+    
     <br>
+    
     
     📥 ${call.received_time || ""}
     
+    
     <br>
+    
     
     📤 ${call.sent_time || ""}
     
@@ -1226,18 +1445,18 @@ async function sendTeacherMessage(student){
     `;
     
     
-    }
-    
     
     }
     
-//====================================
-// دریافت فراخوان‌های قبلی
+    
+    
+    }
+    //====================================
+// دریافت فراخوان های قبلی
 //====================================
 
 
 async function loadCalls(){
-
 
 
     const {
@@ -1245,9 +1464,12 @@ async function loadCalls(){
     error
     }=await supabaseClient
     
+    
     .from("calls")
     
+    
     .select("*")
+    
     
     .order(
     "id",
@@ -1258,14 +1480,18 @@ async function loadCalls(){
     
     
     
+    
     if(error){
+    
     
     console.error(
     "خطا در دریافت فراخوان‌ها:",
     error
     );
     
+    
     return;
+    
     
     }
     
@@ -1274,7 +1500,6 @@ async function loadCalls(){
     
     
     data.forEach(call=>{
-    
     
     
     const student={
@@ -1315,6 +1540,7 @@ async function loadCalls(){
     call.sent_time
     
     
+    
     };
     
     
@@ -1328,7 +1554,6 @@ async function loadCalls(){
     });
     
     
-    
     }
     
     
@@ -1339,82 +1564,21 @@ async function loadCalls(){
     
     
     
-    //====================================
-    // Realtime تغییر وضعیت
-    //====================================
-    
-    
-    supabaseClient
-    
-    .channel(
-    "nazem-status-update"
-    )
-    
-    .on(
-    
-    "postgres_changes",
-    
-    {
-    
-    event:"UPDATE",
-    
-    schema:"public",
-    
-    table:"calls"
-    
-    },
-    
-    
-    payload=>{
-    
-    
-    console.log(
-    "تغییر وضعیت:",
-    payload.new
-    );
-    
-    
-    
-    updateNazemCard(
-    payload.new
-    );
-    
-    
-    
-    }
-    
-    
-    )
-    
-    .subscribe(
-    status=>{
-    
-    
-    console.log(
-    "Nazem UPDATE:",
-    status
-    );
-    
-    
-    
-    });
-    
-    
-    
-    
     
     
     
     //====================================
-    // Realtime فراخوان جدید
+    // Realtime ثبت فراخوان جدید
     //====================================
     
     
     supabaseClient
     
+    
     .channel(
-    "nazem-new-call"
+    "nazem-insert-call"
     )
+    
     
     .on(
     
@@ -1445,7 +1609,6 @@ async function loadCalls(){
     const student={
     
     
-    
     id:
     payload.new.id,
     
@@ -1465,10 +1628,6 @@ async function loadCalls(){
     payload.new.status,
     
     
-    called_date:
-    payload.new.called_date,
-    
-    
     called_time:
     payload.new.called_time,
     
@@ -1479,6 +1638,7 @@ async function loadCalls(){
     
     sent_time:
     payload.new.sent_time
+    
     
     
     };
@@ -1494,20 +1654,96 @@ async function loadCalls(){
     }
     
     
+    
     )
+    
     
     .subscribe(
     status=>{
     
     
     console.log(
-    "Nazem INSERT:",
+    "Realtime INSERT:",
     status
     );
     
     
     
     });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //====================================
+    // Realtime تغییر وضعیت
+    //====================================
+    
+    
+    supabaseClient
+    
+    
+    .channel(
+    "nazem-update-call"
+    )
+    
+    
+    .on(
+    
+    "postgres_changes",
+    
+    {
+    
+    event:"UPDATE",
+    
+    schema:"public",
+    
+    table:"calls"
+    
+    },
+    
+    
+    payload=>{
+    
+    
+    console.log(
+    "UPDATE:",
+    payload.new
+    );
+    
+    
+    
+    updateNazemCard(
+    payload.new
+    );
+    
+    
+    
+    }
+    
+    
+    
+    )
+    
+    
+    .subscribe(
+    status=>{
+    
+    
+    console.log(
+    "Realtime UPDATE:",
+    status
+    );
+    
+    
+    
+    });
+    
+    
     
     
     
@@ -1522,9 +1758,11 @@ async function loadCalls(){
     
     supabaseClient
     
+    
     .channel(
-    "nazem-delete-update"
+    "nazem-delete-call"
     )
+    
     
     .on(
     
@@ -1545,10 +1783,9 @@ async function loadCalls(){
     
     
     console.log(
-    "حذف فراخوان:",
+    "DELETE:",
     payload.old
     );
-    
     
     
     
@@ -1572,14 +1809,16 @@ async function loadCalls(){
     }
     
     
+    
     )
+    
     
     .subscribe(
     status=>{
     
     
     console.log(
-    "Nazem DELETE:",
+    "Realtime DELETE:",
     status
     );
     
@@ -1594,8 +1833,9 @@ async function loadCalls(){
     
     
     
+    
     //====================================
-    // دکمه حذف همه فراخوان‌ها
+    // حذف همه فراخوان ها
     //====================================
     
     
@@ -1607,18 +1847,18 @@ async function loadCalls(){
     
     "click",
     
-    async function(){
+    async()=>{
     
     
     
-    const confirmReset =
+    const ok =
     confirm(
     "تمام فراخوان‌ها پاک شوند؟"
     );
     
     
     
-    if(!confirmReset){
+    if(!ok){
     
     return;
     
@@ -1632,9 +1872,12 @@ async function loadCalls(){
     error
     }=await supabaseClient
     
+    
     .from("calls")
     
+    
     .delete()
+    
     
     .gte(
     "id",
@@ -1654,10 +1897,12 @@ async function loadCalls(){
     );
     
     
-    
     return;
     
+    
     }
+    
+    
     
     
     
@@ -1680,16 +1925,18 @@ async function loadCalls(){
     
     
     
+    
+    
     document
     
     .querySelectorAll(
     ".class-header span"
     )
     
-    .forEach(count=>{
+    .forEach(item=>{
     
     
-    count.innerText="0";
+    item.innerText="0";
     
     
     });
@@ -1698,7 +1945,12 @@ async function loadCalls(){
     
     
     
+    
+    
     speechBuffer="";
+    
+    
+    lastDetectedText="";
     
     
     
@@ -1714,18 +1966,22 @@ async function loadCalls(){
     
     
     console.log(
-    "تمام فراخوان‌ها حذف شدند"
+    "همه فراخوان‌ها حذف شدند"
     );
     
     
     
     }
     
+    
     );
     
     
     
     }
+    
+    
+    
     
     
     
@@ -1741,7 +1997,7 @@ async function loadCalls(){
     
     "beforeunload",
     
-    function(){
+    ()=>{
     
     
     isListening=false;
@@ -1770,6 +2026,8 @@ async function loadCalls(){
     
     }
     
+    
+    
     );
     
     
@@ -1777,8 +2035,11 @@ async function loadCalls(){
     
     
     
+    
+    
+    
     //====================================
-    // فعال کردن دوباره هنگام برگشت به صفحه
+    // برگشت دوباره به صفحه
     //====================================
     
     
@@ -1786,8 +2047,7 @@ async function loadCalls(){
     
     "visibilitychange",
     
-    function(){
-    
+    ()=>{
     
     
     if(
@@ -1811,7 +2071,10 @@ async function loadCalls(){
     
     }
     
+    
+    
     );
+    
     
     
     
