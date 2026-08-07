@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تست فراخوان</title>
+
+<style>
+body{
+font-family:tahoma;
+text-align:center;
+background:#111;
+color:white;
+padding:30px;
+}
+
+button{
+font-size:20px;
+padding:15px 30px;
+cursor:pointer;
+}
+
+#text{
+background:white;
+color:black;
+padding:20px;
+margin:20px;
+font-size:24px;
+border-radius:10px;
+}
+
+#result{
+font-size:25px;
+color:#00ff99;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>تست تشخیص نام دانش آموز</h1>
+
+<button onclick="startMic()">🎤 شروع میکروفون</button>
+
+<div id="text">
+متن شنیده شده
+</div>
+
+<div id="result"></div>
+
+
+<script>
+
+const students=[
+
+{
+id:1001,
+name:"امیرپارسا فخرآبادی"
+},
+
+{
+id:1002,
+name:"علیسان صفیاری"
+},
+
+{
+id:1003,
+name:"محمد حسینی"
+}
+
+];
+
+
+
+function normalize(text){
+
+return text
+.replace(/\s+/g,"")
+.replace(/ي/g,"ی")
+.replace(/ك/g,"ک")
+.trim();
+
+}
+
+
+
+function similarity(a,b){
+
+a=normalize(a);
+b=normalize(b);
+
+let longer=a.length>b.length?a:b;
+let shorter=a.length>b.length?b:a;
+
+let distance=levenshtein(longer,shorter);
+
+return (longer.length-distance)/longer.length;
+
+}
+
+
+
+function levenshtein(a,b){
+
+let matrix=[];
+
+for(let i=0;i<=b.length;i++){
+matrix[i]=[i];
+}
+
+for(let j=0;j<=a.length;j++){
+matrix[0][j]=j;
+}
+
+
+for(let i=1;i<=b.length;i++){
+
+for(let j=1;j<=a.length;j++){
+
+if(b[i-1]==a[j-1]){
+
+matrix[i][j]=matrix[i-1][j-1];
+
+}
+else{
+
+matrix[i][j]=Math.min(
+matrix[i-1][j-1]+1,
+matrix[i][j-1]+1,
+matrix[i-1][j]+1
+);
+
+}
+
+}
+
+}
+
+return matrix[b.length][a.length];
+
+}
+
+
+
+
+function checkName(text){
+
+
+students.forEach(student=>{
+
+
+let score=similarity(
+text,
+student.name
+);
+
+
+console.log(
+student.name,
+score
+);
+
+
+
+if(score>=0.60){
+
+
+document.getElementById("result").innerHTML=
+"✅ فراخوان شد : "+
+student.name+
+"<br>کد : "+
+student.id+
+"<br>شباهت : "+
+Math.round(score*100)+"%";
+
+
+}
+
+
+});
+
+
+}
+
+
+
+
+
+function startMic(){
+
+
+const SpeechRecognition=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+
+let recognition=new SpeechRecognition();
+
+
+recognition.lang="fa-IR";
+
+recognition.continuous=true;
+
+recognition.interimResults=false;
+
+
+recognition.onresult=function(event){
+
+
+let text=
+event.results[event.results.length-1][0].transcript;
+
+
+
+document.getElementById("text").innerHTML=text;
+
+
+checkName(text);
+
+
+
+};
+
+
+
+recognition.onend=function(){
+
+recognition.start();
+
+};
+
+
+
+recognition.start();
+
+
+}
+
+
+</script>
+
+
+</body>
+</html>
