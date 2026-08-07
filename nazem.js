@@ -561,65 +561,120 @@ function levenshtein(a,b){
 //====================================
 
 
-if(
-    "webkitSpeechRecognition" in window
-    ){
+if("webkitSpeechRecognition" in window){
+
+
+    recognition = new webkitSpeechRecognition();
     
     
-    recognition =
-    new webkitSpeechRecognition();
+    recognition.lang="fa-IR";
     
     
-    
-    recognition.lang =
-    "fa-IR";
+    recognition.continuous=true;
     
     
-    
-    recognition.continuous =
-    true;
+    recognition.interimResults=true;
     
     
+    recognition.maxAlternatives=3;
     
-    recognition.interimResults = false;
-    
-    
-    recognition.maxAlternatives =
-    3;
-    
-    
-    
-    
-    
-    //====================================
-    // شروع میکروفون
-    //====================================
     
     
     recognition.onstart=function(){
     
-    
-    
-    console.log(
-    "Microphone Started"
-    );
-    
+    console.log("Mic started");
     
     
     if(micStatus){
     
-    micStatus.innerText =
+    micStatus.innerText=
     "میکروفون فعال است و در حال شنیدن...";
+    
+    }
+    
+    };
+    
+    
+    
+    
+    
+    recognition.onresult=function(event){
+    
+    
+    let text="";
+    
+    
+    for(
+    let i=event.resultIndex;
+    i<event.results.length;
+    i++
+    ){
+    
+    text +=
+    event.results[i][0].transcript;
     
     }
     
     
     
-    if(micIcon){
+    text=text.trim();
     
-    micIcon.classList.add(
-    "mic-active"
+    
+    
+    if(text!==""){
+    
+    
+    console.log(
+    "دریافت صدا:",
+    text
     );
+    
+    
+    
+    // نمایش هر چیزی که گفته می‌شود
+    
+    if(speechText){
+    
+    speechText.innerText=text;
+    
+    }
+    
+    
+    
+    
+    // فقط متن نهایی برای فراخوان
+    
+    let finalText="";
+    
+    
+    for(
+    let i=0;
+    i<event.results.length;
+    i++
+    ){
+    
+    
+    if(event.results[i].isFinal){
+    
+    finalText +=
+    event.results[i][0].transcript;
+    
+    }
+    
+    
+    }
+    
+    
+    
+    if(finalText.trim()!==""){
+    
+    findMultipleStudents(
+    finalText.trim()
+    );
+    
+    }
+    
+    
     
     }
     
@@ -632,179 +687,58 @@ if(
     
     
     
-    //====================================
-    // دریافت نتیجه صدا
-    //====================================
+    recognition.onerror=function(e){
+    
+    console.log(
+    "Speech error:",
+    e.error
+    );
     
     
-    recognition.onresult=function(event){
-
-        let text="";
-        
-        
-        for(
-        let i=event.resultIndex;
-        i<event.results.length;
-        i++
-        ){
-        
-        text += event.results[i][0].transcript;
-        
-        }
-        
-        
-        let cleanText=text.trim();
-        
-        
-        
-        if(cleanText!==""){
-        
-        
-        console.log(
-        "متن تشخیص داده شده:",
-        cleanText
-        );
-        
-        
-        // نمایش هر چیزی که گفته می‌شود داخل کادر
-        
-        if(speechText){
-        
-        speechText.innerText =
-        cleanText;
-        
-        }
-        
-        
-        // فقط متن نهایی برای تشخیص اسم
-        
-        let finalText="";
-        
-        
-        for(
-        let i=event.resultIndex;
-        i<event.results.length;
-        i++
-        ){
-        
-        if(event.results[i].isFinal){
-        
-        finalText +=
-        event.results[i][0].transcript;
-        
-        }
-        
-        }
-        
-        
-        
-        if(finalText.trim()!==""){
-        
-        
-        findMultipleStudents(
-        finalText.trim()
-        );
-        
-        
-        }
-        
-        
-        
-        }
-        
-        
-        };
+    };
     
     
     
     
     
     
-    
-    //====================================
-    // خطای میکروفون
-    //====================================
-    
-    recognition.onerror=function(event){
-
-
-        console.log(
-        "Speech Error:",
-        event.error
-        );
-        
-        
-        
-        if(event.error==="no-speech"){
-        
-        return;
-        
-        }
-        
-        
-        
-        restartMic();
-        
-        
-        };
-    
-    
-    
-    
-    
-    
-    
-    
-    //====================================
-    // پایان خودکار میکروفون
-    //====================================
     
     recognition.onend=function(){
-
-
-        console.log(
-        "Microphone Restarting..."
-        );
-        
-        
-        
-        if(isListening){
-        
-        
-        setTimeout(()=>{
-        
-        
-        try{
-        
-        recognition.start();
-        
-        console.log(
-        "Microphone Active Again"
-        );
-        
-        
-        }
-        catch(e){}
-        
-        
-        
-        },200);
-        
-        
-        
-        }
-        
-        
-        
-        };
+    
+    
+    console.log(
+    "Mic stopped"
+    );
     
     
     
+    if(isListening){
     
     
-    // شروع اولیه
+    setTimeout(()=>{
+    
     
     try{
+    
+    recognition.start();
+    
+    }
+    catch(e){}
+    
+    
+    
+    },500);
+    
+    
+    
+    }
+    
+    
+    
+    };
+    
+    
+    
     
     
     recognition.start();
@@ -812,69 +746,6 @@ if(
     
     
     }
-    
-    catch(e){
-    
-    
-    console.log(e);
-    
-    
-    }
-    
-    
-    
-    }
-    
-    else{
-    
-    
-    if(micStatus){
-    
-    micStatus.innerText =
-    "مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند";
-    
-    }
-    
-    
-    }
-    
-    
-    
-    
-    
-    
-    
-    //====================================
-    // راه اندازی دوباره میکروفون
-    //====================================
-    
-    function restartMic(){
-
-
-        if(!isListening || !recognition){
-        
-        return;
-        
-        }
-        
-        
-        setTimeout(()=>{
-        
-        
-        try{
-        
-        recognition.start();
-        
-        
-        }
-        catch(e){}
-        
-        
-        
-        },200);
-        
-        
-        }
     
     
     //====================================
