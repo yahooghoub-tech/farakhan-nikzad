@@ -145,7 +145,7 @@ const students=[
 // ==========================
     {name:"یونا ایازیان",className:"اول-2"},
     {name:"علی اینانلو گنجی",className:"اول-2"},
-    {name:"رادوین برادری هم پا",className:"اول-2"},
+    {name:"رادوین برادری ",className:"اول-2"},
     {name:"مانیاد رسام",className:"اول-2"},
     {name:"امیرعلی صفاوردی",className:"اول-2"},
     {name:"آروین عباسی",className:"اول-2"},
@@ -829,7 +829,7 @@ if(isSensitive){
 
 
             
-            if(score >= 0.80){
+            if(score >= 0.65){
             
             
             if(
