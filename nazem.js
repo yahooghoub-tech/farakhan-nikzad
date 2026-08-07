@@ -581,7 +581,7 @@ if(
     
     
     
-    recognition.interimResults = true;
+    recognition.interimResults = false;
     
     
     recognition.maxAlternatives =
@@ -759,12 +759,11 @@ if(
     // پایان خودکار میکروفون
     //====================================
     
-    
     recognition.onend=function(){
 
 
         console.log(
-        "Microphone Ended"
+        "Microphone Restarting..."
         );
         
         
@@ -780,7 +779,7 @@ if(
         recognition.start();
         
         console.log(
-        "Microphone Restarted"
+        "Microphone Active Again"
         );
         
         
@@ -789,7 +788,8 @@ if(
         
         
         
-        },300);
+        },200);
+        
         
         
         }
@@ -797,7 +797,6 @@ if(
         
         
         };
-    
     
     
     
@@ -849,66 +848,35 @@ if(
     // راه اندازی دوباره میکروفون
     //====================================
     
-    
     function restartMic(){
+
+
+        if(!isListening || !recognition){
+        
+        return;
+        
+        }
+        
+        
+        setTimeout(()=>{
+        
+        
+        try{
+        
+        recognition.start();
+        
+        
+        }
+        catch(e){}
+        
+        
+        
+        },200);
+        
+        
+        }
     
     
-    
-    clearTimeout(
-    restartTimer
-    );
-    
-    
-    
-    restartTimer =
-    setTimeout(()=>{
-    
-    
-    
-    if(
-    isListening &&
-    recognition
-    ){
-    
-    
-    try{
-    
-    
-    recognition.start();
-    
-    
-    
-    console.log(
-    "Microphone Restarted"
-    );
-    
-    
-    
-    }
-    
-    catch(e){
-    
-    
-    
-    console.log(
-    "Already started"
-    );
-    
-    
-    
-    }
-    
-    
-    
-    }
-    
-    
-    
-    },100);
-    
-    
-    
-    }
     //====================================
 // ارسال فراخوان به Supabase
 //====================================
