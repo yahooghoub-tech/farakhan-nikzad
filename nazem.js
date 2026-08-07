@@ -11,8 +11,8 @@ console.log("Supabase connected");
 
 let recognition;
 let isListening=true;
+let calledStudents=[];
 
-let speechBuffer="";
 
 
 const micStatus=document.getElementById("micStatus");
