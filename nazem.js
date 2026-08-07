@@ -517,41 +517,26 @@ recognition.onresult=function(event){
     };
     
     
-  // این تابع متن گفته شده توسط ناظم را با اسامی دانش آموزان مقایسه می‌کند
-function findMultipleStudents(text){
-
-
-    // متن گفته شده توسط میکروفون را فقط برای مقایسه آماده می‌کنیم
-    // خود متن اصلی تغییر نمی‌کند
-    let cleanText = normalizeText(text);
-
-
-
-    // تمام دانش آموزان را بررسی می‌کنیم
+    
+    function findMultipleStudents(text){
+    
+    
     students.forEach(student=>{
-
-
-        // اسم دانش آموز داخل لیست را هم برای مقایسه آماده می‌کنیم
-        let cleanName = normalizeText(student.name);
-
-
-
-        // اگر بعد از حذف فاصله‌ها دو متن یکی بودند
-        // یعنی همان دانش آموز گفته شده است
-        if(cleanText.includes(cleanName)){
-
-
-            // ارسال فراخوان
-            sendTeacherMessage(student);
-
-
-        }
-
-
+    
+    
+    if(text.includes(student.name)){
+    
+    
+    sendTeacherMessage(student);
+    
+    
+    }
+    
+    
     });
-
-
-}
+    
+    
+    }
     
     
     
