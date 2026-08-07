@@ -509,21 +509,19 @@ recognition.onresult=function(event){
     speechText.innerText=text;
     
     
-    
-    findMultipleStudents(text);
-    
-    
-    
-    };
-    
-    
-    // این تابع فاصله و تفاوت حروف فارسی و عربی را یکسان می‌کند
-// تا مقایسه دقیق‌تر شود
-function normalizeText(text){
+// این تابع متن را برای مقایسه آماده می‌کند
+// فاصله‌ها، تفاوت حروف عربی و فارسی را اصلاح می‌کند
+// فقط برای مقایسه است و متن داخل کادر را تغییر نمی‌دهد
+
+function normalizeName(text){
 
     return text
 
-    // حذف فاصله بین کلمات
+    // حذف فاصله‌ها
+    // مثال:
+    // امیر پارسا فخر آبادی
+    // تبدیل می‌شود به:
+    // امیرپارسا فخرآبادی
     .replace(/\s+/g,"")
 
     // تبدیل ی عربی به ی فارسی
@@ -532,26 +530,20 @@ function normalizeText(text){
     // تبدیل ک عربی به ک فارسی
     .replace(/ك/g,"ک")
 
-    // حذف فاصله‌های اضافی ابتدا و انتها
     .trim();
 
 }
 
 
 
-// این تابع تعداد تفاوت دو متن را محاسبه می‌کند
-// مثال:
-// امیرپارسا
-// امیرپارسای
-// فقط یک حرف تفاوت دارند
+// محاسبه فاصله بین دو متن
+// برای پیدا کردن غلط املایی کوچک استفاده می‌شود
 
-function levenshtein(a,b){
-
+function editDistance(a,b){
 
     let matrix=[];
 
 
-    // ساخت جدول مقایسه
     for(let i=0;i<=b.length;i++){
 
         matrix[i]=[i];
@@ -567,7 +559,6 @@ function levenshtein(a,b){
 
 
 
-    // بررسی تک تک حروف
     for(let i=1;i<=b.length;i++){
 
         for(let j=1;j<=a.length;j++){
@@ -575,15 +566,11 @@ function levenshtein(a,b){
 
             if(b[i-1]===a[j-1]){
 
-
-                // اگر حرف یکی بود، هزینه صفر است
                 matrix[i][j]=matrix[i-1][j-1];
 
+            }
+            else{
 
-            }else{
-
-
-                // اگر فرق داشت، کمترین تغییر را حساب می‌کنیم
                 matrix[i][j]=Math.min(
 
                     matrix[i-1][j-1]+1,
@@ -591,7 +578,6 @@ function levenshtein(a,b){
                     matrix[i-1][j]+1
 
                 );
-
 
             }
 
@@ -606,8 +592,9 @@ function levenshtein(a,b){
 
 
 
-// این تابع درصد شباهت دو متن را برمی‌گرداند
-function similarity(a,b){
+// تبدیل اختلاف حروف به درصد شباهت
+
+function nameSimilarity(a,b){
 
 
     let maxLength=Math.max(
@@ -616,40 +603,59 @@ function similarity(a,b){
     );
 
 
-    let distance=levenshtein(a,b);
+    let distance=editDistance(a,b);
 
 
     return 1-(distance/maxLength);
-
 
 }
 
 
 
     
-    f// این تابع اسم گفته شده توسط ناظم را با لیست دانش آموزان بررسی می‌کند
+    findMultipleStudents(text);
+    
+    
+    
+    };
+    
+    
+    
+    // بررسی اسم گفته شده توسط ناظم با تمام دانش آموزان
+
 function findMultipleStudents(text){
 
 
-    // تبدیل متن گفته شده به حالت استاندارد
-    // فقط برای مقایسه استفاده می‌شود
-    let cleanText = normalizeText(text);
+    // متن گفته شده توسط میکروفون
+    let voiceName =
+    normalizeName(text);
 
 
 
     students.forEach(student=>{
 
 
-        // تبدیل اسم ثبت شده دانش آموز به حالت استاندارد
-        let cleanName = normalizeText(student.name);
+        // اسم ذخیره شده دانش آموز
+        let studentName =
+        normalizeName(student.name);
 
 
 
-        // بررسی شباهت اسم‌ها
-        if(cleanText.includes(cleanName)){
+        // محاسبه میزان شباهت
+        let score =
+        nameSimilarity(
+            voiceName,
+            studentName
+        );
 
 
-            // اگر اسم پیدا شد، فراخوان ارسال شود
+
+        // اگر شباهت بیشتر از 85 درصد بود
+        // آن را همان دانش آموز در نظر بگیر
+
+        if(score >= 0.85){
+
+
             sendTeacherMessage(student);
 
 
@@ -660,6 +666,7 @@ function findMultipleStudents(text){
 
 
 }
+    
     
     
     async function sendTeacherMessage(student){
