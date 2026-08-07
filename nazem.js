@@ -581,8 +581,7 @@ if(
     
     
     
-    recognition.interimResults =
-    true;
+    recognition.interimResults = false;
     
     
     
@@ -746,32 +745,28 @@ if(
     // خطای میکروفون
     //====================================
     
-    
     recognition.onerror=function(event){
-    
-    
-    
-    console.log(
-    "Speech Error:",
-    event.error
-    );
-    
-    
-    
-    if(
-    event.error !== "no-speech" &&
-    event.error !== "aborted"
-    ){
-    
-    
-    restartMic();
-    
-    
-    }
-    
-    
-    
-    };
+
+
+        console.log(
+        "Speech Error:",
+        event.error
+        );
+        
+        
+        
+        if(event.error==="no-speech"){
+        
+        return;
+        
+        }
+        
+        
+        
+        restartMic();
+        
+        
+        };
     
     
     
@@ -786,26 +781,42 @@ if(
     
     
     recognition.onend=function(){
-    
-    
-    
-    console.log(
-    "Microphone Ended"
-    );
-    
-    
-    
-    if(isListening){
-    
-    
-    restartMic();
-    
-    
-    }
-    
-    
-    
-    };
+
+
+        console.log(
+        "Microphone Ended"
+        );
+        
+        
+        
+        if(isListening){
+        
+        
+        setTimeout(()=>{
+        
+        
+        try{
+        
+        recognition.start();
+        
+        console.log(
+        "Microphone Restarted"
+        );
+        
+        
+        }
+        catch(e){}
+        
+        
+        
+        },300);
+        
+        
+        }
+        
+        
+        
+        };
     
     
     
@@ -913,7 +924,7 @@ if(
     
     
     
-    },700);
+    },100);
     
     
     
