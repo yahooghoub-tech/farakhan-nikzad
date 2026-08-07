@@ -650,7 +650,18 @@ recognition.onresult=function(event){
             
             
             
-            if(score>=0.75){
+            let originalParts =
+student.name.split(" ").length;
+
+
+let spokenParts =
+text.trim().split(" ").length;
+
+
+if(
+score>=0.75 &&
+spokenParts>=originalParts
+){
             
             
             if(!calledStudents.includes(student.name)){
