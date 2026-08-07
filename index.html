@@ -1,1160 +1,646 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>پنل ناظم - سیستم فراخوان خروج</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<title>پنل ناظم - فراخوان خروج دانش آموزان</title>
+
 
 <style>
-*{
-box-sizing:border-box;
-}
 
 body{
-margin:0;
-font-family:Vazirmatn,sans-serif;
-background:linear-gradient(135deg,#06121f,#12385b);
-color:white;
-min-height:100vh;
-}
 
-.container{
-width:95%;
-max-width:1400px;
-margin:auto;
+font-family:Tahoma,Arial;
+
+background:
+linear-gradient(
+135deg,
+#071426,
+#102d4d
+);
+
+color:white;
+
+margin:0;
+
 padding:20px;
+
 }
 
 
-/* Header */
-
-.header{
-background:rgba(255,255,255,.12);
-backdrop-filter:blur(15px);
-border-radius:25px;
-padding:25px;
-text-align:center;
-margin-bottom:25px;
-}
-
-.header h1{
-margin:0;
-font-size:30px;
-}
-
-.header p{
-margin:10px 0;
-}
-
-
-
-/* Reset Button */
-
-.reset-btn{
-background:#ff4444;
-color:white;
-border:none;
-padding:12px 25px;
-border-radius:20px;
-font-family:inherit;
-font-size:16px;
-cursor:pointer;
-transition:.3s;
-}
-
-
-.reset-btn:hover{
-background:#cc0000;
-transform:scale(1.05);
-}
-
-
-/* Responsive Header */
-
-@media(max-width:600px){
 
 .container{
-width:100%;
-padding:10px;
+
+max-width:1400px;
+
+margin:auto;
+
+}
+
+
+
+.microphone{
+
+font-size:80px;
+
+text-align:center;
+
+margin:20px;
+
 }
 
 
-.header h1{
-font-size:21px;
+
+.status{
+
+text-align:center;
+
+font-size:22px;
+
+padding:15px;
+
+background:#ffffff20;
+
+border-radius:15px;
+
 }
 
 
-.reset-btn{
-width:100%;
-font-size:15px;
-}
+
+.last-name{
+
+margin:20px auto;
+
+padding:15px;
+
+text-align:center;
+
+background:#ffffff15;
+
+border-radius:15px;
+
+font-size:20px;
 
 }
-.student{
-background:rgba(0,255,150,.15);
+
+
+
+.voice-btn{
+
+display:block;
+
+margin:20px auto;
+
+padding:15px 40px;
+
+border:none;
+
+border-radius:20px;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+
+
+#voiceStatus,
+#voiceText{
+
+background:#ffffff15;
+
+padding:12px;
+
+border-radius:10px;
+
+margin:10px;
+
+text-align:center;
+
+}
+
+
+
+.classes{
+
+display:grid;
+
+grid-template-columns:
+
+repeat(4,1fr);
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+
+
+.class-card{
+
+background:
+
+rgba(255,255,255,.12);
+
+border-radius:20px;
+
+padding:15px;
+
+min-height:180px;
+
+}
+
+
+
+.class-title{
+
+font-size:22px;
+
+text-align:center;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+}
+
+
+
+.student-list{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+
+
+.empty{
+
+text-align:center;
+
+opacity:.7;
+
+}
+
+
+
+.student-item{
+
+background:#ffffff20;
+
+padding:12px;
+
 border-radius:12px;
-padding:10px;
-margin-bottom:8px;
+
 }
+
+
+
+.student-name{
+
+font-size:18px;
+
+}
+
 
 
 .student-status{
+
 margin-top:8px;
-font-size:14px;
+
+color:#ffe082;
+
 }
 
 
-.student-status.waiting{
-color:#ffd000;
+
+.received{
+
+color:#80ff80;
+
 }
 
 
-.student-status.received{
-color:#00ffff;
+
+.sent{
+
+color:#ff9090;
+
 }
 
 
-.student-status.sent{
-color:#00ff99;
+
+@media(max-width:900px){
+
+.classes{
+
+grid-template-columns:
+
+repeat(2,1fr);
+
+}
+
 }
 
 
-.student-time{
-font-size:13px;
-opacity:.8;
-margin-top:5px;
+
+@media(max-width:600px){
+
+.classes{
+
+grid-template-columns:
+
+1fr;
+
 }
+
+}
+
+
 </style>
+
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
-<div class="header">
 
-<h1>
-📢 سیستم هوشمند فراخوان خروج دانش‌آموزان
-</h1>
+<div class="microphone">
 
-<p>
-پنل ناظم
-</p>
+🎤
+
+</div>
 
 
-<button class="reset-btn" onclick="resetAllCalls()">
-🔄 ریست تمام فراخوان‌ها
+<div class="status" id="mainStatus">
+
+آماده دریافت اسامی دانش‌آموزان
+
+</div>
+
+
+
+<div class="last-name">
+
+آخرین دانش‌آموز:
+
+<br>
+
+
+<span id="lastStudent">
+
+---
+
+</span>
+
+
+</div>
+
+
+
+<button id="startVoice" class="voice-btn">
+
+شروع شنود
+
 </button>
 
 
-</div>
-<div class="voice-panel">
 
-    <div class="microphone">
-    🎤
-    </div>
-    
-    <div class="status" id="mainStatus">
-    آماده دریافت اسامی دانش‌آموزان
-    </div>
-    
-    
-    <div class="last-name">
-    
-    آخرین دانش‌آموز:
-    
-    <br>
-    
-    <span id="lastStudent">
-    ---
-    </span>
-    
-    </div>
-    
-    
-    <button id="startVoice" class="voice-btn">
-    شروع شنود
-    </button>
-    
-    
-    <div id="voiceStatus">
-    خاموش
-    </div>
-    
-    
-    <div id="voiceText">
-    متن تشخیص داده شده نمایش داده می‌شود...
-    </div>
-    
-    
-    </div>
-    
-    
-    
-    <div class="classes">
-    
-    
-    <div class="class-card" id="class-1-1">
-    <div class="class-title">اول 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-1-2">
-    <div class="class-title">اول 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-1-3">
-    <div class="class-title">اول 3</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-2-1">
-    <div class="class-title">دوم 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-2-2">
-    <div class="class-title">دوم 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-3-1">
-    <div class="class-title">سوم 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-3-2">
-    <div class="class-title">سوم 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-3-3">
-    <div class="class-title">سوم 3</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-4-1">
-    <div class="class-title">چهارم 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-4-2">
-    <div class="class-title">چهارم 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-4-3">
-    <div class="class-title">چهارم 3</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-5-1">
-    <div class="class-title">پنجم 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-5-2">
-    <div class="class-title">پنجم 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-5-3">
-    <div class="class-title">پنجم 3</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-6-1">
-    <div class="class-title">ششم 1</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    <div class="class-card" id="class-6-2">
-    <div class="class-title">ششم 2</div>
-    <div class="student-list empty">
-    هنوز فراخوانی نشده
-    </div>
-    </div>
-    
-    
-    </div>
-    <script>
+<div id="voiceStatus">
 
-        const supabaseClient=supabase.createClient(
-        "https://ghnpiijihybuhfetnxjp.supabase.co",
-        "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq"
-        );
-        
-        
-        let students=[];
-        
-        let lastStudent="";
-        
-        
-        const classMap={
-        
-        "اول 1":"1-1",
-        "اول 2":"1-2",
-        "اول 3":"1-3",
-        
-        "دوم 1":"2-1",
-        "دوم 2":"2-2",
-        
-        "سوم 1":"3-1",
-        "سوم 2":"3-2",
-        "سوم 3":"3-3",
-        
-        "چهارم 1":"4-1",
-        "چهارم 2":"4-2",
-        "چهارم 3":"4-3",
-        
-        "پنجم 1":"5-1",
-        "پنجم 2":"5-2",
-        "پنجم 3":"5-3",
-        
-        "ششم 1":"6-1",
-        "ششم 2":"6-2"
-        
-        };
-        
-        
-        
-        function shamsiDate(date){
-        
-        if(!date)return "-";
-        
-        
-        return new Intl.DateTimeFormat(
-        "fa-IR",
-        {
-        year:"numeric",
-        month:"2-digit",
-        day:"2-digit",
-        hour:"2-digit",
-        minute:"2-digit"
-        }
-        ).format(new Date(date));
-        
-        
-        }
-        
-        
-        
-        
-        async function loadStudents(){
-        
-        try{
-        
-        
-        const response=await fetch(
-        "/api/get-students"
-        );
-        
-        
-        students=await response.json();
-        
-        
-        console.log(
-        "Students Loaded:",
-        students
-        );
-        
-        
-        
-        }catch(error){
-        
-        
-        console.log(
-        "Load Students Error:",
-        error
-        );
-        
-        
-        }
-        
-        
-        }
-        
-        
-        
-        
-        function findStudent(text){
-        
-        
-        return students.find(student=>
-        
-        
-        text.includes(
-        student.name
-        )
-        
-        );
-        
-        
-        }
-        
-        
-        
-        
-        function getStatusText(status){
-        
-        
-        switch(status){
-        
-        
-        case"calling":
-        
-        return"🔔 در انتظار دریافت";
-        
-        
-        case"received":
-        
-        return"📥 فراخوانی شد توسط معلم";
-        
-        
-        case"sent":
-        
-        return"🚶 فرستاده شد";
-        
-        
-        default:
-        
-        return status;
-        
-        
-        }
-        
-        
-        }
-        function addStudentToClass(student){
-            console.log("دانش آموز وارد شد:", student);
-
-            let className =
-student.class_name ||
-student.className;
-
-
-className =
-className.replace("-", " ");
-
-
-const classId =
-classMap[className];
-
-
-if(!classId){
-
-console.log(
-"کلاس پیدا نشد:",
-student.class_name
-);
-
-return;
-
-}
-
-
-
-const classBox=document.getElementById(
-"class-"+classId
-);
-
-
-if(!classBox)return;
-
-
-
-const list=classBox.querySelector(
-".student-list"
-);
-
-
-
-if(list.classList.contains("empty")){
-
-list.innerHTML="";
-
-list.classList.remove("empty");
-
-}
-
-
-
-
-if(document.getElementById(
-"student-"+student.name
-)){
-
-return;
-
-}
-
-
-
-
-list.innerHTML+=`
-
-<div class="student" id="student-${student.name}">
-
-<div>
-✅ ${student.name}
-</div>
-
-
-<div class="student-status waiting">
-
-🔔 در انتظار دریافت
+خاموش
 
 </div>
 
 
-<div class="student-time" id="time-${student.name}">
+
+<div id="voiceText">
+
+متن تشخیص داده شده نمایش داده می‌شود...
+
+</div>
+
+
+
+
+
+<div class="classes">
+
+
+
+<div class="class-card" id="class-اول-1">
+
+<div class="class-title">
+
+اول-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-اول-2">
+
+<div class="class-title">
+
+اول-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-اول-3">
+
+<div class="class-title">
+
+اول-3
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-دوم-1">
+
+<div class="class-title">
+
+دوم-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-دوم-2">
+
+<div class="class-title">
+
+دوم-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-سوم-1">
+
+<div class="class-title">
+
+سوم-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-سوم-2">
+
+<div class="class-title">
+
+سوم-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-سوم-3">
+
+<div class="class-title">
+
+سوم-3
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-چهارم-1">
+
+<div class="class-title">
+
+چهارم-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-چهارم-2">
+
+<div class="class-title">
+
+چهارم-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-چهارم-3">
+
+<div class="class-title">
+
+چهارم-3
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-پنجم-1">
+
+<div class="class-title">
+
+پنجم-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-پنجم-2">
+
+<div class="class-title">
+
+پنجم-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-پنجم-3">
+
+<div class="class-title">
+
+پنجم-3
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-ششم-1">
+
+<div class="class-title">
+
+ششم-1
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
+
+<div class="class-card" id="class-ششم-2">
+
+<div class="class-title">
+
+ششم-2
+
+</div>
+
+<div class="student-list empty">
+
+هنوز فراخوانی نشده
+
+</div>
+
+</div>
+
+
 
 </div>
 
 
 </div>
 
-`;
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script src="nazem.js"></script>
 
-}
 
-
-
-
-function updateStudentStatus(call){
-
-
-
-const studentBox=document.getElementById(
-"student-"+call.student_name
-);
-
-
-
-if(!studentBox){
-
-return;
-
-}
-
-
-
-
-const statusBox=studentBox.querySelector(
-".student-status"
-);
-
-
-
-const timeBox=document.getElementById(
-"time-"+call.student_name
-);
-
-
-
-if(!statusBox)return;
-
-
-
-if(call.status==="received"){
-
-
-statusBox.className=
-"student-status received";
-
-
-statusBox.innerHTML=
-`
-📥 فراخوانی شد توسط معلم
-`;
-
-
-
-if(timeBox){
-
-timeBox.innerHTML=
-`
-⏰ ${shamsiDate(call.received_at)}
-`;
-
-}
-
-
-}
-
-
-
-
-if(call.status==="sent"){
-
-
-statusBox.className=
-"student-status sent";
-
-
-statusBox.innerHTML=
-`
-🚶 فرستاده شد
-`;
-
-
-
-if(timeBox){
-
-timeBox.innerHTML=
-`
-⏰ ${shamsiDate(call.sent_at)}
-`;
-
-}
-
-
-}
-
-
-}
-async function sendCall(student){
-
-try{
-
-
-const response=await fetch(
-"/api/add-call",
-{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-student_name:student.name,
-
-class_name:student.class_name,
-
-status:"calling",
-
-created_at:new Date().toISOString()
-
-})
-
-});
-
-
-const result=await response.json();
-
-
-console.log(
-"Call Saved:",
-result
-);
-
-
-
-}catch(error){
-
-
-console.log(
-"Save Call Error:",
-error
-);
-
-
-}
-
-
-}
-async function loadActiveCalls(){
-
-
-try{
-
-
-const {data,error}=await supabaseClient
-
-.from("calls")
-
-.select("*")
-
-.in(
-"status",
-[
-"calling",
-"received"
-]
-)
-
-.order(
-"created_at",
-{
-ascending:true
-}
-);
-
-
-
-if(error){
-
-console.log(
-error
-);
-
-return;
-
-}
-
-
-
-data.forEach(call=>{
-
-
-addStudentToClass({
-
-name:call.student_name,
-
-class_name:call.class_name
-
-});
-
-
-
-updateStudentStatus(call);
-
-
-
-});
-
-
-
-console.log(
-"Active Calls:",
-data
-);
-
-
-
-}catch(error){
-
-
-console.log(
-"Load Active Calls Error:",
-error
-);
-
-
-}
-
-
-}
-const startButton=document.getElementById("startVoice");
-const voiceStatus=document.getElementById("voiceStatus");
-const voiceText=document.getElementById("voiceText");
-const mainStatus=document.getElementById("mainStatus");
-const lastStudentBox=document.getElementById("lastStudent");
-
-
-const SpeechRecognition=
-window.SpeechRecognition||
-window.webkitSpeechRecognition;
-
-
-let recognition;
-
-let isListening=false;
-
-
-
-if(!SpeechRecognition){
-
-
-alert(
-"مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند"
-);
-
-
-}else{
-
-
-recognition=new SpeechRecognition();
-
-
-recognition.lang="fa-IR";
-
-
-recognition.continuous=true;
-
-
-recognition.interimResults=true;
-
-
-recognition.maxAlternatives=1;
-
-
-
-recognition.onstart=function(){
-
-
-isListening=true;
-
-
-voiceStatus.innerHTML=
-"🎤 میکروفون فعال است";
-
-
-mainStatus.innerHTML=
-"در حال شنیدن اسامی دانش‌آموزان";
-
-
-};
-
-
-
-recognition.onresult=function(event){
-
-
-let text="";
-
-
-for(
-let i=event.resultIndex;
-i<event.results.length;
-i++
-){
-
-
-if(event.results[i].isFinal){
-
-
-text+=event.results[i][0].transcript;
-
-
-}
-
-
-}
-
-
-
-text=text.trim();
-
-
-
-if(text==="")return;
-
-
-
-voiceText.innerHTML=text;
-
-
-
-const student=findStudent(text);
-
-
-
-if(student&&student.name!==lastStudent){
-
-
-
-lastStudent=student.name;
-
-
-
-lastStudentBox.innerHTML=
-student.name;
-
-
-
-addStudentToClass(student);
-
-
-
-sendCall(student);
-
-
-
-mainStatus.innerHTML=
-"📢 فراخوان ثبت شد";
-
-
-playAlert();
-
-
-
-}
-
-
-};
-
-
-
-
-
-recognition.onerror=function(event){
-
-
-console.log(
-"Speech Error:",
-event.error
-);
-
-
-voiceStatus.innerHTML=
-"خطا: "+event.error;
-
-
-};
-
-
-
-
-
-recognition.onend=function(){
-
-
-console.log(
-"Speech End"
-);
-
-
-
-voiceStatus.innerHTML=
-"🔄 اتصال مجدد";
-
-
-
-if(isListening){
-
-
-setTimeout(()=>{
-
-
-try{
-
-
-recognition.start();
-
-
-}catch(error){
-
-
-console.log(error);
-
-
-}
-
-
-},1000);
-
-
-}
-
-
-
-};
-
-
-
-
-
-}
-
-
-
-startButton.onclick=function(){
-
-
-
-if(isListening)return;
-
-
-
-try{
-
-
-recognition.start();
-
-
-
-}catch(error){
-
-
-console.log(error);
-
-
-}
-
-
-};
-supabaseClient
-.channel("calls-insert")
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"calls"
-},
-(payload)=>{
-
-
-const call=payload.new;
-
-
-console.log(
-"New Call:",
-call
-);
-
-
-
-addStudentToClass({
-
-name:call.student_name,
-
-class_name:call.class_name
-
-});
-
-
-
-updateStudentStatus(call);
-
-
-
-}
-)
-.subscribe();
-
-
-
-
-
-supabaseClient
-.channel("calls-update")
-.on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"calls"
-},
-(payload)=>{
-
-
-const call=payload.new;
-
-
-
-console.log(
-"Status Update:",
-call
-);
-
-
-
-updateStudentStatus(call);
-
-
-
-}
-)
-.subscribe();
-
-// =====================================
-// صدای هشدار
-// =====================================
-
-function playAlert(){
-
-let audio=new Audio(
-"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-);
-
-audio.play()
-.catch(()=>{});
-
-}
-
-
-
-// =====================================
-// شروع اولیه صفحه
-// =====================================
-
-async function init(){
-
-console.log(
-"پنل ناظم آماده شد"
-);
-
-
-await loadStudents();
-
-
-await loadActiveCalls();
-
-
-}
-
-
-
-init();
-
-</script>
-        
 </body>
+
 </html>
