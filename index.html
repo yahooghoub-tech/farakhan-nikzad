@@ -1,646 +1,244 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>پنل ناظم - فراخوان خروج دانش آموزان</title>
-
-
-<style>
-
-body{
-
-font-family:Tahoma,Arial;
-
-background:
-linear-gradient(
-135deg,
-#071426,
-#102d4d
-);
-
-color:white;
-
-margin:0;
-
-padding:20px;
-
-}
-
-
-
-.container{
-
-max-width:1400px;
-
-margin:auto;
-
-}
-
-
-
-.microphone{
-
-font-size:80px;
-
-text-align:center;
-
-margin:20px;
-
-}
-
-
-
-.status{
-
-text-align:center;
-
-font-size:22px;
-
-padding:15px;
-
-background:#ffffff20;
-
-border-radius:15px;
-
-}
-
-
-
-.last-name{
-
-margin:20px auto;
-
-padding:15px;
-
-text-align:center;
-
-background:#ffffff15;
-
-border-radius:15px;
-
-font-size:20px;
-
-}
-
-
-
-.voice-btn{
-
-display:block;
-
-margin:20px auto;
-
-padding:15px 40px;
-
-border:none;
-
-border-radius:20px;
-
-font-size:20px;
-
-cursor:pointer;
-
-}
-
-
-
-#voiceStatus,
-#voiceText{
-
-background:#ffffff15;
-
-padding:12px;
-
-border-radius:10px;
-
-margin:10px;
-
-text-align:center;
-
-}
-
-
-
-.classes{
-
-display:grid;
-
-grid-template-columns:
-
-repeat(4,1fr);
-
-gap:20px;
-
-margin-top:30px;
-
-}
-
-
-
-.class-card{
-
-background:
-
-rgba(255,255,255,.12);
-
-border-radius:20px;
-
-padding:15px;
-
-min-height:180px;
-
-}
-
-
-
-.class-title{
-
-font-size:22px;
-
-text-align:center;
-
-font-weight:bold;
-
-margin-bottom:15px;
-
-}
-
-
-
-.student-list{
-
-display:flex;
-
-flex-direction:column;
-
-gap:10px;
-
-}
-
-
-
-.empty{
-
-text-align:center;
-
-opacity:.7;
-
-}
-
-
-
-.student-item{
-
-background:#ffffff20;
-
-padding:12px;
-
-border-radius:12px;
-
-}
-
-
-
-.student-name{
-
-font-size:18px;
-
-}
-
-
-
-.student-status{
-
-margin-top:8px;
-
-color:#ffe082;
-
-}
-
-
-
-.received{
-
-color:#80ff80;
-
-}
-
-
-
-.sent{
-
-color:#ff9090;
-
-}
-
-
-
-@media(max-width:900px){
-
-.classes{
-
-grid-template-columns:
-
-repeat(2,1fr);
-
-}
-
-}
-
-
-
-@media(max-width:600px){
-
-.classes{
-
-grid-template-columns:
-
-1fr;
-
-}
-
-}
-
-
-</style>
-
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>پنل ناظم - سیستم فراخوان خروج</title>
+<link rel="stylesheet" href="nazem.css">
+<link rel="manifest" href="manifest.json">
 </head>
-
-
 <body>
 
+<div class="app">
 
-<div class="container">
+<header class="header">
 
-
-<div class="microphone">
-
-🎤
-
+<div class="header-title">
+<h1>پنل ناظم</h1>
+<p>سیستم هوشمند فراخوان خروج دانش‌آموزان</p>
 </div>
 
-
-<div class="status" id="mainStatus">
-
-آماده دریافت اسامی دانش‌آموزان
-
-</div>
-
-
-
-<div class="last-name">
-
-آخرین دانش‌آموز:
-
-<br>
-
-
-<span id="lastStudent">
-
----
-
-</span>
-
-
-</div>
-
-
-
-<button id="startVoice" class="voice-btn">
-
-شروع شنود
-
+<button class="reset-btn" id="resetCalls">
+🔄 ریست فراخوان‌ها
 </button>
 
+</header>
 
 
-<div id="voiceStatus">
+<section class="microphone-panel">
 
-خاموش
-
+<div class="mic-status">
+<div class="mic-icon" id="micIcon">
+🎤
 </div>
 
-
-
-<div id="voiceText">
-
-متن تشخیص داده شده نمایش داده می‌شود...
-
-</div>
-
-
-
-
-
-<div class="classes">
-
-
-
-<div class="class-card" id="class-اول-1">
-
-<div class="class-title">
-
-اول-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
+<div>
+<h2>وضعیت میکروفون</h2>
+<p id="micStatus">
+در حال آماده‌سازی میکروفون...
+</p>
 </div>
 
 </div>
 
 
+<div class="speech-box">
 
-<div class="class-card" id="class-اول-2">
+<h3>آخرین صدای دریافت شده:</h3>
 
-<div class="class-title">
-
-اول-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
+<p id="speechText">
+منتظر شنیدن نام دانش‌آموز...
+</p>
 
 </div>
 
-</div>
-
-
-
-<div class="class-card" id="class-اول-3">
-
-<div class="class-title">
-
-اول-3
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-دوم-1">
-
-<div class="class-title">
-
-دوم-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-دوم-2">
-
-<div class="class-title">
-
-دوم-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-سوم-1">
-
-<div class="class-title">
-
-سوم-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-سوم-2">
-
-<div class="class-title">
-
-سوم-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-سوم-3">
-
-<div class="class-title">
-
-سوم-3
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-چهارم-1">
-
-<div class="class-title">
-
-چهارم-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-چهارم-2">
-
-<div class="class-title">
-
-چهارم-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-چهارم-3">
-
-<div class="class-title">
-
-چهارم-3
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-پنجم-1">
-
-<div class="class-title">
-
-پنجم-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-پنجم-2">
-
-<div class="class-title">
-
-پنجم-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-پنجم-3">
-
-<div class="class-title">
-
-پنجم-3
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-ششم-1">
-
-<div class="class-title">
-
-ششم-1
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-<div class="class-card" id="class-ششم-2">
-
-<div class="class-title">
-
-ششم-2
-
-</div>
-
-<div class="student-list empty">
-
-هنوز فراخوانی نشده
-
-</div>
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="nazem.js"></script>
-
-
-</body>
-
-</html>
+</section>
+
+
+<section class="classes-section">
+
+    <div class="section-title">
+    <h2>کلاس‌ها</h2>
+    <p>دانش‌آموزان فراخوان شده در کلاس مربوطه نمایش داده می‌شوند</p>
+    </div>
+    
+    <div class="classes-grid">
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 1</h3>
+    <span id="count-اول-1">0</span>
+    </div>
+    <div class="students-list" id="class-اول-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 2</h3>
+    <span id="count-اول-2">0</span>
+    </div>
+    <div class="students-list" id="class-اول-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>اول 3</h3>
+    <span id="count-اول-3">0</span>
+    </div>
+    <div class="students-list" id="class-اول-3"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>دوم 1</h3>
+    <span id="count-دوم-1">0</span>
+    </div>
+    <div class="students-list" id="class-دوم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>دوم 2</h3>
+    <span id="count-دوم-2">0</span>
+    </div>
+    <div class="students-list" id="class-دوم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 1</h3>
+    <span id="count-سوم-1">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 2</h3>
+    <span id="count-سوم-2">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>سوم 3</h3>
+    <span id="count-سوم-3">0</span>
+    </div>
+    <div class="students-list" id="class-سوم-3"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 1</h3>
+    <span id="count-چهارم-1">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-1"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 2</h3>
+    <span id="count-چهارم-2">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-2"></div>
+    </div>
+    
+    
+    <div class="class-card">
+    <div class="class-header">
+    <h3>چهارم 3</h3>
+    <span id="count-چهارم-3">0</span>
+    </div>
+    <div class="students-list" id="class-چهارم-3"></div>
+    </div>
+    <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 1</h3>
+        <span id="count-پنجم-1">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-1"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 2</h3>
+        <span id="count-پنجم-2">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-2"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>پنجم 3</h3>
+        <span id="count-پنجم-3">0</span>
+        </div>
+        <div class="students-list" id="class-پنجم-3"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>ششم 1</h3>
+        <span id="count-ششم-1">0</span>
+        </div>
+        <div class="students-list" id="class-ششم-1"></div>
+        </div>
+        
+        
+        <div class="class-card">
+        <div class="class-header">
+        <h3>ششم 2</h3>
+        <span id="count-ششم-2">0</span>
+        </div>
+        <div class="students-list" id="class-ششم-2"></div>
+        </div>
+        
+        
+        </div>
+        
+        </section>
+        
+        
+        <footer class="footer">
+        <p>
+        سامانه هوشمند فراخوان خروج دانش‌آموزان
+        </p>
+        </footer>
+        
+        
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+        <script src="nazem.js"></script>
+        <script>
+            if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"service-worker.js"
+)
+.then(()=>{
+
+console.log(
+" PWA فعال شد"
+);
+
+});
+
+}
+        </script>
+        </body>
+        </html>

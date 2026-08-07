@@ -1,6 +1,6 @@
 {
     "name": "سیستم فراخوان خروج دانش آموزان",
-    "short_name": "فراخوان",
+    "short_name": "FarakhanNik",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#ffffff",
