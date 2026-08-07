@@ -647,13 +647,24 @@ recognition.onresult=function(event){
             cleanName
             );
             
-            
+            let firstName =
+normalizeText(student.name.split(" ")[0]);
+
+
+let voiceFirstName =
+normalizeText(text.split(" ")[0]);
+
+
+let firstNameScore =
+similarity(
+voiceFirstName,
+firstName
+);
             
             if(score > bestScore){
             
-            bestScore = score;
-            
-            bestStudent = student;
+                score > bestScore &&
+                firstNameScore >= 0.90
             
             }
             
