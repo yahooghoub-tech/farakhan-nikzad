@@ -476,9 +476,19 @@ margin-top:5px;
         
         }
         function addStudentToClass(student){
+            console.log("دانش آموز وارد شد:", student);
+
+            let className =
+student.class_name ||
+student.className;
 
 
-const classId=classMap[student.class_name];
+className =
+className.replace("-", " ");
+
+
+const classId =
+classMap[className];
 
 
 if(!classId){
