@@ -581,8 +581,7 @@ if(
     
     
     
-    recognition.interimResults = false;
-    
+    recognition.interimResults = true;
     
     
     recognition.maxAlternatives =
@@ -639,101 +638,82 @@ if(
     
     
     recognition.onresult=function(event){
-    
-    
-    
-    let text="";
-    
-    
-    
-    // گرفتن متن حتی از نتیجه موقت
-    
-    for(
-    let i=event.resultIndex;
-    i<event.results.length;
-    i++
-    ){
-    
-    
-    text +=
-    event.results[i][0].transcript;
-    
-    
-    }
-    
-    
-    
-    let cleanText =
-    text.trim();
-    
-    
-    
-    
-    if(cleanText!==""){
-    
-    
-    
-    console.log(
-    "متن تشخیص داده شده:",
-    cleanText
-    );
-    
-    
-    
-    
-    //--------------------------------
-    // نمایش فوری در کادر
-    //--------------------------------
-    
-    
-    if(speechText){
-    
-    
-    speechText.innerText =
-    cleanText;
-    
-    
-    }
-    
-    
-    
-    // جلوگیری از پردازش تکراری
-    
-    if(
-    cleanText === lastDetectedText
-    ){
-    
-    return;
-    
-    }
-    
-    
-    
-    lastDetectedText =
-    cleanText;
-    
-    
-    
-    speechBuffer =
-    cleanText;
-    
-    
-    
-    
-    // ارسال برای تشخیص نام
-    
-    
-    findMultipleStudents(
-    cleanText
-    );
-    
-    
-    
-    }
-    
-    
-    
-    };
+
+        let text="";
+        
+        
+        for(
+        let i=event.resultIndex;
+        i<event.results.length;
+        i++
+        ){
+        
+        text += event.results[i][0].transcript;
+        
+        }
+        
+        
+        let cleanText=text.trim();
+        
+        
+        
+        if(cleanText!==""){
+        
+        
+        console.log(
+        "متن تشخیص داده شده:",
+        cleanText
+        );
+        
+        
+        // نمایش هر چیزی که گفته می‌شود داخل کادر
+        
+        if(speechText){
+        
+        speechText.innerText =
+        cleanText;
+        
+        }
+        
+        
+        // فقط متن نهایی برای تشخیص اسم
+        
+        let finalText="";
+        
+        
+        for(
+        let i=event.resultIndex;
+        i<event.results.length;
+        i++
+        ){
+        
+        if(event.results[i].isFinal){
+        
+        finalText +=
+        event.results[i][0].transcript;
+        
+        }
+        
+        }
+        
+        
+        
+        if(finalText.trim()!==""){
+        
+        
+        findMultipleStudents(
+        finalText.trim()
+        );
+        
+        
+        }
+        
+        
+        
+        }
+        
+        
+        };
     
     
     
