@@ -9,10 +9,9 @@ SUPABASE_KEY
 
 console.log("Supabase connected");
 
+
 let recognition;
 let isListening=true;
-let calledStudents=[];
-
 
 
 const micStatus=document.getElementById("micStatus");
@@ -403,6 +402,9 @@ const students=[
     
     ];
 
+
+
+
 if("webkitSpeechRecognition" in window){
 
 
@@ -504,11 +506,11 @@ recognition.onresult=function(event){
     
     
     
-    speechBuffer += " " + text;
-
-speechText.innerText = speechBuffer;
-
-findMultipleStudents(speechBuffer);
+    speechText.innerText=text;
+    
+    
+    
+    findMultipleStudents(text);
     
     
     
@@ -516,155 +518,25 @@ findMultipleStudents(speechBuffer);
     
     
     
-    function normalizeText(text){
-
-        return text
-        .replace(/\s+/g,"")
-        .trim();
-        
-        }
-        
-        
-        
-        function similarity(a,b){
-        
-        let longer =
-        a.length>b.length ? a:b;
-        
-        let shorter =
-        a.length>b.length ? b:a;
-        
-        
-        let longerLength=longer.length;
-        
-        
-        if(longerLength===0){
-        return 1;
-        }
-        
-        
-        let distance =
-        levenshteinDistance(
-        longer,
-        shorter
-        );
-        
-        
-        return (
-        longerLength-distance
-        )/
-        longerLength;
-        
-        
-        }
-        
-        
-        
-        function levenshteinDistance(a,b){
-        
-        let matrix=[];
-        
-        
-        for(let i=0;i<=b.length;i++){
-        
-        matrix[i]=[i];
-        
-        }
-        
-        
-        for(let j=0;j<=a.length;j++){
-        
-        matrix[0][j]=j;
-        
-        }
-        
-        
-        for(let i=1;i<=b.length;i++){
-        
-        for(let j=1;j<=a.length;j++){
-        
-        
-        if(
-        b[i-1]===a[j-1]
-        ){
-        
-        matrix[i][j]=
-        matrix[i-1][j-1];
-        
-        
-        }
-        else{
-        
-        matrix[i][j]=Math.min(
-        
-        matrix[i-1][j-1]+1,
-        
-        matrix[i][j-1]+1,
-        
-        matrix[i-1][j]+1
-        
-        );
-        
-        }
-        
-        
-        }
-        
-        }
-        
-        
-        return matrix[b.length][a.length];
-        
-        }
-        
-        
-        
-        function findMultipleStudents(text){
-        
-        
-        let voiceText =
-        normalizeText(text);
-        
-        
-        
-        students.forEach(student=>{
-        
-        
-        let studentName =
-        normalizeText(
-        student.name
-        );
-        
-        
-        
-        let score =
-        similarity(
-        voiceText,
-        studentName
-        );
-        
-        
-        
-        if(score>=0.75){
-        
-        
-        console.log(
-        "تشخیص:",
-        student.name,
-        score
-        );
-        
-        
-        sendTeacherMessage(student);
-        
-        
-        }
-        
-        
-        });
-        
-        
-        }
+    function findMultipleStudents(text){
+    
+    
+    students.forEach(student=>{
+    
+    
+    if(text.includes(student.name)){
+    
+    
+    sendTeacherMessage(student);
+    
+    
+    }
+    
+    
+    });
+    
+    
+    }
     
     
     
