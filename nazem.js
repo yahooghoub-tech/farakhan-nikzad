@@ -627,9 +627,7 @@ recognition.onresult=function(event){
             
             
             
-            let bestStudent = null;
-            
-            let bestScore = 0;
+            let foundStudents = [];
             
             
             
@@ -647,24 +645,17 @@ recognition.onresult=function(event){
             cleanName
             );
             
-            let firstName =
-normalizeText(student.name.split(" ")[0]);
-
-
-let voiceFirstName =
-normalizeText(text.split(" ")[0]);
-
-
-let firstNameScore =
-similarity(
-voiceFirstName,
-firstName
-);
             
-            if(score > bestScore){
             
-                score > bestScore &&
-                firstNameScore >= 0.90
+            if(
+            cleanText.includes(cleanName)
+            ||
+            score >= 0.85
+            ){
+            
+            
+            foundStudents.push(student);
+            
             
             }
             
@@ -673,40 +664,30 @@ firstName
             
             
             
-            console.log(
-            "بهترین نتیجه:",
-            bestStudent,
-            bestScore
-            );
-            
+            foundStudents.forEach(student=>{
             
             
             if(
-            bestStudent &&
-            bestScore >= 0.80 &&
-            !calledStudents.includes(bestStudent.name)
+            !calledStudents.includes(student.name)
             ){
             
             
-            calledStudents.push(
-            bestStudent.name
-            );
+            calledStudents.push(student.name);
             
             
-            sendTeacherMessage(
-            bestStudent
-            );
+            sendTeacherMessage(student);
             
             
             console.log(
             "فراخوان شد:",
-            bestStudent.name,
-            "امتیاز:",
-            bestScore
+            student.name
             );
             
             
             }
+            
+            
+            });
             
             
             }
