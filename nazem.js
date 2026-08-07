@@ -12,7 +12,7 @@ console.log("Supabase connected");
 
 let recognition;
 let isListening=true;
-
+let calledStudents=[];
 
 const micStatus=document.getElementById("micStatus");
 const micIcon=document.getElementById("micIcon");
@@ -517,26 +517,158 @@ recognition.onresult=function(event){
     };
     
     
-    
-    function findMultipleStudents(text){
-    
-    
-    students.forEach(student=>{
-    
-    
-    if(text.includes(student.name)){
-    
-    
-    sendTeacherMessage(student);
-    
-    
-    }
-    
-    
-    });
-    
-    
-    }
+    function normalizeText(text){
+
+        return text
+        .replace(/ي/g,"ی")
+        .replace(/ى/g,"ی")
+        .replace(/ك/g,"ک")
+        .replace(/\s+/g,"")
+        .trim();
+        
+        }
+        
+        
+        
+        function levenshtein(a,b){
+        
+        
+        let matrix=[];
+        
+        
+        for(let i=0;i<=b.length;i++){
+        
+        matrix[i]=[i];
+        
+        }
+        
+        
+        for(let j=0;j<=a.length;j++){
+        
+        matrix[0][j]=j;
+        
+        }
+        
+        
+        
+        for(let i=1;i<=b.length;i++){
+        
+        
+        for(let j=1;j<=a.length;j++){
+        
+        
+        if(b[i-1]===a[j-1]){
+        
+        matrix[i][j]=matrix[i-1][j-1];
+        
+        }
+        
+        else{
+        
+        
+        matrix[i][j]=Math.min(
+        
+        matrix[i-1][j-1]+1,
+        
+        matrix[i][j-1]+1,
+        
+        matrix[i-1][j]+1
+        
+        );
+        
+        
+        }
+        
+        
+        }
+        
+        
+        }
+        
+        
+        return matrix[b.length][a.length];
+        
+        }
+        
+        
+        
+        
+        function similarity(a,b){
+        
+        
+        a=normalizeText(a);
+        
+        b=normalizeText(b);
+        
+        
+        let distance=
+        levenshtein(a,b);
+        
+        
+        let maxLength=
+        Math.max(
+        a.length,
+        b.length
+        );
+        
+        
+        return 1-(distance/maxLength);
+        
+        
+        }
+        
+        
+        
+        
+        function findMultipleStudents(text){
+
+
+            let cleanText =
+            normalizeText(text);
+            
+            
+            
+            students.forEach(student=>{
+            
+            
+            let cleanName =
+            normalizeText(student.name);
+            
+            
+            
+            if(
+            cleanText.includes(cleanName)
+            ){
+            
+            
+            if(
+            !calledStudents.includes(student.name)
+            ){
+            
+            
+            calledStudents.push(student.name);
+            
+            
+            sendTeacherMessage(student);
+            
+            
+            console.log(
+            "فراخوان شد:",
+            student.name
+            );
+            
+            
+            }
+            
+            
+            }
+            
+            
+            
+            });
+            
+            
+            }
     
     
     
