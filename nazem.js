@@ -619,7 +619,6 @@ recognition.onresult=function(event){
         
         }
         
-        
         function findMultipleStudents(text){
 
 
@@ -636,8 +635,23 @@ recognition.onresult=function(event){
             
             
             
+            let score =
+            similarity(
+            cleanText,
+            cleanName
+            );
+            
+            
+            
+            console.log(
+            student.name,
+            score
+            );
+            
+            
+            
             if(
-            cleanText.includes(cleanName)
+            score >= 0.80
             ){
             
             
@@ -654,7 +668,9 @@ recognition.onresult=function(event){
             
             console.log(
             "فراخوان شد:",
-            student.name
+            student.name,
+            "شباهت:",
+            score
             );
             
             
@@ -668,7 +684,7 @@ recognition.onresult=function(event){
             
             
             }
-        
+       
         
     
     
