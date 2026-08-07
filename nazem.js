@@ -627,6 +627,12 @@ recognition.onresult=function(event){
             
             
             
+            let bestStudent = null;
+            
+            let bestScore = 0;
+            
+            
+            
             students.forEach(student=>{
             
             
@@ -643,44 +649,53 @@ recognition.onresult=function(event){
             
             
             
-            console.log(
-            student.name,
-            score
-            );
+            if(score > bestScore){
             
+            bestScore = score;
             
-            
-            if(
-            score >= 0.80
-            ){
-            
-            
-            if(
-            !calledStudents.includes(student.name)
-            ){
-            
-            
-            calledStudents.push(student.name);
-            
-            
-            sendTeacherMessage(student);
-            
-            
-            console.log(
-            "فراخوان شد:",
-            student.name,
-            "شباهت:",
-            score
-            );
-            
-            
-            }
-            
+            bestStudent = student;
             
             }
             
             
             });
+            
+            
+            
+            console.log(
+            "بهترین نتیجه:",
+            bestStudent,
+            bestScore
+            );
+            
+            
+            
+            if(
+            bestStudent &&
+            bestScore >= 0.80 &&
+            !calledStudents.includes(bestStudent.name)
+            ){
+            
+            
+            calledStudents.push(
+            bestStudent.name
+            );
+            
+            
+            sendTeacherMessage(
+            bestStudent
+            );
+            
+            
+            console.log(
+            "فراخوان شد:",
+            bestStudent.name,
+            "امتیاز:",
+            bestScore
+            );
+            
+            
+            }
             
             
             }
