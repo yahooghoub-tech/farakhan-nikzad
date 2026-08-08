@@ -24,13 +24,11 @@ module.exports = async function handler(req, res) {
             process.env.VAPID_PRIVATE_KEY
         );
 
-
         const { data: devices, error } =
             await supabase
                 .from("teacher_devices")
                 .select("subscription")
                 .eq("class_name", "ششم-1");
-
 
         if (error) {
 
@@ -45,7 +43,6 @@ module.exports = async function handler(req, res) {
 
         }
 
-
         if (!devices || devices.length === 0) {
 
             return res.status(404).json({
@@ -53,7 +50,6 @@ module.exports = async function handler(req, res) {
             });
 
         }
-
 
         const payload = JSON.stringify({
 
@@ -71,9 +67,7 @@ module.exports = async function handler(req, res) {
 
         });
 
-
         const results = [];
-
 
         for (const device of devices) {
 
@@ -84,11 +78,9 @@ module.exports = async function handler(req, res) {
                     payload
                 );
 
-
                 results.push({
                     success: true
                 });
-
 
             } catch (error) {
 
@@ -96,26 +88,27 @@ module.exports = async function handler(req, res) {
                     "خطا در ارسال Push:",
                     error
                 );
-    
+
                 console.error(
                     "Status Code:",
                     error.statusCode
                 );
-    
+
                 console.error(
                     "Response Body:",
                     error.body
                 );
-    
-    
+
                 results.push({
                     success: false,
                     error: error.message,
                     statusCode: error.statusCode || null,
                     body: error.body || null
                 });
-    
+
             }
+
+        }
 
         return res.status(200).json({
 
@@ -125,14 +118,12 @@ module.exports = async function handler(req, res) {
 
         });
 
-
     } catch (error) {
 
         console.error(
             "Test Push Error:",
             error
         );
-
 
         return res.status(500).json({
 
