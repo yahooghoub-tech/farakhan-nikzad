@@ -66,6 +66,8 @@ self.addEventListener("push", function(event) {
 
         requireInteraction:
             true
+            ,
+            silent: false
 
     };
 
