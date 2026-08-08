@@ -1,3 +1,4 @@
+
 const webpush = require("web-push");
 const { createClient } = require("@supabase/supabase-js");
 
@@ -100,10 +101,17 @@ module.exports = async function handler(req, res) {
                 );
 
                 results.push({
+
                     success: false,
+
                     error: error.message,
-                    statusCode: error.statusCode || null,
-                    body: error.body || null
+
+                    statusCode:
+                        error.statusCode || null,
+
+                    body:
+                        error.body || null
+
                 });
 
             }
@@ -126,6 +134,8 @@ module.exports = async function handler(req, res) {
         );
 
         return res.status(500).json({
+
+            success: false,
 
             error: error.message
 
