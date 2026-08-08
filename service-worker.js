@@ -6,9 +6,22 @@ self.addEventListener("push", function(event) {
 
     try {
 
-        data = event.data
-            ? event.data.json()
-            : {};
+        if (event.data) {
+
+            try {
+
+                data = event.data.json();
+
+            } catch (error) {
+
+                data = {
+                    title: "🔔 فراخوان دانش‌آموز",
+                    body: event.data.text()
+                };
+
+            }
+
+        }
 
     } catch (error) {
 
@@ -21,7 +34,8 @@ self.addEventListener("push", function(event) {
 
 
     const title =
-        data.title || "🔔 فراخوان دانش‌آموز";
+        data.title ||
+        "🔔 فراخوان دانش‌آموز";
 
 
     const options = {
@@ -36,15 +50,13 @@ self.addEventListener("push", function(event) {
         badge:
             "/icon-192.png",
 
-        vibrate:
-            data.vibrate ||
-            [
-                300,
-                100,
-                300,
-                100,
-                500
-            ],
+        vibrate: [
+            300,
+            100,
+            300,
+            100,
+            500
+        ],
 
         tag:
             "student-call",

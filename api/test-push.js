@@ -96,17 +96,26 @@ module.exports = async function handler(req, res) {
                     "خطا در ارسال Push:",
                     error
                 );
-
-
+    
+                console.error(
+                    "Status Code:",
+                    error.statusCode
+                );
+    
+                console.error(
+                    "Response Body:",
+                    error.body
+                );
+    
+    
                 results.push({
                     success: false,
-                    error: error.message
+                    error: error.message,
+                    statusCode: error.statusCode || null,
+                    body: error.body || null
                 });
-
+    
             }
-
-        }
-
 
         return res.status(200).json({
 
