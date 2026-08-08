@@ -1,0 +1,12 @@
+$ npx web-push generate-vapid-keys
+
+=======================================
+
+Public Key:
+BGXK8_09Z7XoTpt1PDaMmra88f8LvxyRFjnV7W36XGQSMVNRTdjpGtEHzhevjTJ5V4AtiIWsZSG0TyIO5VCgPRE
+
+Private Key:
+nXmaIMR3YPYhzGgXk2MNz0zWzRKIrkrAjGEH7lyJPw0
+
+=======================================
+
