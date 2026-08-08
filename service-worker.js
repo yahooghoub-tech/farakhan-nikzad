@@ -1,52 +1,42 @@
-const CACHE_NAME="farakhan-v1";
+self.addEventListener("push", function(event) {
 
+    const data = event.data
+        ? event.data.json()
+        : {};
 
-const files=[
+    const title =
+        data.title || "فراخوان خروج";
 
-"./",
-"./index.html",
-"./style.css",
-"./nazem.js"
+    const options = {
 
-];
+        body:
+        data.body || "فراخوان جدید دریافت شد",
 
+        icon:
+        "icon-192.png",
 
-self.addEventListener(
-"install",
-event=>{
+        badge:
+        "icon-192.png",
 
+        vibrate: [
+            200,
+            100,
+            200,
+            100,
+            500
+        ],
 
-event.waitUntil(
+        requireInteraction: true
 
-caches.open(CACHE_NAME)
-.then(cache=>{
+    };
 
-return cache.addAll(files);
+    event.waitUntil(
 
-})
+        self.registration.showNotification(
+            title,
+            options
+        )
 
-);
-
-
-});
-
-
-
-self.addEventListener(
-"fetch",
-event=>{
-
-
-event.respondWith(
-
-caches.match(event.request)
-.then(response=>{
-
-return response || fetch(event.request);
-
-})
-
-);
-
+    );
 
 });
