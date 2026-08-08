@@ -1,34 +1,62 @@
 self.addEventListener("push", function(event) {
 
-    const data = event.data
-        ? event.data.json()
-        : {};
+    console.log("Push دریافت شد");
+
+    let data = {};
+
+    try {
+
+        data = event.data
+            ? event.data.json()
+            : {};
+
+    } catch (error) {
+
+        console.error(
+            "خطا در خواندن Push:",
+            error
+        );
+
+    }
+
 
     const title =
-        data.title || "فراخوان خروج";
+        data.title || "🔔 فراخوان دانش‌آموز";
+
 
     const options = {
 
         body:
-        data.body || "فراخوان جدید دریافت شد",
+            data.body ||
+            "یک فراخوان جدید دریافت شد",
 
         icon:
-        "icon-192.png",
+            "/icon-192.png",
 
         badge:
-        "icon-192.png",
+            "/icon-192.png",
 
-        vibrate: [
-            200,
-            100,
-            200,
-            100,
-            500
-        ],
+        vibrate:
+            data.vibrate ||
+            [
+                300,
+                100,
+                300,
+                100,
+                500
+            ],
 
-        requireInteraction: true
+        tag:
+            "student-call",
+
+        renotify:
+            true,
+
+        requireInteraction:
+            true
 
     };
+
 
     event.waitUntil(
 
